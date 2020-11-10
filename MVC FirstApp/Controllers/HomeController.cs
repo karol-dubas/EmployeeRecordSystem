@@ -35,6 +35,15 @@ namespace MVC_FirstApp.Controllers
         [HttpPost]
         public IActionResult Login(LoginViewModel data)
         {
+            var result = _as.SignIn(data);
+
+            if (result.Succeeded)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            ModelState.AddModelError("", "Nieprawidłowe dane");
+
             return View(data);
         }
 

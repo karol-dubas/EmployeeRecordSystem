@@ -1,4 +1,5 @@
-﻿
+﻿@model MVC_FirstApp.Models.ViewModels.LoginViewModel
+
 @{
     Layout = null;
 }
@@ -8,8 +9,22 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title>Login</title>
+    <title>Logowanie</title>
 </head>
 <body>
+    <h1 class="card-header">Logowanie</h1>
+    <form method="post">
+        <div class="form-group">
+            <label asp-for="UserName"></label>
+            <input asp-for="UserName" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="Password"></label>
+            <input asp-for="Password" class="form-control" />
+        </div>
+        <div asp-validation-summary="All">
+        </div>
+        <button type="submit" class="btn btn-primary">Zaloguj</button>
+    </form>
 </body>
 </html>
