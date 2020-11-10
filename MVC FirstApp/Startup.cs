@@ -2,14 +2,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MVC_FirstApp.Controllers;
 using MVC_FirstApp.Models;
+using MVC_FirstApp.Models.Services;
 
 namespace MVC_FirstApp
 {
@@ -29,6 +34,15 @@ namespace MVC_FirstApp
 
             services.AddDbContext<MvcDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("MvcConnection")));
+
+            services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<MvcDbContext>();
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
+            services.ConfigureApplicationCookie(options =>
+                {
+                    options.LoginPath = new PathString("/Home/Login");
+                });
+
+            services.AddTransient<AccountService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -49,6 +63,7 @@ namespace MVC_FirstApp
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
