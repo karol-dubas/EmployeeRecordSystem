@@ -36,5 +36,10 @@ namespace MVC_FirstApp.Models.Services
 
             return result;
         }
+
+        public void SignOut()
+        {
+            _sim.SignOutAsync();
+        }
     }
 }

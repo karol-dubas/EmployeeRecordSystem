@@ -43,5 +43,12 @@ namespace MVC_FirstApp.Controllers
 
             return View(data);
         }
+
+        public IActionResult Logout()
+        {
+            _as.SignOut();
+
+            return RedirectToAction("Index", "Login");
+        }
     }
 }
