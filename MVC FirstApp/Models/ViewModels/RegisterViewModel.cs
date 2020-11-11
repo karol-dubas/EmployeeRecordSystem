@@ -25,5 +25,11 @@ namespace MVC_FirstApp.Models.ViewModels
         {
             return Password == ConfirmPassword;
         }
+
+        [Required(ErrorMessage = "Pole 'Imię' jest wymagane")]
+        public string FirstName { get; set; }
+
+        [Required(ErrorMessage = "Pole 'Nazwisko' jest wymagane")]
+        public string LastName { get; set; }
     }
 }

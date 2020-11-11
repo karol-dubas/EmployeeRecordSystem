@@ -9,10 +9,10 @@ namespace MVC_FirstApp.Models.Services
 {
     public class AccountService
     {
-        private UserManager<IdentityUser> _um;
-        private SignInManager<IdentityUser> _sim;
+        private UserManager<ApplicationUser> _um;
+        private SignInManager<ApplicationUser> _sim;
 
-        public AccountService(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        public AccountService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
         {
             _um = userManager;
             _sim = signInManager;
@@ -20,9 +20,11 @@ namespace MVC_FirstApp.Models.Services
 
         public IdentityResult CreateUser(RegisterViewModel data)
         {
-            var entity = new IdentityUser()
+            var entity = new ApplicationUser()
             {
                 UserName = data.UserName,
+                FirstName = data.FirstName,
+                LastName = data.LastName,
             };
 
             var result = _um.CreateAsync(entity, data.Password).Result;

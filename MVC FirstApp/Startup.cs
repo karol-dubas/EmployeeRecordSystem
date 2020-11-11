@@ -35,7 +35,7 @@ namespace MVC_FirstApp
             services.AddDbContext<MvcDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("MvcConnection")));
 
-            services.AddIdentity<IdentityUser, IdentityRole>(options =>
+            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
                 {
                     options.Password.RequiredLength = 4;
                     options.Password.RequireDigit = false;

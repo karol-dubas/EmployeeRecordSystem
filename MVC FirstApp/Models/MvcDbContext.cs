@@ -7,8 +7,14 @@ using System.Threading.Tasks;
 
 namespace MVC_FirstApp.Models
 {
-    public class MvcDbContext : IdentityDbContext
+    public class MvcDbContext : IdentityDbContext<ApplicationUser>
     {
-        public MvcDbContext(DbContextOptions options) : base(options) { }
+        public MvcDbContext(DbContextOptions<MvcDbContext> options) 
+            : base(options) { }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+        }
     }
 }
