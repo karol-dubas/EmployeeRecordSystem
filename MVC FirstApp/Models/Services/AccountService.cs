@@ -11,11 +11,13 @@ namespace MVC_FirstApp.Models.Services
     {
         private UserManager<ApplicationUser> _um;
         private SignInManager<ApplicationUser> _sim;
+        private MvcDbContext _db;
 
-        public AccountService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        public AccountService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, MvcDbContext dbContext)
         {
             _um = userManager;
             _sim = signInManager;
+            _db = dbContext;
         }
 
         public IdentityResult CreateUser(RegisterViewModel data)
@@ -42,6 +44,22 @@ namespace MVC_FirstApp.Models.Services
         public void SignOut()
         {
             _sim.SignOutAsync();
+        }
+
+        public HomeUserViewModel GetUserDetails(string userId)
+        {
+            var user = _db.Users.Find(userId);
+
+            var vm = new HomeUserViewModel
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Group = user.Group,
+                Position = user.Position
+            };
+
+            return vm;
         }
     }
 }

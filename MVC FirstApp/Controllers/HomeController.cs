@@ -16,9 +16,21 @@ namespace MVC_FirstApp.Controllers
     [Authorize]
     public class HomeController : Controller
     {
+        private AccountService _as;
+        private UserManager<ApplicationUser> _um;
+
+        public HomeController(AccountService accountService, UserManager<ApplicationUser> userManager)
+        {
+            _as = accountService;
+            _um = userManager;
+        }
+
         public IActionResult Index()
         {
-            return View();
+            var userId = _um.GetUserId(User);
+            var vm = _as.GetUserDetails(userId);
+
+            return View(vm);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
