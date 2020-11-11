@@ -14,61 +14,9 @@ namespace MVC_FirstApp.Controllers
 {
     public class HomeController : Controller
     {
-        public AccountService _as;
-
-        public HomeController(AccountService accountService)
-        {
-            _as = accountService;
-        }
-
         public IActionResult Index()
         {
             return View();
-        }
-
-        [HttpGet]
-        public IActionResult Login()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult Login(LoginViewModel data)
-        {
-            var result = _as.SignIn(data);
-
-            if (result.Succeeded)
-            {
-                return RedirectToAction("Index", "Home");
-            }
-
-            ModelState.AddModelError("", "Nieprawidłowe dane");
-
-            return View(data);
-        }
-
-        [HttpGet]
-        public IActionResult Register()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult Register(RegisterViewModel data)
-        {
-            var result = _as.CreateUser(data);
-
-            if (result.Succeeded)
-            {
-                return RedirectToAction("Index", "Home");
-            }
-
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError("", error.Description);
-            }
-
-            return View(data);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -35,11 +35,19 @@ namespace MVC_FirstApp
             services.AddDbContext<MvcDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("MvcConnection")));
 
-            services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<MvcDbContext>();
+            services.AddIdentity<IdentityUser, IdentityRole>(options =>
+                {
+                    options.Password.RequiredLength = 4;
+                    options.Password.RequireDigit = false;
+                    options.Password.RequireLowercase = false;
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequireUppercase = false;
+                })
+                .AddEntityFrameworkStores<MvcDbContext>();
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
             services.ConfigureApplicationCookie(options =>
                 {
-                    options.LoginPath = new PathString("/Home/Login");
+                    options.LoginPath = new PathString("/Login/Index");
                 });
 
             services.AddTransient<AccountService>();
