@@ -9,6 +9,5 @@ namespace MVC_FirstApp.Models
     {
         WarehouseWorker,
         TeamLeader,
-        Admin
     }
 }

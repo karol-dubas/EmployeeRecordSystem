@@ -25,6 +25,7 @@ namespace MVC_FirstApp.Controllers
             _um = userManager;
         }
 
+        [HttpGet]
         public IActionResult Index()
         {
             var userId = _um.GetUserId(User);
