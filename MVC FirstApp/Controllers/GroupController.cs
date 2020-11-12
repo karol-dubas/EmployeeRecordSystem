@@ -19,7 +19,6 @@ namespace MVC_FirstApp.Controllers
             _gs = groupService;
         }
 
-        [HttpGet]
         public IActionResult Index()
         {
             var vm = _gs.GetAll();

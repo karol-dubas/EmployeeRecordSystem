@@ -16,20 +16,19 @@ namespace MVC_FirstApp.Controllers
     [Authorize]
     public class HomeController : Controller
     {
-        private AccountService _as;
+        private UserEditService _us;
         private UserManager<ApplicationUser> _um;
 
-        public HomeController(AccountService accountService, UserManager<ApplicationUser> userManager)
+        public HomeController(UserEditService userService, UserManager<ApplicationUser> userManager)
         {
-            _as = accountService;
+            _us = userService;
             _um = userManager;
         }
 
-        [HttpGet]
         public IActionResult Index()
         {
             var userId = _um.GetUserId(User);
-            var vm = _as.GetUserDetails(userId);
+            var vm = _us.GetUserDetails(userId);
 
             return View(vm);
         }

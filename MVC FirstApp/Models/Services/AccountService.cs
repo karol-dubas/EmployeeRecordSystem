@@ -13,7 +13,9 @@ namespace MVC_FirstApp.Models.Services
         private SignInManager<ApplicationUser> _sim;
         private MvcDbContext _db;
 
-        public AccountService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, MvcDbContext dbContext)
+        public AccountService(UserManager<ApplicationUser> userManager, 
+            SignInManager<ApplicationUser> signInManager,
+            MvcDbContext dbContext)
         {
             _um = userManager;
             _sim = signInManager;
@@ -46,20 +48,13 @@ namespace MVC_FirstApp.Models.Services
             _sim.SignOutAsync();
         }
 
-        public HomeUserViewModel GetUserDetails(string userId)
+        public IdentityResult DeleteUser(string id)
         {
-            var user = _db.Users.Find(userId);
+            var user = _db.Users.Find(id);
 
-            var vm = new HomeUserViewModel
-            {
-                Id = user.Id,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Group = user.Group,
-                Position = user.Position
-            };
+            var result = _um.DeleteAsync(user).Result;
 
-            return vm;
+            return result;
         }
     }
 }
