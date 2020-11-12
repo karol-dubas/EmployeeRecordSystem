@@ -52,6 +52,7 @@ namespace MVC_FirstApp
 
             services.AddTransient<AccountService>();
             services.AddTransient<GroupService>();
+            services.AddTransient<UserEditService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
