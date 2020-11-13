@@ -25,18 +25,18 @@
         <div class="form-group">
             <label asp-for="Group"></label>
             <select class="custom-select" asp-for="Group">
-                <option value="None">brak grupy</option>
-                <option value="GroupA">Grupa A</option>
-                <option value="GroupB">Grupa B</option>
-                <option value="GroupC">Grupa C</option>
+                <option value="@GroupEnum.None">brak grupy</option>
+                <option value="@GroupEnum.GroupA">Grupa A</option>
+                <option value="@GroupEnum.GroupB">Grupa B</option>
+                <option value="@GroupEnum.GroupC">Grupa C</option>
             </select>
         </div>
         <div class="form-group">
             <label asp-for="Position"></label>
             <select class="custom-select" asp-for="Position">
-                <option value="None">brak stanowiska</option>
-                <option value="WarehouseWorker">Pracownik magazynu</option>
-                <option value="TeamLeader">Kierownik</option>
+                <option value="@PositionEnum.None">brak stanowiska</option>
+                <option value="@PositionEnum.WarehouseWorker">Pracownik magazynu</option>
+                <option value="@PositionEnum.TeamLeader">Kierownik</option>
             </select>
         </div>
         <div asp-validation-summary="All"></div>

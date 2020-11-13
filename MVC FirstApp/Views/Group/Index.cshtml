@@ -10,7 +10,7 @@
 </div>
 <div class="page">
     <div class="groupTable">
-    <h3>Brak grupy:</h3>
+        <h3>Brak grupy:</h3>
         <table class="table table-sm table-hover">
             <thead>
                 <tr>
@@ -28,7 +28,18 @@
                         <th scope="row">@n</th>
                         <td>@user.FirstName</td>
                         <td>@user.LastName</td>
-                        <td>@user.Position</td>
+                        @switch (user.Position)
+                        {
+                            case PositionEnum.None:
+                                <td>-</td>
+                                break;
+                            case PositionEnum.WarehouseWorker:
+                                <td>Pracownik magazynu</td>
+                                break;
+                            case PositionEnum.TeamLeader:
+                                <td>Kierownik</td>
+                                break;
+                        }
                         <td><a class="btn btn-secondary btn-sm" asp-controller="User" asp-action="Edit" asp-route-id="@user.Id">Edytuj</a></td>
                     </tr>
                     n++;
@@ -38,7 +49,7 @@
     </div>
 
     <div class="groupTable">
-    <h3>Grupa A:</h3>
+        <h3>Grupa A:</h3>
         <table class="table table-sm table-hover">
             <thead>
                 <tr>
@@ -56,7 +67,18 @@
                         <th scope="row">@a</th>
                         <td>@user.FirstName</td>
                         <td>@user.LastName</td>
-                        <td>@user.Position</td>
+                        @switch (user.Position)
+                        {
+                            case PositionEnum.None:
+                                <td>-</td>
+                                break;
+                            case PositionEnum.WarehouseWorker:
+                                <td>Pracownik magazynu</td>
+                                break;
+                            case PositionEnum.TeamLeader:
+                                <td>Kierownik</td>
+                                break;
+                        }
                         <td><a class="btn btn-secondary btn-sm" asp-controller="User" asp-action="Edit" asp-route-id="@user.Id">Edytuj</a></td>
                     </tr>
                     a++;
@@ -66,7 +88,7 @@
     </div>
 
     <div class="groupTable">
-    <h3>Grupa B:</h3>
+        <h3>Grupa B:</h3>
         <table class="table table-sm table-hover">
             <thead>
                 <tr>
@@ -84,7 +106,18 @@
                         <th scope="row">@b</th>
                         <td>@user.FirstName</td>
                         <td>@user.LastName</td>
-                        <td>@user.Position</td>
+                        @switch (user.Position)
+                        {
+                            case PositionEnum.None:
+                                <td>-</td>
+                                break;
+                            case PositionEnum.WarehouseWorker:
+                                <td>Pracownik magazynu</td>
+                                break;
+                            case PositionEnum.TeamLeader:
+                                <td>Kierownik</td>
+                                break;
+                        }
                         <td><a class="btn btn-secondary btn-sm" asp-controller="User" asp-action="Edit" asp-route-id="@user.Id">Edytuj</a></td>
                     </tr>
                     b++;
@@ -94,7 +127,7 @@
     </div>
 
     <div class="groupTable">
-    <h3>Grupa C:</h3>
+        <h3>Grupa C:</h3>
         <table class="table table-sm table-hover">
             <thead>
                 <tr>
@@ -112,7 +145,18 @@
                         <th scope="row">@c</th>
                         <td>@user.FirstName</td>
                         <td>@user.LastName</td>
-                        <td>@user.Position</td>
+                        @switch (user.Position)
+                        {
+                            case PositionEnum.None:
+                                <td>-</td>
+                                break;
+                            case PositionEnum.WarehouseWorker:
+                                <td>Pracownik magazynu</td>
+                                break;
+                            case PositionEnum.TeamLeader:
+                                <td>Kierownik</td>
+                                break;
+                        }
                         <td><a class="btn btn-secondary btn-sm" asp-controller="User" asp-action="Edit" asp-route-id="@user.Id">Edytuj</a></td>
                     </tr>
                     c++;
