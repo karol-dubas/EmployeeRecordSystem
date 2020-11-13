@@ -13,21 +13,43 @@ namespace MVC_FirstApp.Controllers
     public class UserController : Controller
     {
         private AccountService _as;
+        private UserEditService _us;
 
-        public UserController(AccountService accountService)
+        public UserController(AccountService accountService, UserEditService userEditService)
         {
             _as = accountService;
+            _us = userEditService;
         }
 
         [HttpGet]
-        public IActionResult Edit()
+        public IActionResult Edit(string id)
         {
-            return View();
+            var vm = _us.GetToEdit(id);
+
+            return View(vm);
         }
 
         [HttpPost]
         public IActionResult Edit(EditUserViewModel data)
         {
+            //VM requirements
+            if (!ModelState.IsValid)
+            {
+                return View(data);
+            }
+
+            var result = _us.Update(data);
+            //Identity requirements
+            if (result.Succeeded)
+            {
+                return RedirectToAction("Index", "Group");
+            }
+
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError("", error.Description);
+            }
+
             return View(data);
         }
 

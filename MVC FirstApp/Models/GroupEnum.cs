@@ -7,6 +7,7 @@ namespace MVC_FirstApp.Models
 {
     public enum GroupEnum
     {
+        None,
         GroupA,
         GroupB,
         GroupC

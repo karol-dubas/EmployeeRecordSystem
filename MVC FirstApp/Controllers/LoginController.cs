@@ -33,7 +33,7 @@ namespace MVC_FirstApp.Controllers
             }
 
             var result = _as.SignIn(data);
-
+            //Identity requirements
             if (result.Succeeded)
             {
                 return RedirectToAction("Index", "Home");

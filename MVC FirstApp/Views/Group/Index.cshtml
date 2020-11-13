@@ -4,30 +4,120 @@
     ViewData["Title"] = "Index";
 }
 
-@{int i = 1;}
+@{int n = 1, a = 1, b = 1, c = 1;}
 
-<table class="table table-sm">
-    <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">Imię</th>
-            <th scope="col">Nazwisko</th>
-            <th scope="col">Stanowisko</th>
-            <th scope="col"></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var user in Model.Accounts)
-        {
-        <tr>
-            <th scope="row">@i</th>
-            <td>@user.FirstName</td>
-            <td>@user.LastName</td>
-            <td>@user.Position</td>
-            <td><a class="btn btn-primary btn-sm" asp-controller="User" asp-action="Edit" asp-route-id="@user.Id">Edytuj</a></td>
-            <td><a class="btn btn-danger btn-sm" asp-controller="Group" asp-action="Remove" asp-route-id="@user.Id">Usuń</a></td>
-        </tr>
-            i++;
-        }
-    </tbody>
-</table>
+<div asp-validation-summary="All">
+</div>
+<div class="page">
+    <div class="groupTable">
+    <h3>Brak grupy:</h3>
+        <table class="table table-sm table-hover">
+            <thead>
+                <tr>
+                    <th class="counter" scope="col">#</th>
+                    <th scope="col">Imię</th>
+                    <th scope="col">Nazwisko</th>
+                    <th scope="col">Stanowisko</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model.Accounts.Where(x => x.Group == GroupEnum.None))
+                {
+                    <tr>
+                        <th scope="row">@n</th>
+                        <td>@user.FirstName</td>
+                        <td>@user.LastName</td>
+                        <td>@user.Position</td>
+                        <td><a class="btn btn-secondary btn-sm" asp-controller="User" asp-action="Edit" asp-route-id="@user.Id">Edytuj</a></td>
+                    </tr>
+                    n++;
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="groupTable">
+    <h3>Grupa A:</h3>
+        <table class="table table-sm table-hover">
+            <thead>
+                <tr>
+                    <th class="counter" scope="col">#</th>
+                    <th scope="col">Imię</th>
+                    <th scope="col">Nazwisko</th>
+                    <th scope="col">Stanowisko</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model.Accounts.Where(x => x.Group == GroupEnum.GroupA))
+                {
+                    <tr>
+                        <th scope="row">@a</th>
+                        <td>@user.FirstName</td>
+                        <td>@user.LastName</td>
+                        <td>@user.Position</td>
+                        <td><a class="btn btn-secondary btn-sm" asp-controller="User" asp-action="Edit" asp-route-id="@user.Id">Edytuj</a></td>
+                    </tr>
+                    a++;
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="groupTable">
+    <h3>Grupa B:</h3>
+        <table class="table table-sm table-hover">
+            <thead>
+                <tr>
+                    <th class="counter" scope="col">#</th>
+                    <th scope="col">Imię</th>
+                    <th scope="col">Nazwisko</th>
+                    <th scope="col">Stanowisko</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model.Accounts.Where(x => x.Group == GroupEnum.GroupB))
+                {
+                    <tr>
+                        <th scope="row">@b</th>
+                        <td>@user.FirstName</td>
+                        <td>@user.LastName</td>
+                        <td>@user.Position</td>
+                        <td><a class="btn btn-secondary btn-sm" asp-controller="User" asp-action="Edit" asp-route-id="@user.Id">Edytuj</a></td>
+                    </tr>
+                    b++;
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="groupTable">
+    <h3>Grupa C:</h3>
+        <table class="table table-sm table-hover">
+            <thead>
+                <tr>
+                    <th class="counter" scope="col">#</th>
+                    <th scope="col">Imię</th>
+                    <th scope="col">Nazwisko</th>
+                    <th scope="col">Stanowisko</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model.Accounts.Where(x => x.Group == GroupEnum.GroupC))
+                {
+                    <tr>
+                        <th scope="row">@c</th>
+                        <td>@user.FirstName</td>
+                        <td>@user.LastName</td>
+                        <td>@user.Position</td>
+                        <td><a class="btn btn-secondary btn-sm" asp-controller="User" asp-action="Edit" asp-route-id="@user.Id">Edytuj</a></td>
+                    </tr>
+                    c++;
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

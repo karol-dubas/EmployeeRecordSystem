@@ -1,0 +1,21 @@
+﻿body {
+}
+
+.table td, .table th {
+    border-top: 1px solid #dee2e6;
+    vertical-align: middle;
+}
+
+.counter {
+    width: 80px;
+}
+
+.table {
+    table-layout: fixed;
+    width:100%;
+}
+
+.groupTable {
+    padding-bottom: 20px;
+}
+

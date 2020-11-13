@@ -29,6 +29,8 @@ namespace MVC_FirstApp.Models.Services
                 UserName = data.UserName,
                 FirstName = data.FirstName,
                 LastName = data.LastName,
+                Group = GroupEnum.None,
+                Position = PositionEnum.None
             };
 
             var result = _um.CreateAsync(entity, data.Password).Result;

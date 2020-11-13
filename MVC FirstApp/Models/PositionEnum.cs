@@ -7,6 +7,7 @@ namespace MVC_FirstApp.Models
 {
     public enum PositionEnum
     {
+        None,
         WarehouseWorker,
         TeamLeader,
     }

@@ -39,7 +39,7 @@ namespace MVC_FirstApp.Controllers
             }
 
             var result = _as.CreateUser(data);
-            //other requirements
+            //Identity requirements
             if (result.Succeeded)
             {
                 return RedirectToAction("Index", "Home");
