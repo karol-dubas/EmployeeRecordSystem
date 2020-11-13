@@ -13,9 +13,9 @@ namespace MVC_FirstApp.Controllers
     public class UserController : Controller
     {
         private AccountService _as;
-        private UserEditService _us;
+        private UserService _us;
 
-        public UserController(AccountService accountService, UserEditService userEditService)
+        public UserController(AccountService accountService, UserService userEditService)
         {
             _as = accountService;
             _us = userEditService;

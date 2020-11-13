@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace MVC_FirstApp.Models.Services
 {
-    public class UserEditService
+    public class UserService
     {
         private UserManager<ApplicationUser> _um;
         private MvcDbContext _db;
 
-        public UserEditService(UserManager<ApplicationUser> userManager, MvcDbContext dbContext)
+        public UserService(UserManager<ApplicationUser> userManager, MvcDbContext dbContext)
         {
             _um = userManager;
             _db = dbContext;
@@ -24,6 +24,7 @@ namespace MVC_FirstApp.Models.Services
 
             var vm = new HomeUserViewModel
             {
+                Id = user.Id,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Group = user.Group,

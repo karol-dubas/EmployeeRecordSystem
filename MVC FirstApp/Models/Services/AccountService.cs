@@ -58,5 +58,14 @@ namespace MVC_FirstApp.Models.Services
 
             return result;
         }
+
+        public IdentityResult ChangePassword(string id, string currentPassword, string newPassword)
+        {
+            var user = _db.Users.Find(id);
+
+            var result = _um.ChangePasswordAsync(user, currentPassword, newPassword).Result;
+
+            return result;
+        }
     }
 }

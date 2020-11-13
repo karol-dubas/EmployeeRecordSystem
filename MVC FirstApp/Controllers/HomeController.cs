@@ -16,13 +16,17 @@ namespace MVC_FirstApp.Controllers
     [Authorize]
     public class HomeController : Controller
     {
-        private UserEditService _us;
+        private UserService _us;
         private UserManager<ApplicationUser> _um;
+        public AccountService _as;
 
-        public HomeController(UserEditService userService, UserManager<ApplicationUser> userManager)
+        public HomeController(UserService userService,
+            UserManager<ApplicationUser> userManager,
+            AccountService accountService)
         {
             _us = userService;
             _um = userManager;
+            _as = accountService;
         }
 
         public IActionResult Index()
@@ -31,6 +35,36 @@ namespace MVC_FirstApp.Controllers
             var vm = _us.GetUserDetails(userId);
 
             return View(vm);
+        }
+
+        [HttpGet]
+        public IActionResult Password()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Password(PasswordViewModel data)
+        {
+            if (!data.PasswordConfirmed())
+            {
+                ModelState.AddModelError("", "Hasła muszą być takie same");
+                return View();
+            }
+
+            var result = _as.ChangePassword(data.Id, data.CurrentPassword, data.NewPassword);
+
+            if (result.Succeeded)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError("", error.Description);
+            }
+
+            return View(data);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

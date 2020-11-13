@@ -4,7 +4,57 @@
     ViewData["Title"] = "Home Page";
 }
 
-<h4>Imię: @Model.FirstName</h4>
-<h4>Nazwisko: @Model.LastName</h4>
-<h4>Grupa: @Model.Group</h4>
-<h4>Stanowisko: @Model.Position</h4>
+<link rel="stylesheet" href="~/css/home.css" />
+
+<div class="page">
+    <br /><h2>Twoje konto:</h2><br />
+    <table class="table table-bordered">
+        <tbody>
+            <tr>
+                <th scope="row">Imię</th>
+                <td>@Model.FirstName</td>
+            </tr>
+            <tr>
+                <th scope="row">Nazwisko</th>
+                <td>@Model.LastName</td>
+            </tr>
+            <tr>
+                <th scope="row">Grupa</th>
+                @switch (Model.Group)
+                {
+                    case GroupEnum.None:
+                        <td>-</td>
+                        break;
+                    case GroupEnum.GroupA:
+                        <td>Grupa A</td>
+                        break;
+                    case GroupEnum.GroupB:
+                        <td>Grupa B</td>
+                        break;
+                    case GroupEnum.GroupC:
+                        <td>Grupa C</td>
+                        break;
+                }
+            </tr>
+            <tr>
+                <th scope="row">Stanowisko</th>
+                @switch (Model.Position)
+                {
+                    case PositionEnum.None:
+                        <td>-</td>
+                        break;
+                    case PositionEnum.WarehouseWorker:
+                        <td>Pracownik magazynu</td>
+                        break;
+                    case PositionEnum.TeamLeader:
+                        <td>Kierownik</td>
+                        break;
+                }
+            </tr>
+            <tr>
+                <th scope="row">Hasło</th>
+                <td><a class="btn btn-outline-info" asp-controller="Home" asp-action="Password" asp-route-id="@Model.Id">Zmień</a></td>
+            </tr>
+        </tbody>
+    </table>
+</div>

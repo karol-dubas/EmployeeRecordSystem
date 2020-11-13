@@ -1,0 +1,20 @@
+﻿body {
+}
+
+.page {
+    width: 50%;
+    margin: auto;
+}
+
+.table-bordered {
+    border: unset;
+}
+
+.table-bordered td, .table-bordered th {
+    border-radius: 8px;
+}
+
+.table td, .table th {
+    text-align: center;
+    padding: 12px;
+}
