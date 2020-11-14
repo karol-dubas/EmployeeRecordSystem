@@ -45,7 +45,14 @@
         <span class="btn-group-toggle">
             <button type="submit" class="btn btn-success">Zapisz</button>
             <a class="btn btn-secondary" asp-controller="Group" asp-action="Index">Powrót</a>
-            <a class="btn btn-danger float-right" asp-controller="User" asp-action="Delete" asp-route-id="@Model.Id">Usuń</a>
+            <span class="float-right" id="confirmDeleteSpan" style="display:none">
+                <span>Czy chcesz ununąć? </span>
+                <a class="btn btn-danger" asp-controller="User" asp-action="Delete" asp-route-id="@Model.Id">Tak</a>
+                <a class="btn btn-primary" href="#" onclick="confirmDelete(false)">Nie</a>
+            </span>
+            <span class="float-right" id="deleteSpan">
+                <a href="#" class="btn btn-danger" onclick="confirmDelete(true)">Usuń</a>
+            </span>
         </span>
     </form>
 </div>

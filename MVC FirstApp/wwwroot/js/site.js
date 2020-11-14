@@ -2,3 +2,16 @@
 // for details on configuring this project to bundle and minify static web assets.
 
 // Write your JavaScript code.
+
+function confirmDelete(isTrue) {
+    var deleteSpan = 'deleteSpan';
+    var confirmDeleteSpan = 'confirmDeleteSpan';
+
+    if (isTrue) {
+        $('#' + deleteSpan).hide();
+        $('#' + confirmDeleteSpan).show();
+    } else {
+        $('#' + deleteSpan).show();
+        $('#' + confirmDeleteSpan).hide();
+    }
+}
