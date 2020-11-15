@@ -9,8 +9,8 @@ namespace MVC_FirstApp.Models.Services
 {
     public class UserService
     {
-        private UserManager<ApplicationUser> _um;
-        private MvcDbContext _db;
+        private readonly UserManager<ApplicationUser> _um;
+        private readonly MvcDbContext _db;
 
         public UserService(UserManager<ApplicationUser> userManager, MvcDbContext dbContext)
         {
@@ -22,16 +22,20 @@ namespace MVC_FirstApp.Models.Services
         {
             var user = _db.Users.Find(userId);
 
-            var vm = new HomeUserViewModel
+            if (user != null)
             {
-                Id = user.Id,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Group = user.Group,
-                Position = user.Position
-            };
+                var vm = new HomeUserViewModel
+                {
+                    Id = user.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Group = user.Group,
+                    Position = user.Position
+                };
+                return vm;
+            }
 
-            return vm;
+            return null;
         }
 
         public EditUserViewModel GetToEdit(string userId)

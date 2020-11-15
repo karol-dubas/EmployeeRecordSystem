@@ -9,7 +9,7 @@ namespace MVC_FirstApp.Models.Services
 {
     public class GroupService
     {
-        private MvcDbContext _db;
+        private readonly MvcDbContext _db;
 
         public GroupService(MvcDbContext dbContext)
         {

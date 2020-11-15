@@ -9,17 +9,20 @@ namespace MVC_FirstApp.Models.Services
 {
     public class AccountService
     {
-        private UserManager<ApplicationUser> _um;
-        private SignInManager<ApplicationUser> _sim;
-        private MvcDbContext _db;
+        private readonly UserManager<ApplicationUser> _um;
+        private readonly SignInManager<ApplicationUser> _sim;
+        private readonly MvcDbContext _db;
+        private readonly RoleManager<IdentityRole> _rm;
 
-        public AccountService(UserManager<ApplicationUser> userManager, 
+        public AccountService(UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            MvcDbContext dbContext)
+            MvcDbContext dbContext,
+            RoleManager<IdentityRole> roleManager)
         {
             _um = userManager;
             _sim = signInManager;
             _db = dbContext;
+            _rm = roleManager;
         }
 
         public IdentityResult CreateUser(RegisterViewModel data)

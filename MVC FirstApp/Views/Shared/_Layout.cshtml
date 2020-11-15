@@ -1,4 +1,6 @@
-﻿<html lang="pl">
+﻿@inject Microsoft.AspNetCore.Identity.SignInManager<ApplicationUser> _sim;
+
+<html lang="pl">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -16,12 +18,21 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
+                        <li class="nav-item mr-2">
                             <a class="btn btn-light" asp-area="" asp-controller="Home" asp-action="Index">Moje konto</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="btn btn-light" asp-area="" asp-controller="Group" asp-action="Index">Grupy</a>
-                        </li>
+                        @if (_sim.IsSignedIn(User) && User.IsInRole("Pracownik"))
+                        {
+                            <li class="nav-item mr-2">
+                                <a class="btn btn-light" asp-area="" asp-controller="Group" asp-action="Index">Grupy</a>
+                            </li>
+                        }
+                        @if (_sim.IsSignedIn(User) && User.IsInRole("Administrator"))
+                        {
+                            <li class="nav-item mr-2">
+                                <a class="btn btn-light" asp-area="" asp-controller="Administration" asp-action="RolesList">Uprawnienia</a>
+                            </li>
+                        }
                     </ul>
                 </div>
                 <a class="btn btn-secondary" asp-controller="Login" asp-action="Logout">Wyloguj</a>

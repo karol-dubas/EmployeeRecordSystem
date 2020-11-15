@@ -1,4 +1,5 @@
 ﻿@model MVC_FirstApp.Models.ViewModels.GroupListViewModel
+@inject Microsoft.AspNetCore.Identity.SignInManager<ApplicationUser> _sim;
 
 @{
     ViewData["Title"] = "Index";
@@ -20,7 +21,10 @@
                     <th scope="col">Imię</th>
                     <th scope="col">Nazwisko</th>
                     <th scope="col">Stanowisko</th>
-                    <th scope="col"></th>
+                    @if (_sim.IsSignedIn(User) && User.IsInRole("Administrator"))
+                    {
+                        <th scope="col"></th>
+                    }
                 </tr>
             </thead>
             <tbody>
@@ -42,7 +46,10 @@
                                 <td>Kierownik</td>
                                 break;
                         }
-                        <td><a class="btn btn-secondary btn-sm" asp-controller="User" asp-action="Edit" asp-route-id="@user.Id">Edytuj</a></td>
+                        @if (_sim.IsSignedIn(User) && User.IsInRole("Administrator"))
+                        {
+                            <td><a class="btn btn-secondary btn-sm" asp-controller="User" asp-action="Edit" asp-route-id="@user.Id">Edytuj</a></td>
+                        }
                     </tr>
                     n++;
                 }
@@ -59,7 +66,10 @@
                     <th scope="col">Imię</th>
                     <th scope="col">Nazwisko</th>
                     <th scope="col">Stanowisko</th>
-                    <th scope="col"></th>
+                    @if (_sim.IsSignedIn(User) && User.IsInRole("Administrator"))
+                    {
+                        <th scope="col"></th>
+                    }
                 </tr>
             </thead>
             <tbody>
@@ -81,7 +91,10 @@
                                 <td>Kierownik</td>
                                 break;
                         }
-                        <td><a class="btn btn-secondary btn-sm" asp-controller="User" asp-action="Edit" asp-route-id="@user.Id">Edytuj</a></td>
+                        @if (_sim.IsSignedIn(User) && User.IsInRole("Administrator"))
+                        {
+                            <td><a class="btn btn-secondary btn-sm" asp-controller="User" asp-action="Edit" asp-route-id="@user.Id">Edytuj</a></td>
+                        }
                     </tr>
                     a++;
                 }
@@ -98,7 +111,10 @@
                     <th scope="col">Imię</th>
                     <th scope="col">Nazwisko</th>
                     <th scope="col">Stanowisko</th>
-                    <th scope="col"></th>
+                    @if (_sim.IsSignedIn(User) && User.IsInRole("Administrator"))
+                    {
+                        <th scope="col"></th>
+                    }
                 </tr>
             </thead>
             <tbody>
@@ -120,7 +136,10 @@
                                 <td>Kierownik</td>
                                 break;
                         }
-                        <td><a class="btn btn-secondary btn-sm" asp-controller="User" asp-action="Edit" asp-route-id="@user.Id">Edytuj</a></td>
+                        @if (_sim.IsSignedIn(User) && User.IsInRole("Administrator"))
+                        {
+                            <td><a class="btn btn-secondary btn-sm" asp-controller="User" asp-action="Edit" asp-route-id="@user.Id">Edytuj</a></td>
+                        }
                     </tr>
                     b++;
                 }
@@ -137,7 +156,10 @@
                     <th scope="col">Imię</th>
                     <th scope="col">Nazwisko</th>
                     <th scope="col">Stanowisko</th>
-                    <th scope="col"></th>
+                    @if (_sim.IsSignedIn(User) && User.IsInRole("Administrator"))
+                    {
+                        <th scope="col"></th>
+                    }
                 </tr>
             </thead>
             <tbody>
@@ -159,7 +181,10 @@
                                 <td>Kierownik</td>
                                 break;
                         }
-                        <td><a class="btn btn-secondary btn-sm" asp-controller="User" asp-action="Edit" asp-route-id="@user.Id">Edytuj</a></td>
+                        @if (_sim.IsSignedIn(User) && User.IsInRole("Administrator"))
+                        {
+                            <td><a class="btn btn-secondary btn-sm" asp-controller="User" asp-action="Edit" asp-route-id="@user.Id">Edytuj</a></td>
+                        }
                     </tr>
                     c++;
                 }

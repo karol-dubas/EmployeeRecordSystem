@@ -16,9 +16,9 @@ namespace MVC_FirstApp.Controllers
     [Authorize]
     public class HomeController : Controller
     {
-        private UserService _us;
-        private UserManager<ApplicationUser> _um;
-        public AccountService _as;
+        private readonly UserService _us;
+        private readonly UserManager<ApplicationUser> _um;
+        public readonly AccountService _as;
 
         public HomeController(UserService userService,
             UserManager<ApplicationUser> userManager,
@@ -29,6 +29,7 @@ namespace MVC_FirstApp.Controllers
             _as = accountService;
         }
 
+        [HttpGet]
         public IActionResult Index()
         {
             var userId = _um.GetUserId(User);

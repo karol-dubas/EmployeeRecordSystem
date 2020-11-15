@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace MVC_FirstApp.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Administrator")]
     public class UserController : Controller
     {
-        private AccountService _as;
-        private UserService _us;
+        private readonly AccountService _as;
+        private readonly UserService _us;
 
         public UserController(AccountService accountService, UserService userEditService)
         {
@@ -53,6 +53,7 @@ namespace MVC_FirstApp.Controllers
             return View(data);
         }
 
+        [HttpGet]
         public IActionResult Delete(string id)
         {
             var result = _as.DeleteUser(id);

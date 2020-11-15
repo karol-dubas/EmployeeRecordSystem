@@ -44,6 +44,7 @@ namespace MVC_FirstApp.Controllers
             return View(data);
         }
 
+        [HttpGet]
         public IActionResult Logout()
         {
             _as.SignOut();

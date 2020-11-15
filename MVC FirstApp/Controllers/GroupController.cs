@@ -9,16 +9,17 @@ using MVC_FirstApp.Models.ViewModels;
 
 namespace MVC_FirstApp.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Pracownik, Administrator")]
     public class GroupController : Controller
     {
-        private GroupService _gs;
+        private readonly GroupService _gs;
 
         public GroupController(GroupService groupService)
         {
             _gs = groupService;
         }
 
+        [HttpGet]
         public IActionResult Index()
         {
             var vm = _gs.GetAll();
