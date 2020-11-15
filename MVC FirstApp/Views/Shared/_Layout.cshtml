@@ -21,7 +21,7 @@
                         <li class="nav-item mr-2">
                             <a class="btn btn-light" asp-area="" asp-controller="Home" asp-action="Index">Moje konto</a>
                         </li>
-                        @if (_sim.IsSignedIn(User) && User.IsInRole("Pracownik"))
+                        @if (_sim.IsSignedIn(User) && User.IsInRole("Pracownik") || User.IsInRole("Administrator"))
                         {
                             <li class="nav-item mr-2">
                                 <a class="btn btn-light" asp-area="" asp-controller="Group" asp-action="Index">Grupy</a>

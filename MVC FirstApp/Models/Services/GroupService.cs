@@ -27,7 +27,7 @@ namespace MVC_FirstApp.Models.Services
                     LastName = x.LastName,
                     Group = x.Group,
                     Position = x.Position
-                }).ToList()
+                }).ToList().OrderByDescending(x => x.Position)
             };
 
             return vm;

@@ -53,6 +53,11 @@ namespace MVC_FirstApp
             services.AddTransient<AccountService>();
             services.AddTransient<GroupService>();
             services.AddTransient<UserService>();
+
+            services.Configure<SecurityStampValidatorOptions>(options =>
+            {
+                options.ValidationInterval = TimeSpan.FromMinutes(0);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
