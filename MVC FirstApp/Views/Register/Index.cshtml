@@ -17,29 +17,33 @@
 <body>
     <div class="grandParentContainer">
         <div class="parentContainer">
-            <h1 class="card-title">Rejestracja</h1>
-            <form method="post" class="loginForm">
-                <div class="form-group">
-                    <input asp-for="FirstName" class="form-control" placeholder="Imię" />
+            <div class="card">
+                <div class="card-body">
+                    <h1 class="card-title">Rejestracja</h1>
+                    <form method="post" class="loginForm">
+                        <div class="form-group">
+                            <input asp-for="FirstName" class="form-control" placeholder="Imię" />
+                        </div>
+                        <div class="form-group">
+                            <input asp-for="LastName" class="form-control" placeholder="Nazwisko" />
+                        </div>
+                        <div class="form-group">
+                            <input asp-for="UserName" class="form-control" placeholder="Nazwa użytkownika" />
+                        </div>
+                        <div class="form-group">
+                            <input asp-for="Password" class="form-control" placeholder="Hasło" />
+                        </div>
+                        <div class="form-group">
+                            <input asp-for="ConfirmPassword" class="form-control" placeholder="Potwierdź hasło" />
+                        </div>
+                        <div asp-validation-summary="All"></div>
+                        <span class="btn-group-toggle">
+                            <button type="submit" class="btn btn-primary">Zarejestruj</button>
+                            <a class="btn btn-secondary float-right" asp-controller="Login" asp-action="Index">Logowanie</a>
+                        </span>
+                    </form>
                 </div>
-                <div class="form-group">
-                    <input asp-for="LastName" class="form-control" placeholder="Nazwisko" />
-                </div>
-                <div class="form-group">
-                    <input asp-for="UserName" class="form-control" placeholder="Nazwa użytkownika" />
-                </div>
-                <div class="form-group">
-                    <input asp-for="Password" class="form-control" placeholder="Hasło" />
-                </div>
-                <div class="form-group">
-                    <input asp-for="ConfirmPassword" class="form-control" placeholder="Potwierdź hasło" />
-                </div>
-                <div asp-validation-summary="All"></div>
-                <span class="btn-group-toggle">
-                    <button type="submit" class="btn btn-primary">Zarejestruj</button>
-                    <a class="btn btn-secondary float-right" asp-controller="Login" asp-action="Index">Logowanie</a>
-                </span>
-            </form>
+            </div>
         </div>
     </div>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

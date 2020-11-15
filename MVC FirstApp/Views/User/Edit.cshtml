@@ -3,56 +3,60 @@
 @{
     ViewData["Title"] = "Edit";
 }
-<div style="width:500px; margin:auto">
-    <h2>Edytuj użytkownika</h2><br />
-    <form method="post">
-        <div class="form-group">
-            <label asp-for="Id"></label>
-            <input disabled asp-for="Id" class="form-control" />
-            <input type="hidden" asp-for="Id" class="form-control" />
-        </div>
-        <div class="form-group">
-            <label asp-for="UserName"></label>
-            <input disabled asp-for="UserName" class="form-control" />
-            <input type="hidden" asp-for="UserName" class="form-control" />
-        </div>
-        <div class="form-group">
-            <label asp-for="FirstName"></label>
-            <input asp-for="FirstName" class="form-control" />
-        </div>
-        <div class="form-group">
-            <label asp-for="LastName"></label>
-            <input asp-for="LastName" class="form-control" />
-        </div>
-        <div class="form-group">
-            <label asp-for="Group"></label>
-            <select class="custom-select" asp-for="Group">
-                <option value="@GroupEnum.None">brak grupy</option>
-                <option value="@GroupEnum.GroupA">Grupa A</option>
-                <option value="@GroupEnum.GroupB">Grupa B</option>
-                <option value="@GroupEnum.GroupC">Grupa C</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label asp-for="Position"></label>
-            <select class="custom-select" asp-for="Position">
-                <option value="@PositionEnum.None">brak stanowiska</option>
-                <option value="@PositionEnum.WarehouseWorker">Pracownik magazynu</option>
-                <option value="@PositionEnum.TeamLeader">Kierownik</option>
-            </select>
-        </div>
-        <div asp-validation-summary="All"></div>
-        <span class="btn-group-toggle">
-            <button type="submit" class="btn btn-success">Zapisz</button>
-            <a class="btn btn-secondary" asp-controller="Group" asp-action="Index">Powrót</a>
-            <span class="float-right" id="confirmDeleteSpan" style="display:none">
-                <span>Czy chcesz ununąć? </span>
-                <a class="btn btn-danger" asp-controller="User" asp-action="Delete" asp-route-id="@Model.Id">Tak</a>
-                <a class="btn btn-primary" href="#" onclick="confirmDelete(false)">Nie</a>
-            </span>
-            <span class="float-right" id="deleteSpan">
-                <a href="#" class="btn btn-danger" onclick="confirmDelete(true)">Usuń</a>
-            </span>
-        </span>
-    </form>
+<div class="card" style="width:500px; margin:auto">
+    <div class="card-header">
+        <h2>Edytuj użytkownika</h2><br />
+    </div>
+    <div class="card-body">
+        <form method="post" class="mb-0">
+            <div class="form-group">
+                <label asp-for="Id"></label>
+                <input disabled asp-for="Id" class="form-control" />
+                <input type="hidden" asp-for="Id" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="UserName"></label>
+                <input disabled asp-for="UserName" class="form-control" />
+                <input type="hidden" asp-for="UserName" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="FirstName"></label>
+                <input asp-for="FirstName" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="LastName"></label>
+                <input asp-for="LastName" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Group"></label>
+                <select class="custom-select" asp-for="Group">
+                    <option value="@GroupEnum.None">brak grupy</option>
+                    <option value="@GroupEnum.GroupA">Grupa A</option>
+                    <option value="@GroupEnum.GroupB">Grupa B</option>
+                    <option value="@GroupEnum.GroupC">Grupa C</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Position"></label>
+                <select class="custom-select" asp-for="Position">
+                    <option value="@PositionEnum.None">brak stanowiska</option>
+                    <option value="@PositionEnum.WarehouseWorker">Pracownik magazynu</option>
+                    <option value="@PositionEnum.TeamLeader">Kierownik</option>
+                </select>
+            </div>
+            <div asp-validation-summary="All"></div>
+            <div class="btn-group-toggle" style="margin-top:30px">
+                <button type="submit" class="btn btn-success">Zapisz</button>
+                <a class="btn btn-secondary" asp-controller="Group" asp-action="Index">Powrót</a>
+                <span class="float-right" id="confirmDeleteSpan" style="display:none">
+                    <span>Czy chcesz ununąć? </span>
+                    <a class="btn btn-danger" asp-controller="User" asp-action="Delete" asp-route-id="@Model.Id">Tak</a>
+                    <a class="btn btn-primary" href="#" onclick="confirmDelete(false)">Nie</a>
+                </span>
+                <span class="float-right" id="deleteSpan">
+                    <a href="#" class="btn btn-danger" onclick="confirmDelete(true)">Usuń</a>
+                </span>
+            </div>
+        </form>
+    </div>
 </div>
