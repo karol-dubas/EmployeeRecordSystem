@@ -4,14 +4,16 @@ using MVC_FirstApp.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MVC_FirstApp.Migrations
 {
     [DbContext(typeof(MvcDbContext))]
-    partial class MvcDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201116124517_UserDataRequired")]
+    partial class UserDataRequired
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -116,8 +118,8 @@ namespace MVC_FirstApp.Migrations
                     b.Property<double>("HourlyPay")
                         .HasColumnType("float");
 
-                    b.Property<long>("MinutesWorked")
-                        .HasColumnType("bigint");
+                    b.Property<decimal>("HoursWorked")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 

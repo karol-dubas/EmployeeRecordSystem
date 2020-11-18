@@ -1,0 +1,59 @@
+﻿@model MVC_FirstApp.Models.ViewModels.UserHoursViewModel
+
+@{
+    ViewData["Title"] = "EditHours";
+}
+
+
+<form method="post">
+    <div class="card" style="width:500px; margin:auto">
+        <div class="card-header">
+            <h2>Wybierz użytkowników</h2>
+        </div>
+        <div class="card-body">
+            @for (int i = 0; i < Model.Users.Count; i++)
+            {
+                <div class="form-check m-1">
+                    <input type="hidden" asp-for="@Model.Users[i].UserId" />
+                    <input asp-for="@Model.Users[i].IsSelected" class="form-check-input" />
+                    <label class="form-check-label" asp-for="@Model.Users[i].IsSelected">
+                        @Model.Users[i].FullName
+                        <input type="hidden" asp-for="@Model.Users[i].FullName" />
+                    </label>
+                </div>
+            }
+        </div>
+        <div class="card-header" style="border-top: 1px solid rgba(0,0,0,.125);">
+            <h2>Czas pracy</h2>
+        </div>
+        <div class="card-body pb-0">
+            <div class="form-row" style="margin-right:210px">
+                <div class="col pr-0">
+                    <div class="input-group">
+                        <input asp-for="HoursToEdit" class="form-control">
+                        <div class="input-group-append">
+                            <div class="input-group-text">gdz.</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col pl-0">
+                    <div class="input-group">
+                        <input asp-for="MinutesToEdit" class="form-control">
+                        <div class="input-group-append">
+                            <div class="input-group-text">min.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row pl-4 my-3">
+                <label class="text-danger"><input id="AddHours" name="AddHours" type="radio" value="false"> Odejmij</label>
+                <label class="ml-3 text-success"><input checked="checked" id="AddHours" name="AddHours" type="radio" value="true"> Dodaj</label>
+            </div>
+            <div asp-validation-summary="All" class="text-danger"></div>
+        </div>
+        <div class="card-footer">
+            <button class="btn btn-success" type="submit" style="width:auto">Zapisz</button>
+            <a class="btn btn-secondary float-right" asp-action="Index" asp-controller="Group" style="width:auto">Powrót</a>
+        </div>
+    </div>
+</form>

@@ -28,5 +28,18 @@ namespace MVC_FirstApp.Models.ViewModels
         [Display(Name = "Stanowisko")]
         public PositionEnum Position { get; set; }
 
+        [Display(Name = "Stawka na godzinę [zł/h]")]
+        [Required(ErrorMessage = "Pole 'Stawka na godzinę' jest wymagane")]
+        [Range(0, double.MaxValue, ErrorMessage = "Wartość musi być dodatnia")]
+        public double HourlyPay { get; set; }
+
+        [Display(Name = "Czas przepracowany")]
+        public string HoursMinutesWorked { get; set; }
+
+        [Display(Name = "Saldo [zł]")]
+        public decimal Balance { get; set; }
+
+        [Display(Name = "Uprawnienia")]
+        public string Roles { get; set; }
     }
 }

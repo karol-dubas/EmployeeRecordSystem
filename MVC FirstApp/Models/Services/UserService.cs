@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using MVC_FirstApp.Models.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -11,11 +12,15 @@ namespace MVC_FirstApp.Models.Services
     {
         private readonly UserManager<ApplicationUser> _um;
         private readonly MvcDbContext _db;
+        private readonly RoleManager<IdentityRole> _rm;
 
-        public UserService(UserManager<ApplicationUser> userManager, MvcDbContext dbContext)
+        public UserService(UserManager<ApplicationUser> userManager,
+            MvcDbContext dbContext,
+            RoleManager<IdentityRole> roleManager)
         {
             _um = userManager;
             _db = dbContext;
+            _rm = roleManager;
         }
 
         public HomeUserViewModel GetUserDetails(string userId)
@@ -38,31 +43,16 @@ namespace MVC_FirstApp.Models.Services
             return null;
         }
 
-        public EditUserViewModel GetToEdit(string userId)
-        {
-            var user = _db.Users.Find(userId);
-
-            var vm = new EditUserViewModel
-            {
-                Id = user.Id,
-                UserName = user.UserName,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Group = user.Group,
-                Position = user.Position
-            };
-
-            return vm;
-        }
 
         public IdentityResult Update(EditUserViewModel data)
         {
-            var user = _db.Users.Find(data.Id);
+            var user = _db.Users.Include(x => x.Billing).Where(x => x.Id == data.Id).Single();
 
             user.FirstName = data.FirstName;
             user.LastName = data.LastName;
             user.Group = data.Group;
             user.Position = data.Position;
+            user.Billing.HourlyPay = data.HourlyPay;
 
             var result = _um.UpdateAsync(user).Result;
 

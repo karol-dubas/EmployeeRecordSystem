@@ -12,183 +12,239 @@
 <div asp-validation-summary="All">
 </div>
 <div class="page">
-    <div class="groupTable">
-        <h3>Brak grupy:</h3>
-        <table class="table table-sm table-hover">
-            <thead>
-                <tr>
-                    <th class="counter" scope="col">#</th>
-                    <th scope="col">Imię</th>
-                    <th scope="col">Nazwisko</th>
-                    <th scope="col">Stanowisko</th>
-                    @if (_sim.IsSignedIn(User) && User.IsInRole("Administrator"))
-                    {
-                        <th scope="col"></th>
-                    }
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var user in Model.Accounts.Where(x => x.Group == GroupEnum.None))
-                {
-                    <tr>
-                        <th scope="row">@n</th>
-                        <td>@user.FirstName</td>
-                        <td>@user.LastName</td>
-                        @switch (user.Position)
+    @if (Model.Accounts.Where(x => x.Group == GroupEnum.None).Any())
+    {
+        <div class="card pb-0 mb-lg-4">
+            <div class="card-header">
+                <h3 class="mb-0">Brak grupy:</h3>
+            </div>
+            <div class="card-body px-0 pt-0 pb-0">
+                <table class="table table-sm table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th class="counter" scope="col">#</th>
+                            <th scope="col">Imię</th>
+                            <th scope="col">Nazwisko</th>
+                            <th scope="col">Stanowisko</th>
+                            @if (_sim.IsSignedIn(User) && User.IsInRole("Administrator"))
+                            {
+                                <th scope="col">Przepracowane</th>
+                                <th scope="col">Stawka [zł/h]</th>
+                                <th scope="col"></th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model.Accounts.Where(x => x.Group == GroupEnum.None))
                         {
-                            case PositionEnum.None:
-                                <td>-</td>
-                                break;
-                            case PositionEnum.WarehouseWorker:
-                                <td>Pracownik magazynu</td>
-                                break;
-                            case PositionEnum.TeamLeader:
-                                <td>Kierownik</td>
-                                break;
+                            <tr>
+                                <th scope="row">@n</th>
+                                <td>@user.FirstName</td>
+                                <td>@user.LastName</td>
+                                @switch (user.Position)
+                                {
+                                    case PositionEnum.None:
+                                        <td>-</td>
+                                        break;
+                                    case PositionEnum.WarehouseWorker:
+                                        <td>Pracownik magazynu</td>
+                                        break;
+                                    case PositionEnum.TeamLeader:
+                                        <td>Kierownik</td>
+                                        break;
+                                }
+                                @if (_sim.IsSignedIn(User) && User.IsInRole("Administrator"))
+                                {
+                                    <td>@user.HoursMinutesWorked</td>
+                                    <td>@user.HourlyPay</td>
+                                    <td><a class="btn btn-secondary btn-sm" asp-controller="Group" asp-action="EditUser" asp-route-id="@user.Id">Edytuj</a></td>
+                                }
+                            </tr>
+                            n++;
                         }
-                        @if (_sim.IsSignedIn(User) && User.IsInRole("Administrator"))
-                        {
-                            <td><a class="btn btn-secondary btn-sm" asp-controller="User" asp-action="Edit" asp-route-id="@user.Id">Edytuj</a></td>
-                        }
-                    </tr>
-                    n++;
-                }
-            </tbody>
-        </table>
-    </div>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
 
-    <div class="groupTable">
-        <h3>Grupa A:</h3>
-        <table class="table table-sm table-hover">
-            <thead>
-                <tr>
-                    <th class="counter" scope="col">#</th>
-                    <th scope="col">Imię</th>
-                    <th scope="col">Nazwisko</th>
-                    <th scope="col">Stanowisko</th>
-                    @if (_sim.IsSignedIn(User) && User.IsInRole("Administrator"))
-                    {
-                        <th scope="col"></th>
-                    }
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var user in Model.Accounts.Where(x => x.Group == GroupEnum.GroupA))
+    @if (Model.Accounts.Where(x => x.Group == GroupEnum.GroupA).Any())
+    {
+        <div class="card pb-0 mb-lg-4">
+            <div class="card-header">
+                <h3 class="mb-0 btn-group">Grupa A:</h3>
+                @if (_sim.IsSignedIn(User) && User.IsInRole("Administrator"))
                 {
-                    <tr>
-                        <th scope="row">@a</th>
-                        <td>@user.FirstName</td>
-                        <td>@user.LastName</td>
-                        @switch (user.Position)
-                        {
-                            case PositionEnum.None:
-                                <td>-</td>
-                                break;
-                            case PositionEnum.WarehouseWorker:
-                                <td>Pracownik magazynu</td>
-                                break;
-                            case PositionEnum.TeamLeader:
-                                <td>Kierownik</td>
-                                break;
-                        }
-                        @if (_sim.IsSignedIn(User) && User.IsInRole("Administrator"))
-                        {
-                            <td><a class="btn btn-secondary btn-sm" asp-controller="User" asp-action="Edit" asp-route-id="@user.Id">Edytuj</a></td>
-                        }
-                    </tr>
-                    a++;
+                    <a class="btn btn-secondary btn-group float-right" asp-controller="Group" asp-action="EditHours" asp-route-group="@GroupEnum.GroupA">Zmień godziny pracy</a>
                 }
-            </tbody>
-        </table>
-    </div>
+            </div>
+            <div class="card-body px-0 pt-0 pb-0">
+                <table class="table table-sm table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th class="counter" scope="col">#</th>
+                            <th scope="col">Imię</th>
+                            <th scope="col">Nazwisko</th>
+                            <th scope="col">Stanowisko</th>
+                            @if (_sim.IsSignedIn(User) && User.IsInRole("Administrator"))
+                            {
+                                <th scope="col">Przepracowane</th>
+                                <th scope="col">Stawka [zł/h]</th>
+                                <th scope="col"></th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model.Accounts.Where(x => x.Group == GroupEnum.GroupA))
+                        {
+                            <tr>
+                                <th scope="row">@a</th>
+                                <td>@user.FirstName</td>
+                                <td>@user.LastName</td>
+                                @switch (user.Position)
+                                {
+                                    case PositionEnum.None:
+                                        <td>-</td>
+                                        break;
+                                    case PositionEnum.WarehouseWorker:
+                                        <td>Pracownik magazynu</td>
+                                        break;
+                                    case PositionEnum.TeamLeader:
+                                        <td>Kierownik</td>
+                                        break;
+                                }
+                                @if (_sim.IsSignedIn(User) && User.IsInRole("Administrator"))
+                                {
+                                    <td>@user.HoursMinutesWorked</td>
+                                    <td>@user.HourlyPay</td>
+                                    <td><a class="btn btn-secondary btn-sm" asp-controller="Group" asp-action="EditUser" asp-route-id="@user.Id">Edytuj</a></td>
+                                }
+                            </tr>
+                            a++;
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
 
-    <div class="groupTable">
-        <h3>Grupa B:</h3>
-        <table class="table table-sm table-hover">
-            <thead>
-                <tr>
-                    <th class="counter" scope="col">#</th>
-                    <th scope="col">Imię</th>
-                    <th scope="col">Nazwisko</th>
-                    <th scope="col">Stanowisko</th>
-                    @if (_sim.IsSignedIn(User) && User.IsInRole("Administrator"))
-                    {
-                        <th scope="col"></th>
-                    }
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var user in Model.Accounts.Where(x => x.Group == GroupEnum.GroupB))
+    @if (Model.Accounts.Where(x => x.Group == GroupEnum.GroupB).Any())
+    {
+        <div class="card pb-0 mb-lg-4">
+            <div class="card-header">
+                <h3 class="mb-0 btn-group">Grupa B:</h3>
+                @if (_sim.IsSignedIn(User) && User.IsInRole("Administrator"))
                 {
-                    <tr>
-                        <th scope="row">@b</th>
-                        <td>@user.FirstName</td>
-                        <td>@user.LastName</td>
-                        @switch (user.Position)
-                        {
-                            case PositionEnum.None:
-                                <td>-</td>
-                                break;
-                            case PositionEnum.WarehouseWorker:
-                                <td>Pracownik magazynu</td>
-                                break;
-                            case PositionEnum.TeamLeader:
-                                <td>Kierownik</td>
-                                break;
-                        }
-                        @if (_sim.IsSignedIn(User) && User.IsInRole("Administrator"))
-                        {
-                            <td><a class="btn btn-secondary btn-sm" asp-controller="User" asp-action="Edit" asp-route-id="@user.Id">Edytuj</a></td>
-                        }
-                    </tr>
-                    b++;
+                    <a class="btn btn-secondary btn-group float-right" asp-controller="Group" asp-action="EditHours" asp-route-group="@GroupEnum.GroupB">Zmień godziny pracy</a>
                 }
-            </tbody>
-        </table>
-    </div>
+            </div>
+            <div class="card-body px-0 pt-0 pb-0">
+                <table class="table table-sm table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th class="counter" scope="col">#</th>
+                            <th scope="col">Imię</th>
+                            <th scope="col">Nazwisko</th>
+                            <th scope="col">Stanowisko</th>
+                            @if (_sim.IsSignedIn(User) && User.IsInRole("Administrator"))
+                            {
+                                <th scope="col">Przepracowane</th>
+                                <th scope="col">Stawka [zł/h]</th>
+                                <th scope="col"></th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model.Accounts.Where(x => x.Group == GroupEnum.GroupB))
+                        {
+                            <tr>
+                                <th scope="row">@b</th>
+                                <td>@user.FirstName</td>
+                                <td>@user.LastName</td>
+                                @switch (user.Position)
+                                {
+                                    case PositionEnum.None:
+                                        <td>-</td>
+                                        break;
+                                    case PositionEnum.WarehouseWorker:
+                                        <td>Pracownik magazynu</td>
+                                        break;
+                                    case PositionEnum.TeamLeader:
+                                        <td>Kierownik</td>
+                                        break;
+                                }
+                                @if (_sim.IsSignedIn(User) && User.IsInRole("Administrator"))
+                                {
+                                    <td>@user.HoursMinutesWorked</td>
+                                    <td>@user.HourlyPay</td>
+                                    <td><a class="btn btn-secondary btn-sm" asp-controller="Group" asp-action="EditUser" asp-route-id="@user.Id">Edytuj</a></td>
+                                }
+                            </tr>
+                            b++;
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
 
-    <div class="groupTable">
-        <h3>Grupa C:</h3>
-        <table class="table table-sm table-hover">
-            <thead>
-                <tr>
-                    <th class="counter" scope="col">#</th>
-                    <th scope="col">Imię</th>
-                    <th scope="col">Nazwisko</th>
-                    <th scope="col">Stanowisko</th>
-                    @if (_sim.IsSignedIn(User) && User.IsInRole("Administrator"))
-                    {
-                        <th scope="col"></th>
-                    }
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var user in Model.Accounts.Where(x => x.Group == GroupEnum.GroupC))
+    @if (Model.Accounts.Where(x => x.Group == GroupEnum.GroupC).Any())
+    {
+        <div class="card pb-0 mb-lg-4">
+            <div class="card-header">
+                <h3 class="mb-0 btn-group">Grupa C:</h3>
+                @if (_sim.IsSignedIn(User) && User.IsInRole("Administrator"))
                 {
-                    <tr>
-                        <th scope="row">@c</th>
-                        <td>@user.FirstName</td>
-                        <td>@user.LastName</td>
-                        @switch (user.Position)
-                        {
-                            case PositionEnum.None:
-                                <td>-</td>
-                                break;
-                            case PositionEnum.WarehouseWorker:
-                                <td>Pracownik magazynu</td>
-                                break;
-                            case PositionEnum.TeamLeader:
-                                <td>Kierownik</td>
-                                break;
-                        }
-                        @if (_sim.IsSignedIn(User) && User.IsInRole("Administrator"))
-                        {
-                            <td><a class="btn btn-secondary btn-sm" asp-controller="User" asp-action="Edit" asp-route-id="@user.Id">Edytuj</a></td>
-                        }
-                    </tr>
-                    c++;
+                    <a class="btn btn-secondary btn-group float-right" asp-controller="Group" asp-action="EditHours" asp-route-group="@GroupEnum.GroupC">Zmień godziny pracy</a>
                 }
-            </tbody>
-        </table>
-    </div>
+            </div>
+            <div class="card-body px-0 pt-0 pb-0">
+                <table class="table table-sm table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th class="counter" scope="col">#</th>
+                            <th scope="col">Imię</th>
+                            <th scope="col">Nazwisko</th>
+                            <th scope="col">Stanowisko</th>
+                            @if (_sim.IsSignedIn(User) && User.IsInRole("Administrator"))
+                            {
+                                <th scope="col">Przepracowane</th>
+                                <th scope="col">Stawka [zł/h]</th>
+                                <th scope="col"></th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model.Accounts.Where(x => x.Group == GroupEnum.GroupC))
+                        {
+                            <tr>
+                                <th scope="row">@c</th>
+                                <td>@user.FirstName</td>
+                                <td>@user.LastName</td>
+                                @switch (user.Position)
+                                {
+                                    case PositionEnum.None:
+                                        <td>-</td>
+                                        break;
+                                    case PositionEnum.WarehouseWorker:
+                                        <td>Pracownik magazynu</td>
+                                        break;
+                                    case PositionEnum.TeamLeader:
+                                        <td>Kierownik</td>
+                                        break;
+                                }
+                                @if (_sim.IsSignedIn(User) && User.IsInRole("Administrator"))
+                                {
+                                    <td>@user.HoursMinutesWorked</td>
+                                    <td>@user.HourlyPay</td>
+                                    <td><a class="btn btn-secondary btn-sm" asp-controller="Group" asp-action="EditUser" asp-route-id="@user.Id">Edytuj</a></td>
+                                }
+                            </tr>
+                            c++;
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
 </div>

@@ -12,11 +12,8 @@
 
 .table {
     table-layout: fixed;
-    width:100%;
-}
-
-.groupTable {
-    padding-bottom: 20px;
+    width: 100%;
+    text-align: center;
 }
 
 .page {

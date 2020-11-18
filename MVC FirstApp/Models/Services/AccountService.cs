@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using MVC_FirstApp.Models.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -33,7 +34,13 @@ namespace MVC_FirstApp.Models.Services
                 FirstName = data.FirstName,
                 LastName = data.LastName,
                 Group = GroupEnum.None,
-                Position = PositionEnum.None
+                Position = PositionEnum.None,
+                Billing = new BillingEntity()
+                {
+                    HourlyPay = 0,
+                    MinutesWorked = 0,
+                    Balance = 0
+                }
             };
 
             var result = _um.CreateAsync(entity, data.Password).Result;
@@ -55,8 +62,10 @@ namespace MVC_FirstApp.Models.Services
 
         public IdentityResult DeleteUser(string id)
         {
-            var user = _db.Users.Find(id);
+            var user = _db.Users.Include(x => x.Billing).Where(x => x.Id == id).Single();
+            var userBilling = _db.Billings.Find(user.Billing.Id);
 
+            _db.Billings.Remove(userBilling);
             var result = _um.DeleteAsync(user).Result;
 
             return result;

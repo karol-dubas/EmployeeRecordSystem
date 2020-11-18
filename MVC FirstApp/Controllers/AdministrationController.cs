@@ -78,7 +78,7 @@ namespace MVC_FirstApp.Controllers
 
             var role = await _rm.FindByNameAsync(name);
 
-            var model = new List<UserRoleViewModel>();
+            var vmList = new List<UserRoleViewModel>();
 
             foreach (var user in await _um.Users.ToListAsync())
             {
@@ -98,10 +98,10 @@ namespace MVC_FirstApp.Controllers
                     vm.IsSelected = false;
                 }
 
-                model.Add(vm);
+                vmList.Add(vm);
             }
 
-            return View(model);
+            return View(vmList);
         }
 
         [HttpPost]

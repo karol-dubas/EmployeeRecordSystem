@@ -9,8 +9,10 @@ namespace MVC_FirstApp.Models
 {
     public class MvcDbContext : IdentityDbContext<ApplicationUser>
     {
-        public MvcDbContext(DbContextOptions<MvcDbContext> options) 
+        public MvcDbContext(DbContextOptions<MvcDbContext> options)
             : base(options) { }
+
+        public DbSet<BillingEntity> Billings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

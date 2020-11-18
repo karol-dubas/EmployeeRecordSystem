@@ -1,0 +1,102 @@
+﻿@model MVC_FirstApp.Models.ViewModels.EditUserViewModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<div class="card" style="width:800px; margin:auto">
+    <div class="card-header py-3">
+        <h2 class="m-0">Edytuj użytkownika</h2>
+    </div>
+    <div class="card-body pb-0 pt-3 px-2">
+        <form method="post" class="mb-0">
+            <div class="card-group">
+                <div class="card mx-3" style="border:0">
+                    <div class="form-group">
+                        <label asp-for="Id"></label>
+                        <input disabled asp-for="Id" class="form-control" />
+                        <input type="hidden" asp-for="Id" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="UserName"></label>
+                        <input disabled asp-for="UserName" class="form-control" />
+                        <input type="hidden" asp-for="UserName" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="HoursMinutesWorked"></label><br />
+                        <div class="input-group">
+                            <input disabled asp-for="HoursMinutesWorked" class="form-control" />
+                            <div class="input-group-append">
+                                <a asp-action="EditHours" asp-controller="Group" asp-route-id="@Model.Id" class="btn btn-secondary">Edytuj</a>
+                            </div>
+                        </div>
+                        <input type="hidden" asp-for="HoursMinutesWorked" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Balance"></label>
+                        <input disabled asp-for="Balance" class="form-control" />
+                        <input type="hidden" asp-for="Balance" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Roles"></label><br />
+                        <div class="input-group">
+                            <input disabled asp-for="Roles" class="form-control" />
+                            <input asp-for="Roles" type="hidden" class="form-control" />
+                            <div class="input-group-append">
+                                <a asp-action="RolesList" asp-controller="Administration" asp-route-id="@Model.Id" class="btn btn-secondary">Edytuj</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <span id="confirmDeleteSpan" style="display:none">
+                            <span>Czy chcesz ununąć? </span>
+                            <a class="btn btn-danger" asp-controller="Group" asp-action="DeleteUser" asp-route-id="@Model.Id">Tak</a>
+                            <a class="btn btn-primary" href="#" onclick="confirmDelete(false)">Nie</a>
+                        </span>
+                        <span id="deleteSpan">
+                            <a href="#" class="btn btn-danger" onclick="confirmDelete(true)">Usuń konto</a>
+                        </span>
+                    </div>
+                </div>
+                <div class="card mx-3" style="border:0">
+                    <div class="form-group">
+                        <label asp-for="FirstName"></label>
+                        <input asp-for="FirstName" class="form-control" />
+                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="LastName"></label>
+                        <input asp-for="LastName" class="form-control" />
+                        <span asp-validation-for="LastName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Group"></label>
+                        <select class="custom-select" asp-for="Group">
+                            <option value="@GroupEnum.None">brak grupy</option>
+                            <option value="@GroupEnum.GroupA">Grupa A</option>
+                            <option value="@GroupEnum.GroupB">Grupa B</option>
+                            <option value="@GroupEnum.GroupC">Grupa C</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Position"></label>
+                        <select class="custom-select" asp-for="Position">
+                            <option value="@PositionEnum.None">brak stanowiska</option>
+                            <option value="@PositionEnum.WarehouseWorker">Pracownik magazynu</option>
+                            <option value="@PositionEnum.TeamLeader">Kierownik</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="HourlyPay"></label>
+                        <input asp-for="HourlyPay" class="form-control" />
+                        <span asp-validation-for="HourlyPay" class="text-danger"></span>
+                    </div>
+                    <div class="btn-group-toggle float-right">
+                        <button type="submit" class="btn btn-success">Zapisz</button>
+                        <a class="btn btn-secondary float-right" asp-controller="Group" asp-action="Index">Powrót</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
