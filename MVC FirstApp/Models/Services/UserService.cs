@@ -25,24 +25,29 @@ namespace MVC_FirstApp.Models.Services
 
         public HomeUserViewModel GetUserDetails(string userId)
         {
-            var user = _db.Users.Find(userId);
+            var user = _db.Users.Include(x => x.Billing).SingleOrDefault(x => x.Id == userId);
 
-            if (user != null)
+            var vm = new HomeUserViewModel
             {
-                var vm = new HomeUserViewModel
-                {
-                    Id = user.Id,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    Group = user.Group,
-                    Position = user.Position
-                };
-                return vm;
-            }
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Group = user.Group,
+                Position = user.Position,
+                HoursMinutesWorked = MinsToHoursMins(user.Billing.MinutesWorked),
+                Balance = string.Format($"{user.Billing.Balance}zł")
+            };
 
-            return null;
+            return vm;
         }
 
+        private static string MinsToHoursMins(long minutesToConvert)
+        {
+            var hours = minutesToConvert / 60;
+            var minutes = minutesToConvert % 60;
+
+            return $"{hours}h {minutes}min";
+        }
 
         public IdentityResult Update(EditUserViewModel data)
         {
@@ -60,3 +65,4 @@ namespace MVC_FirstApp.Models.Services
         }
     }
 }
+

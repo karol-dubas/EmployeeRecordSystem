@@ -62,8 +62,14 @@ namespace MVC_FirstApp.Models.Services
 
         public IdentityResult DeleteUser(string id)
         {
-            var user = _db.Users.Include(x => x.Billing).Where(x => x.Id == id).Single();
+            var user = _db.Users.Include(x => x.Billing).Include(x => x.AccountHistory).Where(x => x.Id == id).Single();
             var userBilling = _db.Billings.Find(user.Billing.Id);
+
+            foreach (var history in user.AccountHistory)
+            {
+                var row = _db.Histories.Find(history.Id);
+                _db.Histories.Remove(row);
+            }
 
             _db.Billings.Remove(userBilling);
             var result = _um.DeleteAsync(user).Result;

@@ -5,7 +5,7 @@
 }
 
 <form method="post">
-    <div class="card" style="width:600px; margin:auto">
+    <div class="card mx-auto col-6 p-0">
         <div class="card-header">
             <h1>Edytuj rolę</h1>
         </div>
@@ -17,7 +17,7 @@
         <div class="card-header">
             <h3>Lista użytkowników</h3>
         </div>
-        <div class="card-body">
+        <div class="card-body pb-2">
             @if (Model.Users.Any())
             {
                 foreach (var user in Model.Users)

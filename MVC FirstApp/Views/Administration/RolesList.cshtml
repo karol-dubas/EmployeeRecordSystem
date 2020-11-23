@@ -6,10 +6,10 @@
 
 @if (Model.Count() == 2)
 {
-    <div class="mt-5" style="width:60%; margin:auto">
+    <div class="mt-5 mx-auto col-8">
         @foreach (var role in Model)
         {
-            <div class="card mr-4" style="width:300px; display:inline-block">
+            <div class="card mr-4 col-5 p-0" style="display:inline-block">
                 <div class="card-header">
                     <h3 class="mb-2">@role.Name</h3>
                 </div>

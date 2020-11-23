@@ -4,7 +4,7 @@
     ViewData["Title"] = "Edit";
 }
 
-<div class="card" style="width:800px; margin:auto">
+<div class="card mx-auto col-8 p-0">
     <div class="card-header py-3">
         <h2 class="m-0">Edytuj użytkownika</h2>
     </div>
@@ -33,17 +33,22 @@
                         <input type="hidden" asp-for="HoursMinutesWorked" class="form-control" />
                     </div>
                     <div class="form-group">
-                        <label asp-for="Balance"></label>
-                        <input disabled asp-for="Balance" class="form-control" />
-                        <input type="hidden" asp-for="Balance" class="form-control" />
-                    </div>
-                    <div class="form-group">
                         <label asp-for="Roles"></label><br />
                         <div class="input-group">
                             <input disabled asp-for="Roles" class="form-control" />
                             <input asp-for="Roles" type="hidden" class="form-control" />
                             <div class="input-group-append">
                                 <a asp-action="RolesList" asp-controller="Administration" asp-route-id="@Model.Id" class="btn btn-secondary">Edytuj</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Balance"></label>
+                        <div class="input-group">
+                            <input disabled asp-for="Balance" class="form-control" />
+                            <input type="hidden" asp-for="Balance" class="form-control" />
+                            <div class="input-group-append">
+                                <a asp-action="AccountHistory" asp-controller="Home" asp-route-id="@Model.Id" class="btn btn-secondary">Historia</a>
                             </div>
                         </div>
                     </div>
@@ -82,7 +87,7 @@
                         <label asp-for="Position"></label>
                         <select class="custom-select" asp-for="Position">
                             <option value="@PositionEnum.None">brak stanowiska</option>
-                            <option value="@PositionEnum.WarehouseWorker">Pracownik magazynu</option>
+                            <option value="@PositionEnum.WarehouseWorker">Magazynier</option>
                             <option value="@PositionEnum.TeamLeader">Kierownik</option>
                         </select>
                     </div>

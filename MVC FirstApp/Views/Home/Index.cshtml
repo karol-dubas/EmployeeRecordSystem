@@ -1,64 +1,86 @@
 ﻿@model MVC_FirstApp.Models.ViewModels.HomeUserViewModel
+@inject Microsoft.AspNetCore.Identity.SignInManager<ApplicationUser> _sim;
 
 @{
     ViewData["Title"] = "Home Page";
 }
 
-<link rel="stylesheet" href="~/css/home.css" />
-
-<div class="page card">
-    <div class="card-header">
-        <h2>Twoje konto:</h2>
+<div class="row mx-auto col-10">
+    <div class="col-4">
+        <div class="card">
+            <div class="card-header">
+                <h2>Opcje</h2>
+            </div>
+            <div class="card-body">
+                @if (_sim.IsSignedIn(User) && (User.IsInRole("Pracownik") || User.IsInRole("Administrator")))
+                {
+                    <a class="btn btn-primary btn-block" asp-action="Withdrawal" asp-controller="Home" asp-route-id="@Model.Id">Wypłać pieniądze</a>
+                    <a class="btn btn-primary btn-block" asp-action="AccountHistory" asp-controller="Home" asp-route-id="@Model.Id">Historia konta</a>
+                }
+                <a class="btn btn-primary btn-block" asp-action="Password" asp-controller="Home" asp-route-id="@Model.Id">Zmień hasło</a>
+            </div>
+        </div>
     </div>
-    <div class="card-body p-0">
-        <table class="table table-bordered m-0">
-            <tbody>
-                <tr>
-                    <th scope="row">Imię</th>
-                    <td>@Model.FirstName</td>
-                </tr>
-                <tr>
-                    <th scope="row">Nazwisko</th>
-                    <td>@Model.LastName</td>
-                </tr>
-                <tr>
-                    <th scope="row">Grupa</th>
-                    @switch (Model.Group)
-                    {
-                        case GroupEnum.None:
-                            <td>-</td>
-                            break;
-                        case GroupEnum.GroupA:
-                            <td>Grupa A</td>
-                            break;
-                        case GroupEnum.GroupB:
-                            <td>Grupa B</td>
-                            break;
-                        case GroupEnum.GroupC:
-                            <td>Grupa C</td>
-                            break;
-                    }
-                </tr>
-                <tr>
-                    <th scope="row">Stanowisko</th>
-                    @switch (Model.Position)
-                    {
-                        case PositionEnum.None:
-                            <td>-</td>
-                            break;
-                        case PositionEnum.WarehouseWorker:
-                            <td>Pracownik magazynu</td>
-                            break;
-                        case PositionEnum.TeamLeader:
-                            <td>Kierownik</td>
-                            break;
-                    }
-                </tr>
-                <tr>
-                    <th scope="row">Hasło</th>
-                    <td><a class="btn btn-outline-info" asp-controller="Home" asp-action="Password" asp-route-id="@Model.Id">Zmień</a></td>
-                </tr>
-            </tbody>
-        </table>
+    <div class="col-6">
+        <div class="card">
+            <div class="card-header">
+                <h2>Twoje konto</h2>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-borderless table-striped m-0" style="table-layout:fixed;">
+                    <tbody>
+                        <tr>
+                            <td>Imię</td>
+                            <td>@Model.FirstName</td>
+                        </tr>
+                        <tr>
+                            <td>Nazwisko</td>
+                            <td>@Model.LastName</td>
+                        </tr>
+                        <tr>
+                            <td>Grupa</td>
+                            @switch (Model.Group)
+                            {
+                                case GroupEnum.None:
+                                    <td>brak</td>
+                                    break;
+                                case GroupEnum.GroupA:
+                                    <td>Grupa A</td>
+                                    break;
+                                case GroupEnum.GroupB:
+                                    <td>Grupa B</td>
+                                    break;
+                                case GroupEnum.GroupC:
+                                    <td>Grupa C</td>
+                                    break;
+                            }
+                        </tr>
+                        <tr>
+                            <td>Stanowisko</td>
+                            @switch (Model.Position)
+                            {
+                                case PositionEnum.None:
+                                    <td>brak</td>
+                                    break;
+                                case PositionEnum.WarehouseWorker:
+                                    <td>Magazynier</td>
+                                    break;
+                                case PositionEnum.TeamLeader:
+                                    <td>Kierownik</td>
+                                    break;
+                            }
+                        </tr>
+                        <tr>
+                            <td>Czas przepracowany</td>
+                            <td>@Model.HoursMinutesWorked</td>
+                        </tr>
+                        <tr>
+                            <td>Saldo</td>
+                            <td>@Model.Balance</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>

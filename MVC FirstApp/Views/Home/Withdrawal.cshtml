@@ -1,0 +1,34 @@
+﻿@model MVC_FirstApp.Models.ViewModels.WithdrawalViewModel
+
+@{
+    ViewData["Title"] = "EditHours";
+}
+
+
+<form method="post">
+    <div class="card mx-auto col-4 p-0">
+        <div class="card-header">
+            <h2>Saldo</h2>
+        </div>
+        <div class="card-body">
+            <input disabled asp-for="CurrentBalance" class="form-control col-4 ml-3">
+            <input type="hidden" asp-for="CurrentBalance" />
+        </div>
+        <div class="card-header border-top">
+            <h2>Kwota wypłaty</h2>
+        </div>
+        <div class="card-body pb-0">
+            <div class="input-group col-6">
+                <input asp-for="AmountToWithdraw" class="form-control">
+                <div class="input-group-append">
+                    <div class="input-group-text">zł</div>
+                </div>
+            </div>
+        </div>
+        <div asp-validation-summary="All" class="text-danger mt-2"></div>
+        <div class="card-footer">
+            <button class="btn btn-success" type="submit" style="width:auto">Wypłać</button>
+            <a class="btn btn-secondary float-right" asp-action="Index" asp-controller="Home" style="width:auto">Powrót</a>
+        </div>
+    </div>
+</form>

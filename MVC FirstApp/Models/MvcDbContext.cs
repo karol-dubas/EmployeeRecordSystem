@@ -13,6 +13,7 @@ namespace MVC_FirstApp.Models
             : base(options) { }
 
         public DbSet<BillingEntity> Billings { get; set; }
+        public DbSet<AccountHistoryEntity> Histories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

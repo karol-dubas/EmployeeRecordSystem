@@ -162,6 +162,31 @@ namespace MVC_FirstApp.Controllers
 
             return RedirectToAction("Index", "Group");
         }
+
+        [HttpGet]
+        [Authorize(Roles = "Administrator")]
+        public IActionResult AddMoney()
+        {
+            foreach (var user in _db.Users.Include(x => x.Billing))
+            {
+                var amount = (decimal)user.Billing.HourlyPay / 60 * user.Billing.MinutesWorked;
+                var balanceAfter = user.Billing.Balance += amount;
+                user.Billing.MinutesWorked = 0;
+
+                user.AccountHistory = new List<AccountHistoryEntity>
+                {
+                    new AccountHistoryEntity
+                    {
+                        ActionType = "renumeration",
+                        Amount = (double)amount,
+                        BalanceAfter = (double)balanceAfter,
+                        Date = DateTime.Now
+                    }
+                };
+            }
+
+            _db.SaveChanges();
+            return RedirectToAction("Index");
+        }
     }
 }
-

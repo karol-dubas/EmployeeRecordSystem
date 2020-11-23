@@ -6,7 +6,7 @@
 
 
 <form method="post">
-    <div class="card" style="width:500px; margin:auto">
+    <div class="card mx-auto col-6 p-0">
         <div class="card-header">
             <h2>Wybierz użytkowników</h2>
         </div>
@@ -23,12 +23,12 @@
                 </div>
             }
         </div>
-        <div class="card-header" style="border-top: 1px solid rgba(0,0,0,.125);">
+        <div class="card-header border-top">
             <h2>Czas pracy</h2>
         </div>
         <div class="card-body pb-0">
-            <div class="form-row" style="margin-right:210px">
-                <div class="col pr-0">
+            <div class="form-row">
+                <div class="col pr-0 col-3">
                     <div class="input-group">
                         <input asp-for="HoursToEdit" class="form-control">
                         <div class="input-group-append">
@@ -36,7 +36,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col pl-0">
+                <div class="col pl-0 col-3">
                     <div class="input-group">
                         <input asp-for="MinutesToEdit" class="form-control">
                         <div class="input-group-append">
@@ -44,12 +44,18 @@
                         </div>
                     </div>
                 </div>
+            <div class="row m-auto">
+                <div class="btn-group btn-group-toggle " data-toggle="buttons">
+                    <label class="btn btn-success px-3 active">
+                        <input checked="checked" id="AddHours" name="AddHours" type="radio" value="true"> Dodaj
+                    </label>
+                    <label class="btn btn-danger">
+                        <input id="AddHours" name="AddHours" type="radio" value="false">Odejmij
+                    </label>
+                </div>
+                </div>
             </div>
-            <div class="row pl-4 my-3">
-                <label class="text-danger"><input id="AddHours" name="AddHours" type="radio" value="false"> Odejmij</label>
-                <label class="ml-3 text-success"><input checked="checked" id="AddHours" name="AddHours" type="radio" value="true"> Dodaj</label>
-            </div>
-            <div asp-validation-summary="All" class="text-danger"></div>
+            <div asp-validation-summary="All" class="text-danger mt-3"></div>
         </div>
         <div class="card-footer">
             <button class="btn btn-success" type="submit" style="width:auto">Zapisz</button>

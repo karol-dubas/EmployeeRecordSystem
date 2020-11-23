@@ -31,7 +31,7 @@ namespace MVC_FirstApp.Models.Services
                     HoursMinutesWorked = MinsToHoursMins(x.Billing.MinutesWorked),
                     HourlyPay = x.Billing.HourlyPay
 
-                }).ToList().OrderByDescending(x => x.Position)
+                }).OrderByDescending(x => x.Position).ToList()
             };
 
             return vm;

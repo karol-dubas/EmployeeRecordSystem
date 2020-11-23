@@ -19,5 +19,6 @@ namespace MVC_FirstApp.Models
         public PositionEnum Position { get; set; }
         [Required]
         public virtual BillingEntity Billing { get; set; }
+        public virtual ICollection<AccountHistoryEntity> AccountHistory { get; set; }
     }
 }

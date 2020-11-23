@@ -14,7 +14,7 @@
 <div class="page">
     @if (Model.Accounts.Where(x => x.Group == GroupEnum.None).Any())
     {
-        <div class="card pb-0 mb-lg-4">
+        <div class="card pb-0 mb-4">
             <div class="card-header">
                 <h3 class="mb-0">Brak grupy:</h3>
             </div>
@@ -47,7 +47,7 @@
                                         <td>-</td>
                                         break;
                                     case PositionEnum.WarehouseWorker:
-                                        <td>Pracownik magazynu</td>
+                                        <td>Magazynier</td>
                                         break;
                                     case PositionEnum.TeamLeader:
                                         <td>Kierownik</td>
@@ -70,7 +70,7 @@
 
     @if (Model.Accounts.Where(x => x.Group == GroupEnum.GroupA).Any())
     {
-        <div class="card pb-0 mb-lg-4">
+        <div class="card pb-0 mb-4">
             <div class="card-header">
                 <h3 class="mb-0 btn-group">Grupa A:</h3>
                 @if (_sim.IsSignedIn(User) && User.IsInRole("Administrator"))
@@ -107,7 +107,7 @@
                                         <td>-</td>
                                         break;
                                     case PositionEnum.WarehouseWorker:
-                                        <td>Pracownik magazynu</td>
+                            <td>Magazynier</td>
                                         break;
                                     case PositionEnum.TeamLeader:
                                         <td>Kierownik</td>
@@ -130,7 +130,7 @@
 
     @if (Model.Accounts.Where(x => x.Group == GroupEnum.GroupB).Any())
     {
-        <div class="card pb-0 mb-lg-4">
+        <div class="card pb-0 mb-4">
             <div class="card-header">
                 <h3 class="mb-0 btn-group">Grupa B:</h3>
                 @if (_sim.IsSignedIn(User) && User.IsInRole("Administrator"))
@@ -167,7 +167,7 @@
                                         <td>-</td>
                                         break;
                                     case PositionEnum.WarehouseWorker:
-                                        <td>Pracownik magazynu</td>
+                            <td>Magazynier</td>
                                         break;
                                     case PositionEnum.TeamLeader:
                                         <td>Kierownik</td>
@@ -190,7 +190,7 @@
 
     @if (Model.Accounts.Where(x => x.Group == GroupEnum.GroupC).Any())
     {
-        <div class="card pb-0 mb-lg-4">
+        <div class="card pb-0 mb-4">
             <div class="card-header">
                 <h3 class="mb-0 btn-group">Grupa C:</h3>
                 @if (_sim.IsSignedIn(User) && User.IsInRole("Administrator"))
@@ -227,7 +227,7 @@
                                         <td>-</td>
                                         break;
                                     case PositionEnum.WarehouseWorker:
-                                        <td>Pracownik magazynu</td>
+                            <td>Magazynier</td>
                                         break;
                                     case PositionEnum.TeamLeader:
                                         <td>Kierownik</td>
@@ -248,3 +248,15 @@
         </div>
     }
 </div>
+
+@if (_sim.IsSignedIn(User) && User.IsInRole("Administrator"))
+{
+    @section footer
+    {
+        <footer class="border-top footer text-muted">
+            <div class="container col-md-6">
+                <a asp-action="AddMoney" asp-controller="Group" class="btn btn-info btn-block my-3">Wypłać pieniądze za godziny pracy użytkowników</a>
+            </div>
+        </footer>
+    }
+}
