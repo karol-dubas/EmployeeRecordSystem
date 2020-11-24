@@ -10,18 +10,18 @@ namespace MVC_FirstApp.Models.Services
 {
     public class GroupService
     {
-        private readonly MvcDbContext _db;
+        private readonly MvcDbContext dbContext;
 
         public GroupService(MvcDbContext dbContext)
         {
-            _db = dbContext;
+            this.dbContext = dbContext;
         }
 
         public GroupListViewModel GetAll()
         {
             var vm = new GroupListViewModel
             {
-                Accounts = _db.Users.Include(x => x.Billing).Select(x => new GroupItemListViewModel
+                Accounts = dbContext.Users.Include(x => x.Billing).Select(x => new GroupItemListViewModel
                 {
                     Id = x.Id,
                     FirstName = x.FirstName,
@@ -47,38 +47,40 @@ namespace MVC_FirstApp.Models.Services
 
         public UserHoursViewModel GetUsersInGroup(string group, string userId)
         {
+            UserHoursViewModel vm;
+
             //vm for all group
             if (group != null)
             {
                 var groupEnum = (GroupEnum)Enum.Parse(typeof(GroupEnum), group);
 
-                var vm = new UserHoursViewModel
+                vm = new UserHoursViewModel
                 {
-                    Users = _db.Users.Where(x => groupEnum == x.Group)
-                    .Select(x => new HoursEditUserListViewModel
-                    {
-                        UserId = x.Id,
-                        IsSelected = true,
-                        FullName = string.Format($"{x.FirstName} {x.LastName}, {x.UserName}")
-                    }).ToList()
+                    Users = dbContext.Users.Where(x => groupEnum == x.Group)
+                     .Select(x => new HoursEditUserListViewModel
+                     {
+                         UserId = x.Id,
+                         IsSelected = true,
+                         FullName = string.Format($"{x.FirstName} {x.LastName}, {x.UserName}")
+                     }).ToList()
                 };
 
                 return vm;
             }
 
             //vm only for 1 user
-            var vm2 = new UserHoursViewModel
+            vm = new UserHoursViewModel
             {
-                Users = _db.Users.Where(x => userId == x.Id)
-                .Select(x => new HoursEditUserListViewModel
-                {
-                    UserId = x.Id,
-                    IsSelected = true,
-                    FullName = string.Format($"{x.FirstName} {x.LastName}, {x.UserName}")
-                }).ToList()
+                Users = dbContext.Users.Where(x => userId == x.Id)
+                  .Select(x => new HoursEditUserListViewModel
+                  {
+                      UserId = x.Id,
+                      IsSelected = true,
+                      FullName = string.Format($"{x.FirstName} {x.LastName}, {x.UserName}")
+                  }).ToList()
             };
 
-            return vm2;
+            return vm;
         }
 
         public bool UpdateTime(UserHoursViewModel data)
@@ -91,7 +93,7 @@ namespace MVC_FirstApp.Models.Services
                 {
                     if (user.IsSelected)
                     {
-                        var userFound = _db.Users.Include(x => x.Billing).Where(x => x.Id == user.UserId).Single();
+                        var userFound = dbContext.Users.Include(x => x.Billing).SingleOrDefault(x => x.Id == user.UserId);
 
                         userFound.Billing.MinutesWorked += (data.MinutesToEdit + (data.HoursToEdit * 60));
                     }
@@ -103,7 +105,7 @@ namespace MVC_FirstApp.Models.Services
                 {
                     if (user.IsSelected)
                     {
-                        var userFound = _db.Users.Include(x => x.Billing).Where(x => x.Id == user.UserId).Single();
+                        var userFound = dbContext.Users.Include(x => x.Billing).SingleOrDefault(x => x.Id == user.UserId);
 
                         var newTime = userFound.Billing.MinutesWorked -= (data.MinutesToEdit + (data.HoursToEdit * 60));
 
@@ -115,9 +117,8 @@ namespace MVC_FirstApp.Models.Services
                 }
             }
 
-            _db.SaveChanges();
+            dbContext.SaveChanges();
             return false;
         }
     }
 }
-

@@ -14,33 +14,24 @@ namespace MVC_FirstApp.Controllers
 {
     public class GroupController : Controller
     {
-        private readonly GroupService _gs;
-        private readonly AccountService _as;
-        private readonly UserService _us;
-        private readonly UserManager<ApplicationUser> _um;
-        private readonly RoleManager<IdentityRole> _rm;
-        private readonly MvcDbContext _db;
+        private readonly AccountService accountService;
+        private readonly UserDataService userDataService;
+        private readonly GroupService groupService;
 
         public GroupController(AccountService accountService,
-            UserService userEditService,
-            GroupService groupService,
-            UserManager<ApplicationUser> userManager,
-            RoleManager<IdentityRole> roleManager,
-            MvcDbContext dbContext)
+            UserDataService userEditService,
+            GroupService groupService)
         {
-            _as = accountService;
-            _us = userEditService;
-            _gs = groupService;
-            _um = userManager;
-            _rm = roleManager;
-            _db = dbContext;
+            this.accountService = accountService;
+            this.userDataService = userEditService;
+            this.groupService = groupService;
         }
 
         [HttpGet]
         [Authorize(Roles = "Pracownik, Administrator")]
         public IActionResult Index()
         {
-            var vm = _gs.GetAll();
+            var vm = groupService.GetAll();
 
             return View(vm);
         }
@@ -49,7 +40,7 @@ namespace MVC_FirstApp.Controllers
         [Authorize(Roles = "Administrator")]
         public IActionResult EditHours(string group, string id)
         {
-            var vm = _gs.GetUsersInGroup(group, id);
+            var vm = groupService.GetUsersInGroup(group, id);
 
             return View(vm);
         }
@@ -63,7 +54,7 @@ namespace MVC_FirstApp.Controllers
                 return View(data);
             }
 
-            var error = _gs.UpdateTime(data);
+            var error = groupService.UpdateTime(data);
 
             if (error)
             {
@@ -79,49 +70,14 @@ namespace MVC_FirstApp.Controllers
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> EditUser(string id)
         {
-            //var vm = _us.GetToEdit(id);
-
-            var user = await _db.Users.Include(x => x.Billing).FirstOrDefaultAsync(x => x.Id == id);
-
-            var userRolesList = new List<string>();
-
-            foreach (var role in _rm.Roles.ToList())
-            {
-                if (await _um.IsInRoleAsync(user, role.Name))
-                {
-                    userRolesList.Add(role.Name);
-                }
-            }
-            var userRoles = string.Join(", ", userRolesList);
-
-            var vm = new EditUserViewModel
-            {
-                Id = user.Id,
-                UserName = user.UserName,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Group = user.Group,
-                Position = user.Position,
-                Roles = userRoles,
-                Balance = user.Billing.Balance,
-                HourlyPay = user.Billing.HourlyPay,
-                HoursMinutesWorked = MinsToHoursMins(user.Billing.MinutesWorked)
-            };
+            var vm = await userDataService.GetToEdit(id);
 
             return View(vm);
         }
 
-        private static string MinsToHoursMins(long minutesToConvert)
-        {
-            var hours = minutesToConvert / 60;
-            var minutes = minutesToConvert % 60;
-
-            return $"{hours}h {minutes}min";
-        }
-
         [HttpPost]
         [Authorize(Roles = "Administrator")]
-        public IActionResult EditUser(EditUserViewModel data)
+        public async Task<IActionResult> EditUser(EditUserViewModel data)
         {
             //VM requirements
             if (!ModelState.IsValid)
@@ -129,7 +85,8 @@ namespace MVC_FirstApp.Controllers
                 return View(data);
             }
 
-            var result = _us.Update(data);
+            var result = await userDataService.Update(data);
+
             //Identity requirements
             if (result.Succeeded)
             {
@@ -146,9 +103,9 @@ namespace MVC_FirstApp.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Administrator")]
-        public IActionResult DeleteUser(string id)
+        public async Task<IActionResult> DeleteUser(string id)
         {
-            var result = _as.DeleteUser(id);
+            var result = await accountService.DeleteUser(id);
 
             if (result.Succeeded)
             {
@@ -167,25 +124,8 @@ namespace MVC_FirstApp.Controllers
         [Authorize(Roles = "Administrator")]
         public IActionResult AddMoney()
         {
-            foreach (var user in _db.Users.Include(x => x.Billing))
-            {
-                var amount = (decimal)user.Billing.HourlyPay / 60 * user.Billing.MinutesWorked;
-                var balanceAfter = user.Billing.Balance += amount;
-                user.Billing.MinutesWorked = 0;
+            userDataService.AddMoney();
 
-                user.AccountHistory = new List<AccountHistoryEntity>
-                {
-                    new AccountHistoryEntity
-                    {
-                        ActionType = "renumeration",
-                        Amount = (double)amount,
-                        BalanceAfter = (double)balanceAfter,
-                        Date = DateTime.Now
-                    }
-                };
-            }
-
-            _db.SaveChanges();
             return RedirectToAction("Index");
         }
     }

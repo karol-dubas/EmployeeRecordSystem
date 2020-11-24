@@ -10,11 +10,11 @@ namespace MVC_FirstApp.Controllers
 {
     public class LoginController : Controller
     {
-        public AccountService _as;
+        private readonly AccountService accountService;
 
         public LoginController(AccountService accountService)
         {
-            _as = accountService;
+            this.accountService = accountService;
         }
 
         [HttpGet]
@@ -24,7 +24,7 @@ namespace MVC_FirstApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult Index(LoginViewModel data)
+        public async Task<IActionResult> Index(LoginViewModel data)
         {
             //VM requirements
             if (!ModelState.IsValid)
@@ -32,7 +32,8 @@ namespace MVC_FirstApp.Controllers
                 return View(data);
             }
 
-            var result = _as.SignIn(data);
+            var result = await accountService.SignIn(data);
+
             //Identity requirements
             if (result.Succeeded)
             {
@@ -47,7 +48,7 @@ namespace MVC_FirstApp.Controllers
         [HttpGet]
         public IActionResult Logout()
         {
-            _as.SignOut();
+            accountService.SignOut();
 
             return RedirectToAction("Index", "Login");
         }

@@ -54,7 +54,7 @@ namespace MVC_FirstApp
 
             services.AddTransient<AccountService>();
             services.AddTransient<GroupService>();
-            services.AddTransient<UserService>();
+            services.AddTransient<UserDataService>();
 
             services.Configure<SecurityStampValidatorOptions>(options =>
             {

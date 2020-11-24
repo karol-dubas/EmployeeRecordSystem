@@ -16,28 +16,28 @@ namespace MVC_FirstApp.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly UserService _us;
-        private readonly UserManager<ApplicationUser> _um;
-        public readonly AccountService _as;
-        public readonly MvcDbContext _db;
+        private readonly UserDataService userDataService;
+        private readonly UserManager<ApplicationUser> userManager;
+        private readonly AccountService accountService;
+        private readonly MvcDbContext dbContext;
 
-        public HomeController(UserService userService,
+        public HomeController(UserDataService userService,
             UserManager<ApplicationUser> userManager,
             AccountService accountService,
             MvcDbContext dbContext)
         {
-            _us = userService;
-            _um = userManager;
-            _as = accountService;
-            _db = dbContext;
+            this.userDataService = userService;
+            this.userManager = userManager;
+            this.accountService = accountService;
+            this.dbContext = dbContext;
         }
 
         [HttpGet]
         [Authorize]
         public IActionResult Index()
         {
-            var userId = _um.GetUserId(User);
-            var vm = _us.GetUserDetails(userId);
+            var userId = userManager.GetUserId(User);
+            var vm = userDataService.GetUserDetails(userId);
 
             return View(vm);
         }
@@ -51,7 +51,7 @@ namespace MVC_FirstApp.Controllers
 
         [HttpPost]
         [Authorize]
-        public IActionResult Password(PasswordViewModel data)
+        public async Task<IActionResult> Password(PasswordViewModel data)
         {
             if (!data.PasswordConfirmed())
             {
@@ -59,7 +59,7 @@ namespace MVC_FirstApp.Controllers
                 return View();
             }
 
-            var result = _as.ChangePassword(data.Id, data.CurrentPassword, data.NewPassword);
+            var result = await accountService.ChangePassword(data.Id, data.CurrentPassword, data.NewPassword);
 
             if (result.Succeeded)
             {
@@ -78,13 +78,7 @@ namespace MVC_FirstApp.Controllers
         [Authorize(Roles = "Pracownik, Administrator")]
         public IActionResult Withdrawal(string id)
         {
-            var user = _db.Users.Include(x => x.Billing).SingleOrDefault(x => x.Id == id);
-
-            var vm = new WithdrawalViewModel
-            {
-                CurrentBalance = string.Format($"{user.Billing.Balance} zł"),
-                AmountToWithdraw = user.Billing.Balance
-            };
+            var vm = userDataService.GetDataToWithdrawMoney(id);
 
             return View(vm);
         }
@@ -98,36 +92,20 @@ namespace MVC_FirstApp.Controllers
                 return View(data);
             }
 
-            var user = _db.Users.Include(x => x.Billing).SingleOrDefault(x => x.Id == id);
+            if (data.AmountToWithdraw == 0)
+            {
+                ModelState.AddModelError("", "Wpisz kwotę powyżej 0");
+                return View(data);
+            }
 
+            var user = dbContext.Users.Include(x => x.Billing).SingleOrDefault(x => x.Id == id);
             if (data.AmountToWithdraw > user.Billing.Balance)
             {
                 ModelState.AddModelError("", "Nie możesz wypłacić więcej pieniędzy, niż masz na koncie");
                 return View(data);
             }
-            else if (data.AmountToWithdraw == 0)
-            {
-                ModelState.AddModelError("", "Wpisz kwotę powyżej 0");
-                return View(data);
-            }
-            else
-            {
-                var amount = data.AmountToWithdraw;
-                var balanceAfter = user.Billing.Balance -= amount;
 
-                user.AccountHistory = new List<AccountHistoryEntity>
-                {
-                    new AccountHistoryEntity
-                    {
-                        ActionType = "withdrawal",
-                        Amount = (double)amount,
-                        BalanceAfter = (double)balanceAfter,
-                        Date = DateTime.Now
-                    }
-                };
-
-                _db.SaveChanges();
-            }
+            userDataService.WithdrawMoney(data.AmountToWithdraw, user);
 
             return RedirectToAction("Index");
         }
@@ -136,14 +114,7 @@ namespace MVC_FirstApp.Controllers
         [Authorize(Roles = "Pracownik, Administrator")]
         public IActionResult AccountHistory(string id)
         {
-            var vm = _db.Users.Include(x => x.AccountHistory).SingleOrDefault(x => x.Id == id)
-                .AccountHistory.Select(x => new AccountHistoryViewModel
-                {
-                    ActionType = x.ActionType,
-                    Amount = string.Format($"{Math.Round(x.Amount, 2)} zł"),
-                    BalanceAfter = string.Format($"{Math.Round(x.BalanceAfter, 2)} zł"),
-                    Date = x.Date
-                }).OrderByDescending(x => x.Date).ToList();
+            var vm = userDataService.GetUserHistory(id);
 
             return View(vm);
         }
