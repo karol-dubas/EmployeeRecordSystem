@@ -116,20 +116,23 @@ namespace MVC_FirstApp.Models.Services
 
             foreach (var user in users)
             {
-                var amount = (decimal)user.Billing.HourlyPay / 60 * user.Billing.MinutesWorked;
-                var balanceAfter = user.Billing.Balance += amount;
-                user.Billing.MinutesWorked = 0;
-
-                user.AccountHistory = new List<AccountHistoryEntity>
+                if (user.Billing.MinutesWorked != 0)
                 {
-                    new AccountHistoryEntity
+                    var amount = (decimal)user.Billing.HourlyPay / 60 * user.Billing.MinutesWorked;
+                    var balanceAfter = user.Billing.Balance += amount;
+                    user.Billing.MinutesWorked = 0;
+
+                    user.AccountHistory = new List<AccountHistoryEntity>
                     {
-                        ActionType = "wynagrodzenie",
-                        Amount = (double)amount,
-                        BalanceAfter = (double)balanceAfter,
-                        Date = DateTime.Now
-                    }
-                };
+                        new AccountHistoryEntity
+                        {
+                            ActionType = "wynagrodzenie",
+                            Amount = (double)amount,
+                            BalanceAfter = (double)balanceAfter,
+                            Date = DateTime.Now
+                        }
+                    };
+                }
             }
 
             dbContext.SaveChanges();
