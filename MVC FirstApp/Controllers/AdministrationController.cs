@@ -17,15 +17,12 @@ namespace MVC_FirstApp.Controllers
     {
         private readonly AccountService accountService;
         private readonly RoleManager<IdentityRole> roleManager;
-        private readonly UserManager<ApplicationUser> userManager;
 
         public AdministrationController(AccountService accountService,
-            RoleManager<IdentityRole> roleManager,
-            UserManager<ApplicationUser> userManager)
+            RoleManager<IdentityRole> roleManager)
         {
             this.accountService = accountService;
             this.roleManager = roleManager;
-            this.userManager = userManager;
         }
 
         [HttpGet]
@@ -66,6 +63,11 @@ namespace MVC_FirstApp.Controllers
             if (result.Succeeded)
             {
                 return RedirectToAction("RolePreview", new { Name = name });
+            }
+
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError("", error.Description);
             }
 
             return View();

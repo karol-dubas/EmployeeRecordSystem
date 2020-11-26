@@ -77,23 +77,29 @@ namespace MVC_FirstApp.Models.Services
             return vm;
         }
 
-        public void WithdrawMoney(decimal amountToWithdraw, ApplicationUser user)
+        public bool WithdrawMoney(WithdrawalViewModel data, string userId)
         {
-            var amount = amountToWithdraw;
+            var user = dbContext.Users.Include(x => x.Billing).Include(x => x.AccountHistory)
+                .SingleOrDefault(x => x.Id == userId);
+
+            var amount = data.AmountToWithdraw;
             var balanceAfter = user.Billing.Balance -= amount;
 
-            user.AccountHistory = new List<AccountHistoryEntity>
+            if (balanceAfter < 0)
             {
-                 new AccountHistoryEntity
-                 {
-                    ActionType = "wypłata",
-                    Amount = (double)amount,
-                    BalanceAfter = (double)balanceAfter,
-                    Date = DateTime.Now
-                 }
-            };
+                return true;
+            }
+
+            user.AccountHistory.Add(new AccountHistoryEntity
+            {
+                ActionType = "wypłata",
+                Amount = (double)amount,
+                BalanceAfter = (double)balanceAfter,
+                Date = DateTime.Now
+            });
 
             dbContext.SaveChanges();
+            return false;
         }
 
         public List<AccountHistoryViewModel> GetUserHistory(string id)
@@ -108,34 +114,6 @@ namespace MVC_FirstApp.Models.Services
                }).OrderByDescending(x => x.Date).ToList();
 
             return vm;
-        }
-
-        public void AddMoney()
-        {
-            var users = dbContext.Users.Include(x => x.Billing);
-
-            foreach (var user in users)
-            {
-                if (user.Billing.MinutesWorked != 0)
-                {
-                    var amount = (decimal)user.Billing.HourlyPay / 60 * user.Billing.MinutesWorked;
-                    var balanceAfter = user.Billing.Balance += amount;
-                    user.Billing.MinutesWorked = 0;
-
-                    user.AccountHistory = new List<AccountHistoryEntity>
-                    {
-                        new AccountHistoryEntity
-                        {
-                            ActionType = "wynagrodzenie",
-                            Amount = (double)amount,
-                            BalanceAfter = (double)balanceAfter,
-                            Date = DateTime.Now
-                        }
-                    };
-                }
-            }
-
-            dbContext.SaveChanges();
         }
 
         public async Task<EditUserViewModel> GetToEdit(string id)

@@ -19,11 +19,11 @@ namespace MVC_FirstApp.Controllers
         private readonly GroupService groupService;
 
         public GroupController(AccountService accountService,
-            UserDataService userEditService,
+            UserDataService userDataService,
             GroupService groupService)
         {
             this.accountService = accountService;
-            this.userDataService = userEditService;
+            this.userDataService = userDataService;
             this.groupService = groupService;
         }
 
@@ -124,7 +124,7 @@ namespace MVC_FirstApp.Controllers
         [Authorize(Roles = "Administrator")]
         public IActionResult AddMoney()
         {
-            userDataService.AddMoney();
+            groupService.AddMoney();
 
             return RedirectToAction("Index");
         }

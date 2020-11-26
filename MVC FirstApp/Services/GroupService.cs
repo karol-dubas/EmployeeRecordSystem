@@ -85,40 +85,57 @@ namespace MVC_FirstApp.Models.Services
 
         public bool UpdateTime(UserHoursViewModel data)
         {
-            var usersList = data.Users;
+            var selectedUsers = data.Users.Where(x => x.IsSelected == true);
 
             if (data.AddHours == true)
             {
-                foreach (var user in usersList)
+                foreach (var user in selectedUsers)
                 {
-                    if (user.IsSelected)
-                    {
-                        var userFound = dbContext.Users.Include(x => x.Billing).SingleOrDefault(x => x.Id == user.UserId);
+                    var userFound = dbContext.Users.Include(x => x.Billing).SingleOrDefault(x => x.Id == user.UserId);
 
-                        userFound.Billing.MinutesWorked += (data.MinutesToEdit + (data.HoursToEdit * 60));
-                    }
+                    userFound.Billing.MinutesWorked += (data.MinutesToEdit + (data.HoursToEdit * 60));
                 }
             }
             else
             {
-                foreach (var user in usersList)
+                foreach (var user in selectedUsers)
                 {
-                    if (user.IsSelected)
+                    var userFound = dbContext.Users.Include(x => x.Billing).SingleOrDefault(x => x.Id == user.UserId);
+
+                    var newTime = userFound.Billing.MinutesWorked -= (data.MinutesToEdit + (data.HoursToEdit * 60));
+
+                    if (newTime < 0)
                     {
-                        var userFound = dbContext.Users.Include(x => x.Billing).SingleOrDefault(x => x.Id == user.UserId);
-
-                        var newTime = userFound.Billing.MinutesWorked -= (data.MinutesToEdit + (data.HoursToEdit * 60));
-
-                        if (newTime < 0)
-                        {
-                            return true;
-                        }
+                        return true;
                     }
                 }
             }
 
             dbContext.SaveChanges();
             return false;
+        }
+
+        public void AddMoney()
+        {
+            var users = dbContext.Users.Include(x => x.Billing).Include(x => x.AccountHistory)
+                .Where(x => x.Billing.MinutesWorked > 0);
+
+            foreach (var user in users)
+            {
+                var amount = (decimal)user.Billing.HourlyPay / 60 * user.Billing.MinutesWorked;
+                var balanceAfter = user.Billing.Balance += amount;
+                user.Billing.MinutesWorked = 0;
+
+                user.AccountHistory.Add(new AccountHistoryEntity
+                {
+                    ActionType = "wynagrodzenie",
+                    Amount = (double)amount,
+                    BalanceAfter = (double)balanceAfter,
+                    Date = DateTime.Now
+                });
+            }
+
+            dbContext.SaveChanges();
         }
     }
 }

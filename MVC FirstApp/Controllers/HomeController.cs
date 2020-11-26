@@ -19,17 +19,14 @@ namespace MVC_FirstApp.Controllers
         private readonly UserDataService userDataService;
         private readonly UserManager<ApplicationUser> userManager;
         private readonly AccountService accountService;
-        private readonly MvcDbContext dbContext;
 
-        public HomeController(UserDataService userService,
+        public HomeController(UserDataService userDataService,
             UserManager<ApplicationUser> userManager,
-            AccountService accountService,
-            MvcDbContext dbContext)
+            AccountService accountService)
         {
-            this.userDataService = userService;
+            this.userDataService = userDataService;
             this.userManager = userManager;
             this.accountService = accountService;
-            this.dbContext = dbContext;
         }
 
         [HttpGet]
@@ -98,14 +95,13 @@ namespace MVC_FirstApp.Controllers
                 return View(data);
             }
 
-            var user = dbContext.Users.Include(x => x.Billing).SingleOrDefault(x => x.Id == id);
-            if (data.AmountToWithdraw > user.Billing.Balance)
+            var error = userDataService.WithdrawMoney(data, id);
+
+            if (error)
             {
                 ModelState.AddModelError("", "Nie możesz wypłacić więcej pieniędzy, niż masz na koncie");
                 return View(data);
             }
-
-            userDataService.WithdrawMoney(data.AmountToWithdraw, user);
 
             return RedirectToAction("Index");
         }

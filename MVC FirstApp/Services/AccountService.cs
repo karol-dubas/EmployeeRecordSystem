@@ -157,7 +157,6 @@ namespace MVC_FirstApp.Models.Services
                 {
                     continue;
                 }
-
             }
 
             return result;
