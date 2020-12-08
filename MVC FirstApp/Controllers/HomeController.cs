@@ -73,16 +73,17 @@ namespace MVC_FirstApp.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Pracownik, Administrator")]
-        public IActionResult Withdrawal(string id)
+        public IActionResult Withdrawal()
         {
-            var vm = userDataService.GetDataToWithdrawMoney(id);
+            var userId = userManager.GetUserId(User);
+            var vm = userDataService.GetDataToWithdrawMoney(userId);
 
             return View(vm);
         }
 
         [HttpPost]
         [Authorize(Roles = "Pracownik, Administrator")]
-        public IActionResult Withdrawal(WithdrawalViewModel data, string id)
+        public IActionResult Withdrawal(WithdrawalViewModel data)
         {
             if (!ModelState.IsValid)
             {
@@ -95,7 +96,8 @@ namespace MVC_FirstApp.Controllers
                 return View(data);
             }
 
-            var error = userDataService.WithdrawMoney(data, id);
+            var userId = userManager.GetUserId(User);
+            var error = userDataService.WithdrawMoney(data, userId);
 
             if (error)
             {
@@ -110,9 +112,16 @@ namespace MVC_FirstApp.Controllers
         [Authorize(Roles = "Pracownik, Administrator")]
         public IActionResult AccountHistory(string id)
         {
-            var vm = userDataService.GetUserHistory(id);
+            var userId = userManager.GetUserId(User);
 
-            return View(vm);
+            if (User.IsInRole("Administrator") || userId == id)
+            {
+                var vm = userDataService.GetUserHistory(id);
+
+                return View(vm);
+            }
+
+            return Unauthorized();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

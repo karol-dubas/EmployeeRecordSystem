@@ -14,7 +14,7 @@
             <div class="card-body">
                 @if (_sim.IsSignedIn(User) && (User.IsInRole("Pracownik") || User.IsInRole("Administrator")))
                 {
-                    <a class="btn btn-primary btn-block" asp-action="Withdrawal" asp-controller="Home" asp-route-id="@Model.Id">Wypłać pieniądze</a>
+                    <a class="btn btn-primary btn-block" asp-action="Withdrawal" asp-controller="Home">Wypłać pieniądze</a>
                     <a class="btn btn-primary btn-block" asp-action="AccountHistory" asp-controller="Home" asp-route-id="@Model.Id">Historia konta</a>
                 }
                 <a class="btn btn-primary btn-block" asp-action="Password" asp-controller="Home" asp-route-id="@Model.Id">Zmień hasło</a>
