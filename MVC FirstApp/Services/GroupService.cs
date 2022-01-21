@@ -52,11 +52,11 @@ namespace MVC_FirstApp.Models.Services
             //vm for all group
             if (group != null)
             {
-                var groupEnum = (GroupEnum)Enum.Parse(typeof(GroupEnum), group);
+                var Group = (Group)Enum.Parse(typeof(Group), group);
 
                 vm = new UserHoursViewModel
                 {
-                    Users = dbContext.Users.Where(x => groupEnum == x.Group)
+                    Users = dbContext.Users.Where(x => Group == x.Group)
                      .Select(x => new HoursEditUserListViewModel
                      {
                          UserId = x.Id,

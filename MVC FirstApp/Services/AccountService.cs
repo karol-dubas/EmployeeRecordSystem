@@ -33,8 +33,8 @@ namespace MVC_FirstApp.Models.Services
                 UserName = data.UserName,
                 FirstName = data.FirstName,
                 LastName = data.LastName,
-                Group = GroupEnum.None,
-                Position = PositionEnum.None,
+                Group = Group.None,
+                Position = Position.None,
                 Billing = new BillingEntity()
                 {
                     HourlyPay = 0,

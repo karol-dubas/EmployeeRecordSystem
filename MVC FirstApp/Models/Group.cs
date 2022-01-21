@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MVC_FirstApp.Models
 {
-    public enum GroupEnum
+    public enum Group
     {
         None,
         GroupA,

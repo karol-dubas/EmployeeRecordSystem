@@ -23,10 +23,10 @@ namespace MVC_FirstApp.Models.ViewModels
         public string LastName { get; set; }
 
         [Display(Name = "Grupa")]
-        public GroupEnum Group { get; set; }
+        public Group Group { get; set; }
 
         [Display(Name = "Stanowisko")]
-        public PositionEnum Position { get; set; }
+        public Position Position { get; set; }
 
         [Display(Name = "Stawka na godzinę [zł/h]")]
         [Required(ErrorMessage = "Pole 'Stawka na godzinę' jest wymagane")]

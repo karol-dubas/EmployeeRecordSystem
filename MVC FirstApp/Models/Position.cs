@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MVC_FirstApp.Models
 {
-    public enum PositionEnum
+    public enum Position
     {
         None,
         WarehouseWorker,

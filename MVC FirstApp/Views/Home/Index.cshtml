@@ -41,16 +41,16 @@
                             <td>Grupa</td>
                             @switch (Model.Group)
                             {
-                                case GroupEnum.None:
+                                case Group.None:
                                     <td>brak</td>
                                     break;
-                                case GroupEnum.GroupA:
+                                case Group.GroupA:
                                     <td>Grupa A</td>
                                     break;
-                                case GroupEnum.GroupB:
+                                case Group.GroupB:
                                     <td>Grupa B</td>
                                     break;
-                                case GroupEnum.GroupC:
+                                case Group.GroupC:
                                     <td>Grupa C</td>
                                     break;
                             }
@@ -59,13 +59,13 @@
                             <td>Stanowisko</td>
                             @switch (Model.Position)
                             {
-                                case PositionEnum.None:
+                                case Position.None:
                                     <td>brak</td>
                                     break;
-                                case PositionEnum.WarehouseWorker:
+                                case Position.WarehouseWorker:
                                     <td>Magazynier</td>
                                     break;
-                                case PositionEnum.TeamLeader:
+                                case Position.TeamLeader:
                                     <td>Kierownik</td>
                                     break;
                             }

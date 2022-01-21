@@ -32,8 +32,6 @@ namespace MVC_FirstApp
         {
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
-            services.AddControllersWithViews();
-
             services.AddDbContext<MvcDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("MvcConnection")));
 
@@ -46,7 +44,9 @@ namespace MVC_FirstApp
                     options.Password.RequireUppercase = false;
                 })
                 .AddEntityFrameworkStores<MvcDbContext>();
+
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
+
             services.ConfigureApplicationCookie(options =>
                 {
                     options.LoginPath = new PathString("/Login/Index");
@@ -57,9 +57,9 @@ namespace MVC_FirstApp
             services.AddTransient<UserDataService>();
 
             services.Configure<SecurityStampValidatorOptions>(options =>
-            {
-                options.ValidationInterval = TimeSpan.FromMinutes(0);
-            });
+                {
+                    options.ValidationInterval = TimeSpan.FromMinutes(0);
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -75,6 +75,7 @@ namespace MVC_FirstApp
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 

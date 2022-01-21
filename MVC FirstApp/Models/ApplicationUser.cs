@@ -14,9 +14,9 @@ namespace MVC_FirstApp.Models
         [Required]
         public string LastName { get; set; }
         [Required]
-        public GroupEnum Group { get; set; }
+        public Group Group { get; set; }
         [Required]
-        public PositionEnum Position { get; set; }
+        public Position Position { get; set; }
         [Required]
         public virtual BillingEntity Billing { get; set; }
         public virtual ICollection<AccountHistoryEntity> AccountHistory { get; set; }

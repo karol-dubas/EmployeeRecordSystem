@@ -12,7 +12,7 @@
 <div asp-validation-summary="All">
 </div>
 <div class="page">
-    @if (Model.Accounts.Where(x => x.Group == GroupEnum.None).Any())
+    @if (Model.Accounts.Where(x => x.Group == Group.None).Any())
     {
         <div class="card pb-0 mb-4">
             <div class="card-header">
@@ -35,7 +35,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var user in Model.Accounts.Where(x => x.Group == GroupEnum.None))
+                        @foreach (var user in Model.Accounts.Where(x => x.Group == Group.None))
                         {
                             <tr>
                                 <th scope="row">@n</th>
@@ -43,13 +43,13 @@
                                 <td>@user.LastName</td>
                                 @switch (user.Position)
                                 {
-                                    case PositionEnum.None:
+                                    case Position.None:
                                         <td>-</td>
                                         break;
-                                    case PositionEnum.WarehouseWorker:
+                                    case Position.WarehouseWorker:
                                         <td>Magazynier</td>
                                         break;
-                                    case PositionEnum.TeamLeader:
+                                    case Position.TeamLeader:
                                         <td>Kierownik</td>
                                         break;
                                 }
@@ -68,14 +68,14 @@
         </div>
     }
 
-    @if (Model.Accounts.Where(x => x.Group == GroupEnum.GroupA).Any())
+    @if (Model.Accounts.Where(x => x.Group == Group.GroupA).Any())
     {
         <div class="card pb-0 mb-4">
             <div class="card-header">
                 <h3 class="mb-0 btn-group">Grupa A:</h3>
                 @if (_sim.IsSignedIn(User) && User.IsInRole("Administrator"))
                 {
-                    <a class="btn btn-secondary btn-group float-right" asp-controller="Group" asp-action="EditHours" asp-route-group="@GroupEnum.GroupA">Zmień godziny pracy</a>
+                    <a class="btn btn-secondary btn-group float-right" asp-controller="Group" asp-action="EditHours" asp-route-group="@Group.GroupA">Zmień godziny pracy</a>
                 }
             </div>
             <div class="card-body px-0 pt-0 pb-0">
@@ -95,7 +95,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var user in Model.Accounts.Where(x => x.Group == GroupEnum.GroupA))
+                        @foreach (var user in Model.Accounts.Where(x => x.Group == Group.GroupA))
                         {
                             <tr>
                                 <th scope="row">@a</th>
@@ -103,13 +103,13 @@
                                 <td>@user.LastName</td>
                                 @switch (user.Position)
                                 {
-                                    case PositionEnum.None:
+                                    case Position.None:
                                         <td>-</td>
                                         break;
-                                    case PositionEnum.WarehouseWorker:
+                                    case Position.WarehouseWorker:
                             <td>Magazynier</td>
                                         break;
-                                    case PositionEnum.TeamLeader:
+                                    case Position.TeamLeader:
                                         <td>Kierownik</td>
                                         break;
                                 }
@@ -128,14 +128,14 @@
         </div>
     }
 
-    @if (Model.Accounts.Where(x => x.Group == GroupEnum.GroupB).Any())
+    @if (Model.Accounts.Where(x => x.Group == Group.GroupB).Any())
     {
         <div class="card pb-0 mb-4">
             <div class="card-header">
                 <h3 class="mb-0 btn-group">Grupa B:</h3>
                 @if (_sim.IsSignedIn(User) && User.IsInRole("Administrator"))
                 {
-                    <a class="btn btn-secondary btn-group float-right" asp-controller="Group" asp-action="EditHours" asp-route-group="@GroupEnum.GroupB">Zmień godziny pracy</a>
+                    <a class="btn btn-secondary btn-group float-right" asp-controller="Group" asp-action="EditHours" asp-route-group="@Group.GroupB">Zmień godziny pracy</a>
                 }
             </div>
             <div class="card-body px-0 pt-0 pb-0">
@@ -155,7 +155,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var user in Model.Accounts.Where(x => x.Group == GroupEnum.GroupB))
+                        @foreach (var user in Model.Accounts.Where(x => x.Group == Group.GroupB))
                         {
                             <tr>
                                 <th scope="row">@b</th>
@@ -163,13 +163,13 @@
                                 <td>@user.LastName</td>
                                 @switch (user.Position)
                                 {
-                                    case PositionEnum.None:
+                                    case Position.None:
                                         <td>-</td>
                                         break;
-                                    case PositionEnum.WarehouseWorker:
+                                    case Position.WarehouseWorker:
                             <td>Magazynier</td>
                                         break;
-                                    case PositionEnum.TeamLeader:
+                                    case Position.TeamLeader:
                                         <td>Kierownik</td>
                                         break;
                                 }
@@ -188,14 +188,14 @@
         </div>
     }
 
-    @if (Model.Accounts.Where(x => x.Group == GroupEnum.GroupC).Any())
+    @if (Model.Accounts.Where(x => x.Group == Group.GroupC).Any())
     {
         <div class="card pb-0 mb-4">
             <div class="card-header">
                 <h3 class="mb-0 btn-group">Grupa C:</h3>
                 @if (_sim.IsSignedIn(User) && User.IsInRole("Administrator"))
                 {
-                    <a class="btn btn-secondary btn-group float-right" asp-controller="Group" asp-action="EditHours" asp-route-group="@GroupEnum.GroupC">Zmień godziny pracy</a>
+                    <a class="btn btn-secondary btn-group float-right" asp-controller="Group" asp-action="EditHours" asp-route-group="@Group.GroupC">Zmień godziny pracy</a>
                 }
             </div>
             <div class="card-body px-0 pt-0 pb-0">
@@ -215,7 +215,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var user in Model.Accounts.Where(x => x.Group == GroupEnum.GroupC))
+                        @foreach (var user in Model.Accounts.Where(x => x.Group == Group.GroupC))
                         {
                             <tr>
                                 <th scope="row">@c</th>
@@ -223,13 +223,13 @@
                                 <td>@user.LastName</td>
                                 @switch (user.Position)
                                 {
-                                    case PositionEnum.None:
+                                    case Position.None:
                                         <td>-</td>
                                         break;
-                                    case PositionEnum.WarehouseWorker:
+                                    case Position.WarehouseWorker:
                             <td>Magazynier</td>
                                         break;
-                                    case PositionEnum.TeamLeader:
+                                    case Position.TeamLeader:
                                         <td>Kierownik</td>
                                         break;
                                 }
