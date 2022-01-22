@@ -1,4 +1,4 @@
-﻿@model List<MVC_FirstApp.Models.ViewModels.AccountHistoryViewModel>
+﻿@model List<AccountHistoryViewModel>
 
 @{
     ViewData["Title"] = "AccountHistory";
@@ -21,7 +21,7 @@
                     <td>@record.ActionType</td>
                     <td>@record.Amount</td>
                     <td>@record.BalanceAfter</td>
-                    <td>@record.Date</td>
+                    <td>@record.CreatedAt</td>
                 </tr>
             }
         </tbody>

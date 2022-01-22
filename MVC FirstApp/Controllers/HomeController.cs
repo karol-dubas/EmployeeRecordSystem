@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using MVC_FirstApp.Models;
-using MVC_FirstApp.Models.Services;
-using MVC_FirstApp.Models.ViewModels;
+using MVC_FirstApp.Data.Entities;
+using MVC_FirstApp.Services;
+using MVC_FirstApp.ViewModels;
 
 namespace MVC_FirstApp.Controllers
 {

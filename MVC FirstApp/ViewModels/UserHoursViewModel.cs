@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MVC_FirstApp.Models.ViewModels
+namespace MVC_FirstApp.ViewModels
 {
     public class UserHoursViewModel
     {

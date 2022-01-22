@@ -5,10 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using MVC_FirstApp.Models;
-using MVC_FirstApp.Models.Services;
 using Microsoft.EntityFrameworkCore;
-using MVC_FirstApp.Models.ViewModels;
+using MVC_FirstApp.ViewModels;
+using MVC_FirstApp.Services;
 
 namespace MVC_FirstApp.Controllers
 {

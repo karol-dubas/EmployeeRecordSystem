@@ -1,12 +1,14 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using MVC_FirstApp.Models.ViewModels;
+using MVC_FirstApp.Data;
+using MVC_FirstApp.Data.Entities;
+using MVC_FirstApp.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MVC_FirstApp.Models.Services
+namespace MVC_FirstApp.Services
 {
     public class GroupService
     {
@@ -93,7 +95,7 @@ namespace MVC_FirstApp.Models.Services
                 {
                     var userFound = dbContext.Users.Include(x => x.Billing).SingleOrDefault(x => x.Id == user.UserId);
 
-                    userFound.Billing.MinutesWorked += (data.MinutesToEdit + (data.HoursToEdit * 60));
+                    userFound.Billing.MinutesWorked += data.MinutesToEdit + data.HoursToEdit * 60;
                 }
             }
             else
@@ -102,12 +104,10 @@ namespace MVC_FirstApp.Models.Services
                 {
                     var userFound = dbContext.Users.Include(x => x.Billing).SingleOrDefault(x => x.Id == user.UserId);
 
-                    var newTime = userFound.Billing.MinutesWorked -= (data.MinutesToEdit + (data.HoursToEdit * 60));
+                    var newTime = userFound.Billing.MinutesWorked -= data.MinutesToEdit + data.HoursToEdit * 60;
 
                     if (newTime < 0)
-                    {
                         return true;
-                    }
                 }
             }
 
@@ -122,16 +122,16 @@ namespace MVC_FirstApp.Models.Services
 
             foreach (var user in users)
             {
-                var amount = (decimal)user.Billing.HourlyPay / 60 * user.Billing.MinutesWorked;
+                var amount = user.Billing.HourlyPay / 60 * user.Billing.MinutesWorked;
                 var balanceAfter = user.Billing.Balance += amount;
                 user.Billing.MinutesWorked = 0;
 
-                user.AccountHistory.Add(new AccountHistoryEntity
+                user.AccountHistory.Add(new AccountAction
                 {
-                    ActionType = "wynagrodzenie",
-                    Amount = (double)amount,
-                    BalanceAfter = (double)balanceAfter,
-                    Date = DateTime.Now
+                    Action = Data.Enums.Action.Salary.ToString(),
+                    Amount = amount,
+                    BalanceAfter = balanceAfter,
+                    CreatedAt = DateTime.Now
                 });
             }
 

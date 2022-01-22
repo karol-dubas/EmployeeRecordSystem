@@ -1,10 +1,11 @@
-﻿using System;
+﻿using MVC_FirstApp.Data.Entities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MVC_FirstApp.Models.ViewModels
+namespace MVC_FirstApp.ViewModels
 {
     public class EditUserViewModel
     {
@@ -31,7 +32,7 @@ namespace MVC_FirstApp.Models.ViewModels
         [Display(Name = "Stawka na godzinę [zł/h]")]
         [Required(ErrorMessage = "Pole 'Stawka na godzinę' jest wymagane")]
         [Range(0, double.MaxValue, ErrorMessage = "Wartość musi być dodatnia")]
-        public double HourlyPay { get; set; }
+        public decimal HourlyPay { get; set; }
 
         [Display(Name = "Czas przepracowany")]
         public string HoursMinutesWorked { get; set; }

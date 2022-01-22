@@ -4,13 +4,11 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MVC_FirstApp.Models
+namespace MVC_FirstApp.Data.Entities
 {
-    public enum Group
+    public class Group
     {
-        None,
-        GroupA,
-        GroupB,
-        GroupC
+        public long Id { get; set; }
+        public string Name { get; set; }
     }
 }

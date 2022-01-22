@@ -1,12 +1,14 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using MVC_FirstApp.Models.ViewModels;
+using MVC_FirstApp.Data;
+using MVC_FirstApp.Data.Entities;
+using MVC_FirstApp.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MVC_FirstApp.Models.Services
+namespace MVC_FirstApp.Services
 {
     public class UserDataService
     {
@@ -86,16 +88,14 @@ namespace MVC_FirstApp.Models.Services
             var balanceAfter = user.Billing.Balance -= amount;
 
             if (balanceAfter < 0)
-            {
                 return true;
-            }
 
-            user.AccountHistory.Add(new AccountHistoryEntity
+            user.AccountHistory.Add(new AccountAction
             {
-                ActionType = "wypłata",
-                Amount = (double)amount,
-                BalanceAfter = (double)balanceAfter,
-                Date = DateTime.Now
+                Action = Data.Enums.Action.Withdrawal.ToString(),
+                Amount = amount,
+                BalanceAfter = balanceAfter,
+                CreatedAt = DateTimeOffset.Now
             });
 
             dbContext.SaveChanges();
@@ -107,11 +107,11 @@ namespace MVC_FirstApp.Models.Services
             var vm = dbContext.Users.Include(x => x.AccountHistory).SingleOrDefault(x => x.Id == id)
                .AccountHistory.Select(x => new AccountHistoryViewModel
                {
-                   ActionType = x.ActionType,
+                   ActionType = x.Action.ToString(),
                    Amount = string.Format($"{Math.Round(x.Amount, 2)} zł"),
                    BalanceAfter = string.Format($"{Math.Round(x.BalanceAfter, 2)} zł"),
-                   Date = x.Date
-               }).OrderByDescending(x => x.Date).ToList();
+                   CreatedAt = x.CreatedAt
+               }).OrderByDescending(x => x.CreatedAt).ToList();
 
             return vm;
         }
@@ -125,9 +125,7 @@ namespace MVC_FirstApp.Models.Services
             foreach (var role in roleManager.Roles.ToList())
             {
                 if (await userManager.IsInRoleAsync(user, role.Name))
-                {
                     userRolesList.Add(role.Name);
-                }
             }
             var userRoles = string.Join(", ", userRolesList);
 

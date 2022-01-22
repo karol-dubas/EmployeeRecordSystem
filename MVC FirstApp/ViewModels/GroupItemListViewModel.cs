@@ -1,9 +1,10 @@
-﻿using System;
+﻿using MVC_FirstApp.Data.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MVC_FirstApp.Models.ViewModels
+namespace MVC_FirstApp.ViewModels
 {
     public class GroupItemListViewModel
     {
@@ -13,6 +14,6 @@ namespace MVC_FirstApp.Models.ViewModels
         public Group Group { get; set; }
         public Position Position { get; set; }
         public string HoursMinutesWorked { get; set; }
-        public double HourlyPay { get; set; }
+        public decimal HourlyPay { get; set; }
     }
 }

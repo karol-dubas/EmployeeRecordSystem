@@ -1,9 +1,10 @@
-﻿using System;
+﻿using MVC_FirstApp.Data.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MVC_FirstApp.Models.ViewModels
+namespace MVC_FirstApp.ViewModels
 {
     public class HomeUserViewModel
     {

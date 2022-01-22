@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using MVC_FirstApp.Models;
-using MVC_FirstApp.Models.Services;
-using MVC_FirstApp.Models.ViewModels;
+using MVC_FirstApp.Services;
+using MVC_FirstApp.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;

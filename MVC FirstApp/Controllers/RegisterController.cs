@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using MVC_FirstApp.Models.Services;
-using MVC_FirstApp.Models.ViewModels;
+using MVC_FirstApp.Services;
+using MVC_FirstApp.ViewModels;
 
 namespace MVC_FirstApp.Controllers
 {

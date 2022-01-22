@@ -1,12 +1,14 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using MVC_FirstApp.Models.ViewModels;
+using MVC_FirstApp.Data;
+using MVC_FirstApp.Data.Entities;
+using MVC_FirstApp.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MVC_FirstApp.Models.Services
+namespace MVC_FirstApp.Services
 {
     public class AccountService
     {
@@ -33,9 +35,7 @@ namespace MVC_FirstApp.Models.Services
                 UserName = data.UserName,
                 FirstName = data.FirstName,
                 LastName = data.LastName,
-                Group = Group.None,
-                Position = Position.None,
-                Billing = new BillingEntity()
+                Billing = new Billing()
                 {
                     HourlyPay = 0,
                     MinutesWorked = 0,
@@ -67,8 +67,8 @@ namespace MVC_FirstApp.Models.Services
 
             foreach (var history in user.AccountHistory)
             {
-                var row = await dbContext.Histories.FindAsync(history.Id);
-                dbContext.Histories.Remove(row);
+                var row = await dbContext.AccountActions.FindAsync(history.Id);
+                dbContext.AccountActions.Remove(row);
             }
 
             dbContext.Billings.Remove(userBilling);
@@ -98,9 +98,7 @@ namespace MVC_FirstApp.Models.Services
             foreach (var user in await userManager.Users.ToListAsync())
             {
                 if (await userManager.IsInRoleAsync(user, role.Name))
-                {
                     vm.Users.Add(string.Format($"- {user.FirstName} {user.LastName}, {user.UserName}"));
-                }
             }
 
             return vm;
@@ -122,9 +120,7 @@ namespace MVC_FirstApp.Models.Services
                 };
 
                 if (await userManager.IsInRoleAsync(user, role.Name))
-                {
                     vm.IsSelected = true;
-                }
                 else
                 {
                     vm.IsSelected = false;
@@ -141,14 +137,12 @@ namespace MVC_FirstApp.Models.Services
             var role = await roleManager.FindByNameAsync(roleName);
             IdentityResult result = null;
 
-            for (int i = 0; i < model.Count; i++)
+            for (var i = 0; i < model.Count; i++)
             {
                 var user = await userManager.FindByIdAsync(model[i].UserId);
 
-                if (model[i].IsSelected && !(await userManager.IsInRoleAsync(user, role.Name)))
-                {
+                if (model[i].IsSelected && !await userManager.IsInRoleAsync(user, role.Name))
                     result = await userManager.AddToRoleAsync(user, role.Name);
-                }
                 else if (!model[i].IsSelected && await userManager.IsInRoleAsync(user, role.Name))
                 {
                     result = await userManager.RemoveFromRoleAsync(user, role.Name);

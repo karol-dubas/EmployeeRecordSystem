@@ -13,8 +13,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MVC_FirstApp.Controllers;
-using MVC_FirstApp.Models;
-using MVC_FirstApp.Models.Services;
+using MVC_FirstApp.Data;
+using MVC_FirstApp.Data.Entities;
+using MVC_FirstApp.Services;
 
 namespace MVC_FirstApp
 {

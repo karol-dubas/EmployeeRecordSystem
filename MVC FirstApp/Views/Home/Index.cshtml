@@ -1,4 +1,4 @@
-﻿@model MVC_FirstApp.Models.ViewModels.HomeUserViewModel
+﻿@model HomeUserViewModel
 @inject Microsoft.AspNetCore.Identity.SignInManager<ApplicationUser> _sim;
 
 @{
@@ -14,8 +14,8 @@
             <div class="card-body">
                 @if (_sim.IsSignedIn(User) && (User.IsInRole("Pracownik") || User.IsInRole("Administrator")))
                 {
-                    <a class="btn btn-primary btn-block" asp-action="Withdrawal" asp-controller="Home">Wypłać pieniądze</a>
-                    <a class="btn btn-primary btn-block" asp-action="AccountHistory" asp-controller="Home" asp-route-id="@Model.Id">Historia konta</a>
+                        <a class="btn btn-primary btn-block" asp-action="Withdrawal" asp-controller="Home">Wypłać pieniądze</a>
+                        <a class="btn btn-primary btn-block" asp-action="AccountHistory" asp-controller="Home" asp-route-id="@Model.Id">Historia konta</a>
                 }
                 <a class="btn btn-primary btn-block" asp-action="Password" asp-controller="Home" asp-route-id="@Model.Id">Zmień hasło</a>
             </div>
@@ -39,36 +39,36 @@
                         </tr>
                         <tr>
                             <td>Grupa</td>
-                            @switch (Model.Group)
-                            {
+                            @*@switch (Model.Group)
+                                {
                                 case Group.None:
-                                    <td>brak</td>
-                                    break;
+                                <td>brak</td>
+                                break;
                                 case Group.GroupA:
-                                    <td>Grupa A</td>
-                                    break;
+                                <td>Grupa A</td>
+                                break;
                                 case Group.GroupB:
-                                    <td>Grupa B</td>
-                                    break;
+                                <td>Grupa B</td>
+                                break;
                                 case Group.GroupC:
-                                    <td>Grupa C</td>
-                                    break;
-                            }
+                                <td>Grupa C</td>
+                                break;
+                                }*@
                         </tr>
                         <tr>
                             <td>Stanowisko</td>
-                            @switch (Model.Position)
+                            @*@switch (Model.Position)
                             {
                                 case Position.None:
-                                    <td>brak</td>
+                                            <td>brak</td>
                                     break;
                                 case Position.WarehouseWorker:
-                                    <td>Magazynier</td>
+                                            <td>Magazynier</td>
                                     break;
                                 case Position.TeamLeader:
-                                    <td>Kierownik</td>
+                                            <td>Kierownik</td>
                                     break;
-                            }
+                            }*@
                         </tr>
                         <tr>
                             <td>Czas przepracowany</td>
