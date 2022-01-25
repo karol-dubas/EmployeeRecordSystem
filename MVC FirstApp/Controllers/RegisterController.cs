@@ -10,11 +10,11 @@ namespace MVC_FirstApp.Controllers
 {
     public class RegisterController : Controller
     {
-        private readonly AccountService accountService;
+        private readonly AccountService _accountService;
 
         public RegisterController(AccountService accountService)
         {
-            this.accountService = accountService;
+            _accountService = accountService;
         }
 
         [HttpGet]
@@ -26,7 +26,6 @@ namespace MVC_FirstApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Index(RegisterViewModel data)
         {
-            //VM requirements
             if (!ModelState.IsValid)
             {
                 return View(data);
@@ -38,9 +37,8 @@ namespace MVC_FirstApp.Controllers
                 return View(data);
             }
 
-            var result = await accountService.CreateUser(data);
+            var result = await _accountService.CreateUser(data);
 
-            //Identity requirements
             if (result.Succeeded)
             {
                 return RedirectToAction("Index", "Home");

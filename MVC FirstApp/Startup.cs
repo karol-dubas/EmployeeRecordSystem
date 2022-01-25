@@ -31,12 +31,13 @@ namespace MVC_FirstApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews().AddRazorRuntimeCompilation();
+            services.AddControllersWithViews()
+                .AddRazorRuntimeCompilation();
 
             services.AddDbContext<MvcDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("MvcConnection")));
 
-            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            services.AddIdentity<User, IdentityRole>(options =>
                 {
                     options.Password.RequiredLength = 4;
                     options.Password.RequireDigit = false;
@@ -46,7 +47,8 @@ namespace MVC_FirstApp
                 })
                 .AddEntityFrameworkStores<MvcDbContext>();
 
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie();
 
             services.ConfigureApplicationCookie(options =>
                 {
@@ -56,6 +58,7 @@ namespace MVC_FirstApp
             services.AddTransient<AccountService>();
             services.AddTransient<GroupService>();
             services.AddTransient<UserDataService>();
+            services.AddScoped<DatabaseSeeder>();
 
             services.Configure<SecurityStampValidatorOptions>(options =>
                 {
@@ -64,8 +67,10 @@ namespace MVC_FirstApp
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, DatabaseSeeder seeder)
         {
+            seeder.Seed();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

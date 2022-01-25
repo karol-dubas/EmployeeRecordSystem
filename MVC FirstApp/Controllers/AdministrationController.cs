@@ -13,62 +13,62 @@ namespace MVC_FirstApp.Controllers
     [Authorize(Roles = "Administrator")]
     public class AdministrationController : Controller
     {
-        private readonly AccountService accountService;
-        private readonly RoleManager<IdentityRole> roleManager;
+        //        private readonly AccountService accountService;
+        //        private readonly RoleManager<IdentityRole> roleManager;
 
-        public AdministrationController(AccountService accountService,
-            RoleManager<IdentityRole> roleManager)
-        {
-            this.accountService = accountService;
-            this.roleManager = roleManager;
-        }
+        //        public AdministrationController(AccountService accountService,
+        //            RoleManager<IdentityRole> roleManager)
+        //        {
+        //            this.accountService = accountService;
+        //            this.roleManager = roleManager;
+        //        }
 
-        [HttpGet]
-        public IActionResult RolesList()
-        {
-            var roles = roleManager.Roles;
-            return View(roles);
-        }
+        //        [HttpGet]
+        //        public IActionResult RolesList()
+        //        {
+        //            var roles = roleManager.Roles;
+        //            return View(roles);
+        //        }
 
-        [HttpGet]
-        public async Task<IActionResult> RolePreview(string name)
-        {
-            var vm = await accountService.GetUsersInRole(name);
+        //        [HttpGet]
+        //        public async Task<IActionResult> RolePreview(string name)
+        //        {
+        //            var vm = await accountService.GetUsersInRole(name);
 
-            return View(vm);
-        }
+        //            return View(vm);
+        //        }
 
-        [HttpGet]
-        public async Task<IActionResult> EditUsersInRole(string name)
-        {
-            ViewBag.roleName = name;
+        //        [HttpGet]
+        //        public async Task<IActionResult> EditUsersInRole(string name)
+        //        {
+        //            ViewBag.roleName = name;
 
-            var vm = await accountService.GetToEditUsersInRole(name);
+        //            var vm = await accountService.GetToEditUsersInRole(name);
 
-            return View(vm);
-        }
+        //            return View(vm);
+        //        }
 
-        [HttpPost]
-        public async Task<IActionResult> EditUsersInRole(List<UserRoleViewModel> model, string name)
-        {
-            var result = await accountService.EditUsersInRole(model, name);
+        //        [HttpPost]
+        //        public async Task<IActionResult> EditUsersInRole(List<UserRoleViewModel> model, string name)
+        //        {
+        //            var result = await accountService.EditUsersInRole(model, name);
 
-            if (result == null)
-            {
-                return RedirectToAction("RolePreview", new { Name = name });
-            }
+        //            if (result == null)
+        //            {
+        //                return RedirectToAction("RolePreview", new { Name = name });
+        //            }
 
-            if (result.Succeeded)
-            {
-                return RedirectToAction("RolePreview", new { Name = name });
-            }
+        //            if (result.Succeeded)
+        //            {
+        //                return RedirectToAction("RolePreview", new { Name = name });
+        //            }
 
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError("", error.Description);
-            }
+        //            foreach (var error in result.Errors)
+        //            {
+        //                ModelState.AddModelError("", error.Description);
+        //            }
 
-            return View();
-        }
+        //            return View();
+        //        }
     }
 }

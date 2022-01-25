@@ -10,47 +10,47 @@ namespace MVC_FirstApp.Controllers
 {
     public class LoginController : Controller
     {
-        private readonly AccountService accountService;
+        //        private readonly AccountService accountService;
 
-        public LoginController(AccountService accountService)
-        {
-            this.accountService = accountService;
-        }
+        //        public LoginController(AccountService accountService)
+        //        {
+        //            this.accountService = accountService;
+        //        }
 
-        [HttpGet]
-        public IActionResult Index()
-        {
-            return View();
-        }
+        //        [HttpGet]
+        //        public IActionResult Index()
+        //        {
+        //            return View();
+        //        }
 
-        [HttpPost]
-        public async Task<IActionResult> Index(LoginViewModel data)
-        {
-            //VM requirements
-            if (!ModelState.IsValid)
-            {
-                return View(data);
-            }
+        //        [HttpPost]
+        //        public async Task<IActionResult> Index(LoginViewModel data)
+        //        {
+        //            //VM requirements
+        //            if (!ModelState.IsValid)
+        //            {
+        //                return View(data);
+        //            }
 
-            var result = await accountService.SignIn(data);
+        //            var result = await accountService.SignIn(data);
 
-            //Identity requirements
-            if (result.Succeeded)
-            {
-                return RedirectToAction("Index", "Home");
-            }
+        //            //Identity requirements
+        //            if (result.Succeeded)
+        //            {
+        //                return RedirectToAction("Index", "Home");
+        //            }
 
-            ModelState.AddModelError("", "Nieprawidłowe dane");
+        //            ModelState.AddModelError("", "Nieprawidłowe dane");
 
-            return View(data);
-        }
+        //            return View(data);
+        //        }
 
-        [HttpGet]
-        public IActionResult Logout()
-        {
-            accountService.SignOut();
+        //        [HttpGet]
+        //        public IActionResult Logout()
+        //        {
+        //            accountService.SignOut();
 
-            return RedirectToAction("Index", "Login");
-        }
+        //            return RedirectToAction("Index", "Login");
+        //        }
     }
 }

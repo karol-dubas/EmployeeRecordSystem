@@ -10,5 +10,7 @@ namespace MVC_FirstApp.Data.Entities
     {
         public long Id { get; set; }
         public string Name { get; set; }
+
+        public virtual List<User> Users { get; set; } = new();
     }
 }
