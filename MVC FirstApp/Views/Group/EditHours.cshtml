@@ -4,7 +4,6 @@
     ViewData["Title"] = "EditHours";
 }
 
-
 <form method="post">
     <div class="card mx-auto col-6 p-0">
         <div class="card-header">
@@ -32,7 +31,7 @@
                     <div class="input-group">
                         <input asp-for="HoursToEdit" class="form-control">
                         <div class="input-group-append">
-                            <div class="input-group-text">gdz.</div>
+                            <div class="input-group-text">h</div>
                         </div>
                     </div>
                 </div>
@@ -47,10 +46,10 @@
             <div class="row m-auto">
                 <div class="btn-group btn-group-toggle" data-toggle="buttons">
                     <label class="btn btn-success px-3 active">
-                        <input checked="checked" id="AddHours" name="AddHours" type="radio" value="true"> Dodaj
+                        <input checked="checked" type="radio" asp-for="WorkTimeOperation" value="@WorkTimeOperation.Add"> Dodaj
                     </label>
                     <label class="btn btn-danger">
-                        <input id="AddHours" name="AddHours" type="radio" value="false">Odejmij
+                        <input type="radio" asp-for="WorkTimeOperation" value="@WorkTimeOperation.Substract">Odejmij
                     </label>
                 </div>
                 </div>

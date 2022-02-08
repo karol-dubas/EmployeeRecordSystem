@@ -6,14 +6,13 @@ using System.Threading.Tasks;
 
 namespace MVC_FirstApp.ViewModels
 {
-    public class GroupItemListViewModel
+    public class UserViewModel
     {
         public string Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public Group Group { get; set; }
-        public Position Position { get; set; }
-        public string HoursMinutesWorked { get; set; }
+        public string PositionName { get; set; }
+        public string TimeWorked { get; set; }
         public decimal HourlyPay { get; set; }
     }
 }

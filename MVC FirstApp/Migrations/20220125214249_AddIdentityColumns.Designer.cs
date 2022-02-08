@@ -4,6 +4,7 @@ using MVC_FirstApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MVC_FirstApp.Migrations
 {
     [DbContext(typeof(MvcDbContext))]
-    partial class MvcDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220125214249_AddIdentityColumns")]
+    partial class AddIdentityColumns
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -155,6 +157,28 @@ namespace MVC_FirstApp.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("MVC_FirstApp.Data.Entities.Billing", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<decimal>("Balance")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("HourlyPay")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<long>("MinutesWorked")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Billings");
+                });
+
             modelBuilder.Entity("MVC_FirstApp.Data.Entities.Group", b =>
                 {
                     b.Property<long>("Id")
@@ -169,7 +193,7 @@ namespace MVC_FirstApp.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Groups", (string)null);
+                    b.ToTable("Groups");
                 });
 
             modelBuilder.Entity("MVC_FirstApp.Data.Entities.Position", b =>
@@ -186,13 +210,16 @@ namespace MVC_FirstApp.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Positions", (string)null);
+                    b.ToTable("Positions");
                 });
 
             modelBuilder.Entity("MVC_FirstApp.Data.Entities.User", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<int?>("BillingId")
+                        .HasColumnType("int");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -223,15 +250,14 @@ namespace MVC_FirstApp.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UserBillingId")
-                        .HasColumnType("int");
-
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BillingId");
 
                     b.HasIndex("GroupId");
 
@@ -242,33 +268,7 @@ namespace MVC_FirstApp.Migrations
 
                     b.HasIndex("PositionId");
 
-                    b.HasIndex("UserBillingId")
-                        .IsUnique()
-                        .HasFilter("[UserBillingId] IS NOT NULL");
-
                     b.ToTable("Users", (string)null);
-                });
-
-            modelBuilder.Entity("MVC_FirstApp.Data.Entities.UserBilling", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<decimal>("Balance")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("HourlyPay")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<long>("MinutesWorked")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("UserBillings", (string)null);
                 });
 
             modelBuilder.Entity("MVC_FirstApp.Data.Entities.UserOperation", b =>
@@ -298,7 +298,7 @@ namespace MVC_FirstApp.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserOperations", (string)null);
+                    b.ToTable("UserOperations");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -354,6 +354,10 @@ namespace MVC_FirstApp.Migrations
 
             modelBuilder.Entity("MVC_FirstApp.Data.Entities.User", b =>
                 {
+                    b.HasOne("MVC_FirstApp.Data.Entities.Billing", "Billing")
+                        .WithMany()
+                        .HasForeignKey("BillingId");
+
                     b.HasOne("MVC_FirstApp.Data.Entities.Group", "Group")
                         .WithMany("Users")
                         .HasForeignKey("GroupId");
@@ -362,24 +366,18 @@ namespace MVC_FirstApp.Migrations
                         .WithMany("Users")
                         .HasForeignKey("PositionId");
 
-                    b.HasOne("MVC_FirstApp.Data.Entities.UserBilling", "UserBilling")
-                        .WithOne("User")
-                        .HasForeignKey("MVC_FirstApp.Data.Entities.User", "UserBillingId");
+                    b.Navigation("Billing");
 
                     b.Navigation("Group");
 
                     b.Navigation("Position");
-
-                    b.Navigation("UserBilling");
                 });
 
             modelBuilder.Entity("MVC_FirstApp.Data.Entities.UserOperation", b =>
                 {
-                    b.HasOne("MVC_FirstApp.Data.Entities.User", "User")
-                        .WithMany("UserOperations")
+                    b.HasOne("MVC_FirstApp.Data.Entities.User", null)
+                        .WithMany("AccountOperations")
                         .HasForeignKey("UserId");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("MVC_FirstApp.Data.Entities.Group", b =>
@@ -394,12 +392,7 @@ namespace MVC_FirstApp.Migrations
 
             modelBuilder.Entity("MVC_FirstApp.Data.Entities.User", b =>
                 {
-                    b.Navigation("UserOperations");
-                });
-
-            modelBuilder.Entity("MVC_FirstApp.Data.Entities.UserBilling", b =>
-                {
-                    b.Navigation("User");
+                    b.Navigation("AccountOperations");
                 });
 #pragma warning restore 612, 618
         }

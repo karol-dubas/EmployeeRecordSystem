@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MVC_FirstApp.Data.Entities
 {
-    public class Billing
+    public class UserBilling
     {
         public int Id { get; set; }
         public decimal HourlyPay { get; set; }

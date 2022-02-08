@@ -24,10 +24,10 @@ namespace MVC_FirstApp.ViewModels
         public string LastName { get; set; }
 
         [Display(Name = "Grupa")]
-        public Group Group { get; set; }
+        public List<GroupViewModel> Groups { get; set; }
 
         [Display(Name = "Stanowisko")]
-        public Position Position { get; set; }
+        public List<PositionViewModel> Positions { get; set; }
 
         [Display(Name = "Stawka na godzinę [zł/h]")]
         [Required(ErrorMessage = "Pole 'Stawka na godzinę' jest wymagane")]
@@ -42,5 +42,8 @@ namespace MVC_FirstApp.ViewModels
 
         [Display(Name = "Uprawnienia")]
         public string Roles { get; set; }
+
+        public long SelectedGroupId { get; set; }
+        public long SelectedPositionId { get; set; }
     }
 }

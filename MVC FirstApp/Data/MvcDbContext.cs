@@ -14,7 +14,7 @@ namespace MVC_FirstApp.Data
     {
         public MvcDbContext(DbContextOptions<MvcDbContext> options) : base(options) { }
 
-        public DbSet<Billing> Billings { get; set; }
+        public DbSet<UserBilling> UserBillings { get; set; }
         public DbSet<UserOperation> UserOperations { get; set; }
         public DbSet<Group> Groups { get; set; }
         public DbSet<Position> Positions { get; set; }
@@ -26,7 +26,6 @@ namespace MVC_FirstApp.Data
             builder.Entity<User>()
                 .ToTable("Users") // rename table
                 .Ignore(c => c.TwoFactorEnabled)
-                .Ignore(c => c.SecurityStamp)
                 .Ignore(c => c.PhoneNumberConfirmed)
                 .Ignore(c => c.PhoneNumber)
                 .Ignore(c => c.NormalizedEmail)
@@ -34,7 +33,6 @@ namespace MVC_FirstApp.Data
                 .Ignore(c => c.LockoutEnabled)
                 .Ignore(c => c.EmailConfirmed)
                 .Ignore(c => c.Email)
-                .Ignore(c => c.ConcurrencyStamp)
                 .Ignore(c => c.AccessFailedCount);
 
             builder.Entity<User>().Property(c => c.FirstName).IsRequired();
@@ -45,18 +43,6 @@ namespace MVC_FirstApp.Data
             builder.Entity<Position>().Property(c => c.Name).IsRequired();
 
             builder.Entity<Group>().Property(c => c.Name).IsRequired();
-
-            builder.Entity<IdentityRole>()
-                .ToTable("Roles")
-                .Ignore(c => c.ConcurrencyStamp);
-
-            builder.Entity<IdentityUserRole<string>>()
-                .ToTable("UserRoles");
-
-            builder.Ignore<IdentityUserToken<string>>();
-            builder.Ignore<IdentityUserLogin<string>>();
-            builder.Ignore<IdentityUserClaim<string>>();
-            builder.Ignore<IdentityRoleClaim<string>>();
         }
     }
 }

@@ -21,13 +21,13 @@
                         <li class="nav-item mr-2">
                             <a class="btn btn-light" asp-area="" asp-controller="Home" asp-action="Index">Moje konto</a>
                         </li>
-                        @if (_sim.IsSignedIn(User) && (User.IsInRole("Pracownik") || User.IsInRole("Administrator")))
+                        @if (_sim.IsSignedIn(User) && (User.IsInRole(Roles.Worker) || User.IsInRole(Roles.Admin)))
                         {
                             <li class="nav-item mr-2">
                                 <a class="btn btn-light" asp-area="" asp-controller="Group" asp-action="Index">Grupy</a>
                             </li>
                         }
-                        @if (_sim.IsSignedIn(User) && User.IsInRole("Administrator"))
+                        @if (_sim.IsSignedIn(User) && User.IsInRole(Roles.Admin))
                         {
                             <li class="nav-item mr-2">
                                 <a class="btn btn-light" asp-area="" asp-controller="Administration" asp-action="RolesList">Uprawnienia</a>

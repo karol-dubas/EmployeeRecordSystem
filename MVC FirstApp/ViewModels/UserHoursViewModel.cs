@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using MVC_FirstApp.Constants;
 
 namespace MVC_FirstApp.ViewModels
 {
@@ -18,6 +19,6 @@ namespace MVC_FirstApp.ViewModels
         [Range(0, int.MaxValue, ErrorMessage = "Wartość minut musi być dodatnia")]
         public int MinutesToEdit { get; set; }
 
-        public bool AddHours { get; set; }
+        public WorkTimeOperation WorkTimeOperation { get; set; }
     }
 }

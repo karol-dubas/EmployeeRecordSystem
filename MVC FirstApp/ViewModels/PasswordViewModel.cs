@@ -8,8 +8,6 @@ namespace MVC_FirstApp.ViewModels
 {
     public class PasswordViewModel
     {
-        public string Id { get; set; }
-
         [DataType(DataType.Password)]
         public string CurrentPassword { get; set; }
 

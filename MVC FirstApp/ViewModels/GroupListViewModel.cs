@@ -7,6 +7,7 @@ namespace MVC_FirstApp.ViewModels
 {
     public class GroupListViewModel
     {
-        public IEnumerable<GroupItemListViewModel> Accounts { get; set; }
+        public GroupViewModel Group { get; set; }
+        public IEnumerable<UserViewModel> UsersInGroup { get; set; }
     }
 }

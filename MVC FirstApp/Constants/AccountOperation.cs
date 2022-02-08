@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MVC_FirstApp.Data.Enums
+namespace MVC_FirstApp.Constants
 {
-    public enum Operation
+    public enum AccountOperation
     {
+        [Description("wypłata")]
         Withdrawal,
+        [Description("należność")]
         Salary
     }
 }

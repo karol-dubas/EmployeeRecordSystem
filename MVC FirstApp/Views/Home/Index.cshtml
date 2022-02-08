@@ -12,12 +12,12 @@
                 <h2>Opcje</h2>
             </div>
             <div class="card-body">
-                @if (_sim.IsSignedIn(User) && (User.IsInRole("Pracownik") || User.IsInRole("Administrator")))
+                @if (_sim.IsSignedIn(User) && (User.IsInRole(Roles.Worker) || User.IsInRole(Roles.Admin)))
                 {
                         <a class="btn btn-primary btn-block" asp-action="Withdrawal" asp-controller="Home">Wypłać pieniądze</a>
                         <a class="btn btn-primary btn-block" asp-action="AccountHistory" asp-controller="Home" asp-route-id="@Model.Id">Historia konta</a>
                 }
-                <a class="btn btn-primary btn-block" asp-action="Password" asp-controller="Home" asp-route-id="@Model.Id">Zmień hasło</a>
+                <a class="btn btn-primary btn-block" asp-action="Password" asp-controller="Home">Zmień hasło</a>
             </div>
         </div>
     </div>
@@ -39,40 +39,15 @@
                         </tr>
                         <tr>
                             <td>Grupa</td>
-                            @*@switch (Model.Group)
-                                {
-                                case Group.None:
-                                <td>brak</td>
-                                break;
-                                case Group.GroupA:
-                                <td>Grupa A</td>
-                                break;
-                                case Group.GroupB:
-                                <td>Grupa B</td>
-                                break;
-                                case Group.GroupC:
-                                <td>Grupa C</td>
-                                break;
-                                }*@
+                            <td>@Model.Group</td>
                         </tr>
                         <tr>
                             <td>Stanowisko</td>
-                            @*@switch (Model.Position)
-                            {
-                                case Position.None:
-                                            <td>brak</td>
-                                    break;
-                                case Position.WarehouseWorker:
-                                            <td>Magazynier</td>
-                                    break;
-                                case Position.TeamLeader:
-                                            <td>Kierownik</td>
-                                    break;
-                            }*@
+                            <td>@Model.Position</td>
                         </tr>
                         <tr>
                             <td>Czas przepracowany</td>
-                            <td>@Model.HoursMinutesWorked</td>
+                            <td>@Model.TimeWorked</td>
                         </tr>
                         <tr>
                             <td>Saldo</td>

@@ -11,9 +11,9 @@ namespace MVC_FirstApp.ViewModels
         public string Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public Group Group { get; set; }
-        public Position Position { get; set; }
-        public string HoursMinutesWorked { get; set; }
+        public string Group { get; set; }
+        public string Position { get; set; }
+        public string TimeWorked { get; set; }
         public string Balance { get; set; }
     }
 }

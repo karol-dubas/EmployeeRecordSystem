@@ -4,6 +4,7 @@ using MVC_FirstApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MVC_FirstApp.Migrations
 {
     [DbContext(typeof(MvcDbContext))]
-    partial class MvcDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220208213418_RenameUserBilling")]
+    partial class RenameUserBilling
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -169,7 +171,7 @@ namespace MVC_FirstApp.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Groups", (string)null);
+                    b.ToTable("Groups");
                 });
 
             modelBuilder.Entity("MVC_FirstApp.Data.Entities.Position", b =>
@@ -186,7 +188,7 @@ namespace MVC_FirstApp.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Positions", (string)null);
+                    b.ToTable("Positions");
                 });
 
             modelBuilder.Entity("MVC_FirstApp.Data.Entities.User", b =>
@@ -268,7 +270,7 @@ namespace MVC_FirstApp.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserBillings", (string)null);
+                    b.ToTable("UserBillings");
                 });
 
             modelBuilder.Entity("MVC_FirstApp.Data.Entities.UserOperation", b =>
@@ -298,7 +300,7 @@ namespace MVC_FirstApp.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserOperations", (string)null);
+                    b.ToTable("UserOperations");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

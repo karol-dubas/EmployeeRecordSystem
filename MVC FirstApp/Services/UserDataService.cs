@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using MVC_FirstApp.Constants;
 using MVC_FirstApp.Data;
 using MVC_FirstApp.Data.Entities;
+using MVC_FirstApp.Helpers;
 using MVC_FirstApp.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -12,139 +14,171 @@ namespace MVC_FirstApp.Services
 {
     public class UserDataService
     {
-        //private readonly UserManager<User> userManager;
-        //private readonly MvcDbContext dbContext;
-        //private readonly RoleManager<IdentityRole> roleManager;
+        private readonly UserManager<User> _userManager;
+        private readonly MvcDbContext _dbContext;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        //public UserDataService(UserManager<User> userManager,
-        //    MvcDbContext dbContext,
-        //    RoleManager<IdentityRole> roleManager)
-        //{
-        //    this.userManager = userManager;
-        //    this.dbContext = dbContext;
-        //    this.roleManager = roleManager;
-        //}
+        public UserDataService(UserManager<User> userManager,
+            MvcDbContext dbContext,
+            RoleManager<IdentityRole> roleManager)
+        {
+            _userManager = userManager;
+            _dbContext = dbContext;
+            _roleManager = roleManager;
+        }
 
-        //public HomeUserViewModel GetUserDetails(string userId)
-        //{
-        //    var user = dbContext.Users.Include(x => x.Billing).SingleOrDefault(x => x.Id == userId);
+        public HomeUserViewModel GetUserDetails(string userId)
+        {
+            var user = _dbContext.Users
+                .Include(x => x.UserBilling)
+                .Include(x => x.Group)
+                .Include(x => x.Position)
+                .SingleOrDefault(x => x.Id == userId);
 
-        //    var vm = new HomeUserViewModel
-        //    {
-        //        Id = user.Id,
-        //        FirstName = user.FirstName,
-        //        LastName = user.LastName,
-        //        Group = user.Group,
-        //        Position = user.Position,
-        //        HoursMinutesWorked = MinsToHoursMins(user.Billing.MinutesWorked),
-        //        Balance = string.Format($"{user.Billing.Balance}zł")
-        //    };
+            var vm = new HomeUserViewModel
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Group = user.Group?.Name,
+                Position = user.Position?.Name,
+                TimeWorked = new TimeSpan(0, (int)user.UserBilling.MinutesWorked, 0).ToHoursAndMins(),
+                Balance = string.Format($"{user.UserBilling.Balance}zł")
+            };
 
-        //    return vm;
-        //}
+            return vm;
+        }
 
-        //private static string MinsToHoursMins(long minutesToConvert)
-        //{
-        //    var hours = minutesToConvert / 60;
-        //    var minutes = minutesToConvert % 60;
+        public async Task<IdentityResult> Update(EditUserViewModel data)
+        {
+            var user = await _dbContext.Users
+                .Include(x => x.UserBilling)
+                .Include(x => x.Position)
+                .Include(x => x.Group)
+                .SingleOrDefaultAsync(x => x.Id == data.Id);
 
-        //    return $"{hours}h {minutes}min";
-        //}
+            var selectedGroup = _dbContext.Groups
+                .SingleOrDefault(x => x.Id == data.SelectedGroupId);
 
-        //public async Task<IdentityResult> Update(EditUserViewModel data)
-        //{
-        //    var user = await dbContext.Users.Include(x => x.Billing).SingleOrDefaultAsync(x => x.Id == data.Id);
+            var selectedPosition = _dbContext.Positions
+                .SingleOrDefault(x => x.Id == data.SelectedPositionId);
 
-        //    user.FirstName = data.FirstName;
-        //    user.LastName = data.LastName;
-        //    user.Group = data.Group;
-        //    user.Position = data.Position;
-        //    user.Billing.HourlyPay = data.HourlyPay;
+            user.FirstName = data.FirstName;
+            user.LastName = data.LastName;
+            user.Group = selectedGroup;
+            user.Position = selectedPosition;
+            user.UserBilling.HourlyPay = data.HourlyPay;
 
-        //    var result = await userManager.UpdateAsync(user);
+            var result = await _userManager.UpdateAsync(user);
 
-        //    return result;
-        //}
+            return result;
+        }
 
-        //public WithdrawalViewModel GetDataToWithdrawMoney(string id)
-        //{
-        //    var user = dbContext.Users.Include(x => x.Billing).SingleOrDefault(x => x.Id == id);
+        public WithdrawalViewModel GetDataToWithdrawMoney(string id)
+        {
+            var user = _dbContext.Users
+                .Include(x => x.UserBilling)
+                .SingleOrDefault(x => x.Id == id);
 
-        //    var vm = new WithdrawalViewModel
-        //    {
-        //        CurrentBalance = string.Format($"{user.Billing.Balance} zł"),
-        //        AmountToWithdraw = user.Billing.Balance
-        //    };
+            var vm = new WithdrawalViewModel
+            {
+                CurrentBalance = string.Format($"{user.UserBilling.Balance} zł"),
+                AmountToWithdraw = user.UserBilling.Balance
+            };
 
-        //    return vm;
-        //}
+            return vm;
+        }
 
-        //public bool WithdrawMoney(WithdrawalViewModel data, string userId)
-        //{
-        //    var user = dbContext.Users.Include(x => x.Billing).Include(x => x.AccountActions)
-        //        .SingleOrDefault(x => x.Id == userId);
+        public bool WithdrawMoney(WithdrawalViewModel data, string userId)
+        {
+            var user = _dbContext.Users
+                .Include(x => x.UserBilling)
+                .Include(x => x.UserOperations)
+                .SingleOrDefault(x => x.Id == userId);
 
-        //    var amount = data.AmountToWithdraw;
-        //    var balanceAfter = user.Billing.Balance -= amount;
+            var amount = data.AmountToWithdraw;
+            var balanceAfter = user.UserBilling.Balance -= amount;
 
-        //    if (balanceAfter < 0)
-        //        return true;
+            if (balanceAfter < 0)
+                return true;
 
-        //    user.AccountActions.Add(new AccountAction
-        //    {
-        //        ActionType = Data.Enums.Action.Withdrawal.ToString(),
-        //        Amount = amount,
-        //        BalanceAfter = balanceAfter,
-        //        CreatedAt = DateTimeOffset.Now
-        //    });
+            user.UserOperations.Add(new UserOperation
+            {
+                OperationType = AccountOperation.Withdrawal.GetDescription(),
+                Amount = amount,
+                BalanceAfter = balanceAfter,
+                CreatedAt = DateTimeOffset.Now
+            });
 
-        //    dbContext.SaveChanges();
-        //    return false;
-        //}
+            _dbContext.SaveChanges();
+            return false;
+        }
 
-        //public List<AccountHistoryViewModel> GetUserHistory(string id)
-        //{
-        //    var vm = dbContext.Users.Include(x => x.AccountActions).SingleOrDefault(x => x.Id == id)
-        //       .AccountActions.Select(x => new AccountHistoryViewModel
-        //       {
-        //           ActionType = x.ActionType.ToString(),
-        //           Amount = string.Format($"{Math.Round(x.Amount, 2)} zł"),
-        //           BalanceAfter = string.Format($"{Math.Round(x.BalanceAfter, 2)} zł"),
-        //           CreatedAt = x.CreatedAt
-        //       }).OrderByDescending(x => x.CreatedAt).ToList();
+        public List<AccountHistoryViewModel> GetUserHistory(string id)
+        {
+            var vm = _dbContext.Users
+                .Include(x => x.UserOperations)
+                .SingleOrDefault(x => x.Id == id)
+                .UserOperations.Select(x => new AccountHistoryViewModel
+                {
+                    OperationType = x.OperationType,
+                    Amount = string.Format($"{Math.Round(x.Amount, 2)} zł"),
+                    BalanceAfter = string.Format($"{Math.Round(x.BalanceAfter, 2)} zł"),
+                    CreatedAt = x.CreatedAt
+                }).OrderByDescending(x => x.CreatedAt).ToList();
 
-        //    return vm;
-        //}
+            return vm;
+        }
 
-        //public async Task<EditUserViewModel> GetToEdit(string id)
-        //{
-        //    var user = await dbContext.Users.Include(x => x.Billing).FirstOrDefaultAsync(x => x.Id == id);
+        public async Task<EditUserViewModel> GetToEdit(string id)
+        {
+            var user = await _dbContext.Users
+                .Include(x => x.UserBilling)
+                .Include(x => x.Group)
+                .Include(x => x.Position)
+                .FirstOrDefaultAsync(x => x.Id == id);
 
-        //    var userRolesList = new List<string>();
+            var userRolesList = new List<string>();
 
-        //    foreach (var role in roleManager.Roles.ToList())
-        //    {
-        //        if (await userManager.IsInRoleAsync(user, role.Name))
-        //            userRolesList.Add(role.Name);
-        //    }
-        //    var userRoles = string.Join(", ", userRolesList);
+            foreach (var role in _roleManager.Roles.ToList())
+            {
+                if (await _userManager.IsInRoleAsync(user, role.Name))
+                    userRolesList.Add(role.Name);
+            }
+            var userRoles = string.Join(", ", userRolesList);
 
-        //    var vm = new EditUserViewModel
-        //    {
-        //        Id = user.Id,
-        //        UserName = user.UserName,
-        //        FirstName = user.FirstName,
-        //        LastName = user.LastName,
-        //        Group = user.Group,
-        //        Position = user.Position,
-        //        Roles = userRoles,
-        //        Balance = user.Billing.Balance,
-        //        HourlyPay = user.Billing.HourlyPay,
-        //        HoursMinutesWorked = MinsToHoursMins(user.Billing.MinutesWorked)
-        //    };
+            var groups = _dbContext.Groups
+                .Select(x => new GroupViewModel
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    IsCurrent = user.GroupId == x.Id,
+                }).ToList();
 
-        //    return vm;
-        //}
+            var positions = _dbContext.Positions
+                .Select(x => new PositionViewModel
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    IsCurrent = user.PositionId == x.Id,
+                }).ToList();
+
+            var vm = new EditUserViewModel
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Groups = groups,
+                Positions = positions,
+                Roles = userRoles,
+                Balance = user.UserBilling.Balance,
+                HourlyPay = user.UserBilling.HourlyPay,
+                HoursMinutesWorked = new TimeSpan(0, (int)user.UserBilling.MinutesWorked, 0).ToHoursAndMins(),
+            };
+
+            return vm;
+        }
     }
 }
 

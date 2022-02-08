@@ -18,8 +18,9 @@ namespace MVC_FirstApp.Data.Entities
         public long? PositionId { get; set; }
         public virtual Position Position { get; set; }
 
-        public virtual Billing Billing { get; set; } = new();
+        public int? UserBillingId { get; set; }
+        public virtual UserBilling UserBilling { get; set; } = new();
 
-        public virtual List<UserOperation> AccountOperations { get; set; }
+        public virtual List<UserOperation> UserOperations { get; set; }
     }
 }

@@ -26,9 +26,6 @@
                         <label asp-for="HoursMinutesWorked"></label><br />
                         <div class="input-group">
                             <input disabled asp-for="HoursMinutesWorked" class="form-control" />
-                            <div class="input-group-append">
-                                <a asp-action="EditHours" asp-controller="Group" asp-route-id="@Model.Id" class="btn btn-secondary">Edytuj</a>
-                            </div>
                         </div>
                         <input type="hidden" asp-for="HoursMinutesWorked" class="form-control" />
                     </div>
@@ -54,8 +51,8 @@
                     </div>
                     <div class="form-group">
                         <span id="confirmDeleteSpan" style="display:none">
-                            <span>Czy chcesz ununąć? </span>
-                            <a class="btn btn-danger" asp-controller="Group" asp-action="DeleteUser" asp-route-id="@Model.Id">Tak</a>
+                            <span>Czy na pewno chcesz usunąć?</span>
+                            <a class="btn btn-danger" asp-controller="ADministration" asp-action="DeleteUser" asp-route-id="@Model.Id">Tak</a>
                             <a class="btn btn-primary" href="#" onclick="confirmDelete(false)">Nie</a>
                         </span>
                         <span id="deleteSpan">
@@ -75,20 +72,37 @@
                         <span asp-validation-for="LastName" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label asp-for="Group"></label>
-                        <select class="custom-select" asp-for="Group">
-                            @*<option value="@Group.None">brak grupy</option>
-                            <option value="@Group.GroupA">Grupa A</option>
-                            <option value="@Group.GroupB">Grupa B</option>
-                            <option value="@Group.GroupC">Grupa C</option>*@
+                        <label asp-for="Groups"></label>
+                        <select class="custom-select" asp-for="SelectedGroupId">
+                            <option value="0">brak</option>
+                            @foreach (var group in Model.Groups)
+                            {
+                                if (group.IsCurrent)
+                                {
+                                    <option selected="selected" value="@group.Id">@group.Name</option>
+                                }
+                                else
+                                {
+                                    <option value="@group.Id">@group.Name</option>
+                                }
+                            }
                         </select>
                     </div>
                     <div class="form-group">
-                        <label asp-for="Position"></label>
-                        <select class="custom-select" asp-for="Position">
-                            @*<option value="@Position.None">brak stanowiska</option>
-                            <option value="@Position.WarehouseWorker">Magazynier</option>
-                            <option value="@Position.TeamLeader">Kierownik</option>*@
+                        <label asp-for="Positions"></label>
+                        <select class="custom-select" asp-for="SelectedPositionId">
+                            <option value="0">brak</option>
+                            @foreach (var position in Model.Positions)
+                            {
+                                if (position.IsCurrent)
+                                {
+                                    <option selected="selected" value="@position.Id">@position.Name</option>
+                                }
+                                else
+                                {
+                                    <option value="@position.Id">@position.Name</option>
+                                }
+                            }
                         </select>
                     </div>
                     <div class="form-group">

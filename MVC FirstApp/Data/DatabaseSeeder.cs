@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using MVC_FirstApp.Constants;
 using MVC_FirstApp.Data.Entities;
 using MVC_FirstApp.Services;
 using System;
@@ -27,12 +28,7 @@ namespace MVC_FirstApp.Data
 
         public void Seed()
         {
-            // Create database and migrate if can't connect 
-            if (!_dbContext.Database.CanConnect())
-            {
-                RelationalDatabaseFacadeExtensions.Migrate(_dbContext.Database);
-            }
-
+            EnsureDatabaseExists();
             ApplyPendinMigrations();
 
             if (!_dbContext.Groups.Any())
@@ -62,10 +58,19 @@ namespace MVC_FirstApp.Data
             }
         }
 
+        // Create database and migrate if can't connect 
+        private void EnsureDatabaseExists()
+        {
+            if (!_dbContext.Database.CanConnect())
+            {
+                RelationalDatabaseFacadeExtensions.Migrate(_dbContext.Database);
+            }
+        }
+
         private void CreateDummyUsers()
         {
-            var groupA = _dbContext.Groups.Single(x => x.Id == 1);
-            var groupB = _dbContext.Groups.Single(x => x.Id == 2);
+            var managerGroup = _dbContext.Groups.Single(x => x.Id == 1);
+            var warehouseGroup = _dbContext.Groups.Single(x => x.Id == 2);
 
             var workerPosition = _dbContext.Positions.Single(x => x.Id == 1);
             var groupLeaderPosition = _dbContext.Positions.Single(x => x.Id == 2);
@@ -76,10 +81,16 @@ namespace MVC_FirstApp.Data
                 FirstName = "Konrad",
                 LastName = "Książka",
                 UserName = "Konrad1",
+                UserBilling = new UserBilling()
+                {
+                    Balance = 4000,
+                    HourlyPay = 100M,
+                    MinutesWorked = 4964
+                }
             };
             _userManager.CreateAsync(user1, "1234").Wait();
             _userManager.AddToRoleAsync(user1, Roles.Admin).Wait();
-            groupA.Users.Add(user1);
+            managerGroup.Users.Add(user1);
             chiefManagerPosition.Users.Add(user1);
 
             var user2 = new User()
@@ -87,10 +98,16 @@ namespace MVC_FirstApp.Data
                 FirstName = "Maciej",
                 LastName = "Woźny",
                 UserName = "Maciej1",
+                UserBilling = new UserBilling()
+                {
+                    Balance = 100,
+                    HourlyPay = 25.2M,
+                    MinutesWorked = 3968
+                }
             };
             _userManager.CreateAsync(user2, "1234").Wait();
             _userManager.AddToRoleAsync(user2, Roles.Worker).Wait();
-            groupB.Users.Add(user2);
+            warehouseGroup.Users.Add(user2);
             workerPosition.Users.Add(user2);
 
             var user3 = new User()
@@ -98,10 +115,16 @@ namespace MVC_FirstApp.Data
                 FirstName = "Leszek",
                 LastName = "Maciejewski",
                 UserName = "Leszek1",
+                UserBilling = new UserBilling()
+                {
+                    Balance = 0,
+                    HourlyPay = 22.1M,
+                    MinutesWorked = 4096
+                }
             };
             _userManager.CreateAsync(user3, "1234").Wait();
             _userManager.AddToRoleAsync(user3, Roles.Worker).Wait();
-            groupB.Users.Add(user3);
+            warehouseGroup.Users.Add(user3);
             workerPosition.Users.Add(user3);
 
             var user4 = new User()
@@ -109,10 +132,16 @@ namespace MVC_FirstApp.Data
                 FirstName = "Igor",
                 LastName = "Szymański",
                 UserName = "Igor1",
+                UserBilling = new UserBilling()
+                {
+                    Balance = 420,
+                    HourlyPay = 22.6M,
+                    MinutesWorked = 2731
+                }
             };
             _userManager.CreateAsync(user4, "1234").Wait();
             _userManager.AddToRoleAsync(user4, Roles.Worker).Wait();
-            groupB.Users.Add(user4);
+            warehouseGroup.Users.Add(user4);
             workerPosition.Users.Add(user4);
 
             var user5 = new User()
@@ -120,10 +149,16 @@ namespace MVC_FirstApp.Data
                 FirstName = "Karol",
                 LastName = "Łysiak",
                 UserName = "Karol1",
+                UserBilling = new UserBilling()
+                {
+                    Balance = 0,
+                    HourlyPay = 23.8M,
+                    MinutesWorked = 3846
+                }
             };
             _userManager.CreateAsync(user5, "1234").Wait();
             _userManager.AddToRoleAsync(user5, Roles.Worker).Wait();
-            groupB.Users.Add(user5);
+            warehouseGroup.Users.Add(user5);
             groupLeaderPosition.Users.Add(user5);
         }
 
@@ -152,15 +187,11 @@ namespace MVC_FirstApp.Data
             {
                 new Group()
                 {
-                    Name = "A"
+                    Name = "Kierownictwo"
                 },
                 new Group()
                 {
-                    Name = "B"
-                },
-                new Group()
-                {
-                    Name = "C"
+                    Name = "Magazyn A"
                 }
             };
         }

@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using MVC_FirstApp.Constants;
 using MVC_FirstApp.Data;
 using MVC_FirstApp.Data.Entities;
+using MVC_FirstApp.Helpers;
 using MVC_FirstApp.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -12,130 +14,167 @@ namespace MVC_FirstApp.Services
 {
     public class GroupService
     {
-        //        private readonly MvcDbContext dbContext;
+        private readonly MvcDbContext _dbContext;
 
-        //        public GroupService(MvcDbContext dbContext)
-        //        {
-        //            this.dbContext = dbContext;
-        //        }
+        public GroupService(MvcDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
 
-        //        public GroupListViewModel GetAll()
-        //        {
-        //            var vm = new GroupListViewModel
-        //            {
-        //                Accounts = dbContext.Users.Include(x => x.Billing).Select(x => new GroupItemListViewModel
-        //                {
-        //                    Id = x.Id,
-        //                    FirstName = x.FirstName,
-        //                    LastName = x.LastName,
-        //                    Group = x.Group,
-        //                    Position = x.Position,
-        //                    HoursMinutesWorked = MinsToHoursMins(x.Billing.MinutesWorked),
-        //                    HourlyPay = x.Billing.HourlyPay
+        public IEnumerable<GroupListViewModel> GetAll()
+        {
+            var vm = new List<GroupListViewModel>();
+            vm.Add(GetUsersWithoutGroup());
+            vm.AddRange(GetGroupsWithUsers());
 
-        //                }).OrderByDescending(x => x.Position).ToList()
-        //            };
+            return vm;
+        }
 
-        //            return vm;
-        //        }
+        private GroupListViewModel GetUsersWithoutGroup()
+        {
+            var usersWithoutGroup = _dbContext.Users
+                .Where(u => u.GroupId == null)
+                .OrderByDescending(u => u.PositionId)
+                .Select(u => new UserViewModel
+                {
+                    Id = u.Id,
+                    FirstName = u.FirstName,
+                    HourlyPay = u.UserBilling.HourlyPay,
+                    TimeWorked = new TimeSpan(0, (int)u.UserBilling.MinutesWorked, 0).ToHoursAndMins(),
+                    LastName = u.LastName,
+                    PositionName = u.Position.Name ?? "-"
+                });
 
-        //        private static string MinsToHoursMins(long minutesToConvert)
-        //        {
-        //            var hours = minutesToConvert / 60;
-        //            var minutes = minutesToConvert % 60;
+            return new GroupListViewModel()
+            {
+                Group = new GroupViewModel()
+                {
+                    Name = "Bez grupy"
+                },
+                UsersInGroup = usersWithoutGroup
+            };
+        }
 
-        //            return $"{hours}h {minutes}min";
-        //        }
+        private IEnumerable<GroupListViewModel> GetGroupsWithUsers()
+        {
+            var groupsWithUsers = new List<GroupListViewModel>();
 
-        //        public UserHoursViewModel GetUsersInGroup(string group, string userId)
-        //        {
-        //            UserHoursViewModel vm;
+            var groups = _dbContext.Groups
+                .Include(x => x.Users)
+                    .ThenInclude(x => x.UserBilling)
+                .Include(x => x.Users)
+                    .ThenInclude(x => x.Position)
+                .ToList();
 
-        //            //vm for all group
-        //            if (group != null)
-        //            {
-        //                var Group = (Group)Enum.Parse(typeof(Group), group);
+            foreach (var group in groups)
+            {
+                var usersInGroupVm = group.Users
+                    .OrderByDescending(u => u.PositionId)
+                    .Select(u => new UserViewModel
+                    {
+                        Id = u.Id,
+                        FirstName = u.FirstName,
+                        HourlyPay = u.UserBilling.HourlyPay,
+                        TimeWorked = new TimeSpan(0, (int)u.UserBilling.MinutesWorked, 0).ToHoursAndMins(),
+                        LastName = u.LastName,
+                        PositionName = u.Position?.Name ?? "-"
+                    });
 
-        //                vm = new UserHoursViewModel
-        //                {
-        //                    Users = dbContext.Users.Where(x => Group == x.Group)
-        //                     .Select(x => new HoursEditUserListViewModel
-        //                     {
-        //                         UserId = x.Id,
-        //                         IsSelected = true,
-        //                         FullName = string.Format($"{x.FirstName} {x.LastName}, {x.UserName}")
-        //                     }).ToList()
-        //                };
+                var vmItem = new GroupListViewModel()
+                {
+                    Group = new GroupViewModel()
+                    {
+                        Name = group.Name,
+                        Id = group.Id
+                    },
+                    UsersInGroup = usersInGroupVm
+                };
 
-        //                return vm;
-        //            }
+                groupsWithUsers.Add(vmItem);
+            }
 
-        //            //vm only for 1 user
-        //            vm = new UserHoursViewModel
-        //            {
-        //                Users = dbContext.Users.Where(x => userId == x.Id)
-        //                  .Select(x => new HoursEditUserListViewModel
-        //                  {
-        //                      UserId = x.Id,
-        //                      IsSelected = true,
-        //                      FullName = string.Format($"{x.FirstName} {x.LastName}, {x.UserName}")
-        //                  }).ToList()
-        //            };
+            return groupsWithUsers;
+        }
 
-        //            return vm;
-        //        }
+        public UserHoursViewModel GetGroupUsers(long groupId)
+        {
+            var group = _dbContext.Groups
+                .Include(x => x.Users)
+                .Single(x => x.Id == groupId);
 
-        //        public bool UpdateTime(UserHoursViewModel data)
-        //        {
-        //            var selectedUsers = data.Users.Where(x => x.IsSelected == true);
+            var groupUsers = group.Users
+                .Select(x => new HoursEditUserListViewModel
+                {
+                    UserId = x.Id,
+                    IsSelected = true,
+                    FullName = string.Format($"{x.FirstName} {x.LastName}, {x.UserName}")
+                }).ToList();
 
-        //            if (data.AddHours == true)
-        //            {
-        //                foreach (var user in selectedUsers)
-        //                {
-        //                    var userFound = dbContext.Users.Include(x => x.Billing).SingleOrDefault(x => x.Id == user.UserId);
+            var vm = new UserHoursViewModel
+            {
+                Users = groupUsers
+            };
 
-        //                    userFound.Billing.MinutesWorked += data.MinutesToEdit + data.HoursToEdit * 60;
-        //                }
-        //            }
-        //            else
-        //            {
-        //                foreach (var user in selectedUsers)
-        //                {
-        //                    var userFound = dbContext.Users.Include(x => x.Billing).SingleOrDefault(x => x.Id == user.UserId);
+            return vm;
+        }
 
-        //                    var newTime = userFound.Billing.MinutesWorked -= data.MinutesToEdit + data.HoursToEdit * 60;
+        public bool UpdateTime(UserHoursViewModel data)
+        {
+            var selectedUserIds = data.Users
+                .Where(x => x.IsSelected == true)
+                .Select(u => u.UserId);
 
-        //                    if (newTime < 0)
-        //                        return true;
-        //                }
-        //            }
+            var dbUsers = _dbContext.Users
+                .Include(u => u.UserBilling)
+                .Where(u => selectedUserIds.Contains(u.Id))
+                .ToList();
 
-        //            dbContext.SaveChanges();
-        //            return false;
-        //        }
+            if (data.WorkTimeOperation == WorkTimeOperation.Add)
+            {
+                dbUsers.ForEach(u =>
+                {
+                    u.UserBilling.MinutesWorked += data.MinutesToEdit + data.HoursToEdit * 60;
+                });
+            }
 
-        //        public void AddMoney()
-        //        {
-        //            var users = dbContext.Users.Include(x => x.Billing).Include(x => x.AccountActions)
-        //                .Where(x => x.Billing.MinutesWorked > 0);
+            if (data.WorkTimeOperation == WorkTimeOperation.Substract)
+            {
+                foreach (var user in dbUsers)
+                {
+                    var newTime = user.UserBilling.MinutesWorked -= data.MinutesToEdit + data.HoursToEdit * 60;
 
-        //            foreach (var user in users)
-        //            {
-        //                var amount = user.Billing.HourlyPay / 60 * user.Billing.MinutesWorked;
-        //                var balanceAfter = user.Billing.Balance += amount;
-        //                user.Billing.MinutesWorked = 0;
+                    if (newTime < 0)
+                        return true;
+                }
+            }
 
-        //                user.AccountActions.Add(new AccountAction
-        //                {
-        //                    ActionType = Data.Enums.Action.Salary.ToString(),
-        //                    Amount = amount,
-        //                    BalanceAfter = balanceAfter,
-        //                    CreatedAt = DateTime.Now
-        //                });
-        //            }
+            _dbContext.SaveChanges();
+            return false;
+        }
 
-        //            dbContext.SaveChanges();
-        //        }
+        public void AddMoney()
+        {
+            var users = _dbContext.Users
+                .Include(x => x.UserBilling)
+                .Include(x => x.UserOperations)
+                .Where(x => x.UserBilling.MinutesWorked > 0);
+
+            foreach (var user in users)
+            {
+                var amount = user.UserBilling.HourlyPay / 60 * user.UserBilling.MinutesWorked;
+                var balanceAfter = user.UserBilling.Balance += amount;
+                user.UserBilling.MinutesWorked = 0;
+
+                user.UserOperations.Add(new UserOperation
+                {
+                    OperationType = AccountOperation.Salary.GetDescription(),
+                    Amount = amount,
+                    BalanceAfter = balanceAfter,
+                    CreatedAt = DateTimeOffset.Now
+                });
+            }
+
+            _dbContext.SaveChanges();
+        }
     }
 }
