@@ -41,7 +41,7 @@ namespace MVC_FirstApp.Controllers
 
             if (result.Succeeded)
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction(nameof(HomeController.Index), "Home");
             }
 
             foreach (var error in result.Errors)

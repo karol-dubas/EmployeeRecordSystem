@@ -13,17 +13,14 @@ namespace MVC_FirstApp.Services
     public class AccountService
     {
         private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
         private readonly MvcDbContext _dbContext;
         private readonly RoleManager<IdentityRole> _roleManager;
 
         public AccountService(UserManager<User> userManager,
-            SignInManager<User> signInManager,
             MvcDbContext dbContext,
             RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
-            _signInManager = signInManager;
             _dbContext = dbContext;
             _roleManager = roleManager;
         }

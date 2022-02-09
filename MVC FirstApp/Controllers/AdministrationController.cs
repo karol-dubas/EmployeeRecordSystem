@@ -91,7 +91,7 @@ namespace MVC_FirstApp.Controllers
             //Identity requirements
             if (result.Succeeded)
             {
-                return RedirectToAction("Index", "Group");
+                return RedirectToAction(nameof(GroupController.Index), "Group");
             }
 
             foreach (var error in result.Errors)
@@ -109,7 +109,7 @@ namespace MVC_FirstApp.Controllers
 
             if (result.Succeeded)
             {
-                return RedirectToAction("Index", "Group");
+                return RedirectToAction(nameof(GroupController.Index), "Group");
             }
 
             foreach (var error in result.Errors)
@@ -117,7 +117,7 @@ namespace MVC_FirstApp.Controllers
                 ModelState.AddModelError("", error.Description);
             }
 
-            return RedirectToAction("Index", "Group");
+            return RedirectToAction(nameof(GroupController.Index), "Group");
         }
     }
 }

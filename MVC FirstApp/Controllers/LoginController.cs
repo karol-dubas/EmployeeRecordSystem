@@ -42,7 +42,7 @@ namespace MVC_FirstApp.Controllers
                 return View(data);
             }
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction(nameof(HomeController.Index), "Home");
         }
 
         [HttpGet]
@@ -50,7 +50,7 @@ namespace MVC_FirstApp.Controllers
         {
             await _signInManager.SignOutAsync();
 
-            return RedirectToAction("Index", "Login");
+            return RedirectToAction(nameof(LoginController.Index), "Login");
         }
     }
 }
