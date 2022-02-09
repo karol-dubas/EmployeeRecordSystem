@@ -66,5 +66,26 @@ namespace MVC_FirstApp.Controllers
 
             return RedirectToAction("Index");
         }
+
+        [HttpPost]
+        public IActionResult AddGroup(string name)
+        {
+            _groupService.AddGroup(name);
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public IActionResult RenameGroup(long id, string newName)
+        {
+            _groupService.RenameGroup(id, newName);
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public IActionResult DeleteGroup(long id)
+        {
+            _groupService.DeleteGroup(id);
+            return RedirectToAction("Index");
+        }
     }
 }

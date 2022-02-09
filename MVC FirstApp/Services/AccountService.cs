@@ -126,7 +126,9 @@ namespace MVC_FirstApp.Services
                 var user = await _userManager.FindByIdAsync(model[i].UserId);
 
                 if (model[i].IsSelected && !await _userManager.IsInRoleAsync(user, role.Name))
+                {
                     result = await _userManager.AddToRoleAsync(user, role.Name);
+                }
                 else if (!model[i].IsSelected && await _userManager.IsInRoleAsync(user, role.Name))
                 {
                     result = await _userManager.RemoveFromRoleAsync(user, role.Name);

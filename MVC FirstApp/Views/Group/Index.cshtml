@@ -15,10 +15,22 @@
     {
         <div class="card pb-0 mb-4">
             <div class="card-header">
-                <h3 class="mb-0 btn-group">@group.Group.Name</h3>
-                @if (_sim.IsSignedIn(User) && User.IsInRole(Roles.Admin) && group.Group.Id != 0)
+                <h3 class="mb-0 btn-group">@group.GroupDetails.Name</h3>
+                @if (_sim.IsSignedIn(User) && User.IsInRole(Roles.Admin) && group.GroupDetails.Id != 0)
                 {
-                    <a class="btn btn-secondary btn-group float-right" asp-controller="Group" asp-action="EditHours" asp-route-groupId="@group.Group.Id">Zmień godziny pracy grupy</a>
+                    <div class="float-right">
+                        <span onclick="showGroupRenameForm(@group.GroupDetails.Id)" id="renameSpan_@group.GroupDetails.Id" class="btn btn-info">Zmień nazwę</span>
+                        <div id="groupRenameForm_@group.GroupDetails.Id" style="display:none">
+                            @using (Html.BeginForm("RenameGroup", "Group", FormMethod.Post))
+                            {
+                                <input name="newName" class="form-control" placeholder="Nowa nazwa grupy" />
+                                <input name="id" hidden="hidden" value="@group.GroupDetails.Id" />
+                                <button class="btn btn-success">Zamień nazwę</button>
+                            }
+                        </div>
+                        <a asp-action="DeleteGroup" asp-controller="Group" asp-route-id="@group.GroupDetails.Id" class="btn btn-danger">Usuń grupę</a>
+                        <a class="btn btn-secondary" asp-controller="Group" asp-action="EditHours" asp-route-groupId="@group.GroupDetails.Id">Zmień godziny pracy grupy</a>
+                    </div>
                 }
             </div>
             <div class="card-body px-0 pt-0 pb-0">
@@ -53,9 +65,9 @@
                                         <td>@user.HourlyPay</td>
                                         <td>
                                             <a class="btn btn-secondary btn-sm"
-                                               asp-controller="Administration"
-                                               asp-action="@nameof(AdministrationController.EditUser)"
-                                               asp-route-id="@user.Id">Edytuj</a>
+                               asp-controller="Administration"
+                               asp-action="@nameof(AdministrationController.EditUser)"
+                               asp-route-id="@user.Id">Edytuj</a>
                                         </td>
                                     }
                                 </tr>
@@ -73,10 +85,17 @@
 {
     @section footer
     {
-    <footer class="border-top footer text-muted">
-        <div class="container col-md-6">
-            <a asp-action="AddMoney" asp-controller="Group" class="btn btn-info btn-block my-3">Wypłać pieniądze za godziny pracy użytkowników</a>
+<footer class="border-top footer text-muted">
+    <div class="container col-md-6">
+        @using (Html.BeginForm("AddGroup", "Group", FormMethod.Post))
+        {
+        <div class="input-group">
+            <input name="name" class="form-control" placeholder="Nazwa grupy" />
+            <button class="btn btn-success">Dodaj nową grupę</button>
         </div>
-    </footer>
+        }
+        <a asp-action="AddMoney" asp-controller="Group" class="btn btn-info btn-block my-3">Wypłać pieniądze za godziny pracy użytkowników</a>
+    </div>
+</footer>
     }
 }

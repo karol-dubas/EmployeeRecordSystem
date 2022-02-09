@@ -15,3 +15,11 @@ function confirmDelete(isTrue) {
         $('#' + confirmDeleteSpan).hide();
     }
 }
+
+function showGroupRenameForm(id) {
+    var groupRenameForm_ = 'groupRenameForm_';
+    var renameSpan_ = 'renameSpan_';
+
+    $('#' + groupRenameForm_ + id).show();
+    $('#' + renameSpan_ + id).hide();
+}

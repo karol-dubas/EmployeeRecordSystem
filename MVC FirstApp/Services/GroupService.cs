@@ -47,7 +47,7 @@ namespace MVC_FirstApp.Services
 
             return new GroupListViewModel()
             {
-                Group = new GroupViewModel()
+                GroupDetails = new GroupViewModel()
                 {
                     Name = "Bez grupy"
                 },
@@ -82,7 +82,7 @@ namespace MVC_FirstApp.Services
 
                 var vmItem = new GroupListViewModel()
                 {
-                    Group = new GroupViewModel()
+                    GroupDetails = new GroupViewModel()
                     {
                         Name = group.Name,
                         Id = group.Id
@@ -94,6 +94,42 @@ namespace MVC_FirstApp.Services
             }
 
             return groupsWithUsers;
+        }
+
+        public void AddGroup(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                return;
+
+            var group = new Group()
+            {
+                Name = name
+            };
+
+            _dbContext.Groups.Add(group);
+            _dbContext.SaveChanges();
+        }
+
+        public void RenameGroup(long id, string newName)
+        {
+            var group = _dbContext.Groups
+                .Single(x => x.Id == id);
+
+            if (!string.IsNullOrWhiteSpace(newName))
+            {
+                group.Name = newName;
+                _dbContext.SaveChanges();
+            }
+        }
+
+        public void DeleteGroup(long id)
+        {
+            var group = _dbContext.Groups
+                .Include(x => x.Users)
+                .Single(x => x.Id == id);
+
+            _dbContext.Groups.Remove(group);
+            _dbContext.SaveChanges();
         }
 
         public UserHoursViewModel GetGroupUsers(long groupId)
