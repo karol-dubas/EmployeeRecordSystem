@@ -1,0 +1,142 @@
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using EmployeeRecordSystem.Data;
+using EmployeeRecordSystem.Data.Entities;
+using EmployeeRecordSystem.ViewModels;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace EmployeeRecordSystem.Services
+{
+    public class AccountService
+    {
+        private readonly UserManager<User> _userManager;
+        private readonly MvcDbContext _dbContext;
+        private readonly RoleManager<IdentityRole> _roleManager;
+
+        public AccountService(UserManager<User> userManager,
+            MvcDbContext dbContext,
+            RoleManager<IdentityRole> roleManager)
+        {
+            _userManager = userManager;
+            _dbContext = dbContext;
+            _roleManager = roleManager;
+        }
+
+        public async Task<IdentityResult> CreateUser(RegisterViewModel data)
+        {
+            var entity = new User()
+            {
+                UserName = data.UserName,
+                FirstName = data.FirstName,
+                LastName = data.LastName
+            };
+
+            var result = await _userManager.CreateAsync(entity, data.Password);
+
+            return result;
+        }
+
+        public async Task<IdentityResult> DeleteUser(string id)
+        {
+            var user = _dbContext.Users
+                .Include(x => x.UserBilling)
+                .Include(x => x.UserOperations)
+                .SingleOrDefault(x => x.Id == id);
+
+            foreach (var operation in user.UserOperations)
+            {
+                var row = await _dbContext.UserOperations.FindAsync(operation.Id);
+                _dbContext.UserOperations.Remove(row);
+            }
+
+            _dbContext.UserBillings.Remove(user.UserBilling);
+
+            var result = await _userManager.DeleteAsync(user);
+
+            return result;
+        }
+
+        public async Task<IdentityResult> ChangePassword(string id, string currentPassword, string newPassword)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            var result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+
+            return result;
+        }
+
+        public async Task<EditRoleUsersViewModel> GetUsersInRole(string roleName)
+        {
+            var role = await _roleManager.FindByNameAsync(roleName);
+
+            var vm = new EditRoleUsersViewModel
+            {
+                RoleName = role.Name
+            };
+
+            foreach (var user in await _userManager.Users.ToListAsync())
+            {
+                if (await _userManager.IsInRoleAsync(user, role.Name))
+                    vm.Users.Add(string.Format($"- {user.FirstName} {user.LastName}, {user.UserName}"));
+            }
+
+            return vm;
+        }
+
+        public async Task<List<UserRoleViewModel>> GetToEditUsersInRole(string roleName)
+        {
+            var role = await _roleManager.FindByNameAsync(roleName);
+
+            var vmList = new List<UserRoleViewModel>();
+
+            foreach (var user in await _userManager.Users.ToListAsync())
+            {
+                var vm = new UserRoleViewModel
+                {
+                    UserName = user.UserName,
+                    UserId = user.Id,
+                    FullName = string.Format($"{user.FirstName} {user.LastName}")
+                };
+
+                if (await _userManager.IsInRoleAsync(user, role.Name))
+                    vm.IsSelected = true;
+                else
+                {
+                    vm.IsSelected = false;
+                }
+
+                vmList.Add(vm);
+            }
+
+            return vmList;
+        }
+
+        public async Task<IdentityResult> EditUsersInRole(List<UserRoleViewModel> model, string roleName)
+        {
+            var role = await _roleManager.FindByNameAsync(roleName);
+            IdentityResult result = null;
+
+            for (var i = 0; i < model.Count; i++)
+            {
+                var user = await _userManager.FindByIdAsync(model[i].UserId);
+
+                if (model[i].IsSelected && !await _userManager.IsInRoleAsync(user, role.Name))
+                {
+                    result = await _userManager.AddToRoleAsync(user, role.Name);
+                }
+                else if (!model[i].IsSelected && await _userManager.IsInRoleAsync(user, role.Name))
+                {
+                    result = await _userManager.RemoveFromRoleAsync(user, role.Name);
+                }
+                else
+                {
+                    continue;
+                }
+            }
+
+            return result;
+        }
+    }
+}

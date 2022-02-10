@@ -2,7 +2,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
-using MVC_FirstApp;
+using EmployeeRecordSystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
