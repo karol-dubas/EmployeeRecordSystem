@@ -3,25 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmployeeRecordSystem.Tests", "EmployeeRecordSystem.Tests\EmployeeRecordSystem.Tests.csproj", "{91773218-6E88-44A3-9CFC-1511DB2F79FE}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmployeeRecordSystem", "EmployeeRecordSystem\EmployeeRecordSystem.csproj", "{39119CB9-D56C-41F8-BCA0-6B92DA25AC05}"
-EndProject
 Global
-	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
-		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{91773218-6E88-44A3-9CFC-1511DB2F79FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{91773218-6E88-44A3-9CFC-1511DB2F79FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{91773218-6E88-44A3-9CFC-1511DB2F79FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{91773218-6E88-44A3-9CFC-1511DB2F79FE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{39119CB9-D56C-41F8-BCA0-6B92DA25AC05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{39119CB9-D56C-41F8-BCA0-6B92DA25AC05}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{39119CB9-D56C-41F8-BCA0-6B92DA25AC05}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{39119CB9-D56C-41F8-BCA0-6B92DA25AC05}.Release|Any CPU.Build.0 = Release|Any CPU
-	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
