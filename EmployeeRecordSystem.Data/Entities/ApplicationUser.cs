@@ -11,6 +11,7 @@ namespace EmployeeRecordSystem.Data.Entities
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public string BankAccountNumber { get; set; }
 
         public Guid? GroupId { get; set; }
         public virtual Group Group { get; set; }

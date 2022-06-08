@@ -24,6 +24,10 @@ namespace EmployeeRecordSystem.Data.EntityConfigurations
                 .HasMaxLength(50)
                 .IsRequired();
 
+            builder.Property(c => c.BankAccountNumber)
+                .HasMaxLength(34)
+                .IsRequired(false);
+
             builder.Property(c => c.UserName).IsRequired();
             builder.Property(c => c.PasswordHash).IsRequired();
 
