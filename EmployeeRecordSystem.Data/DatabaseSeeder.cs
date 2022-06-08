@@ -1,4 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using EmployeeRecordSystem.Data.Entities;
+using EmployeeRecordSystem.Shared.Constants;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,19 +13,25 @@ namespace EmployeeRecordSystem.Data
     public class DatabaseSeeder
     {
         private readonly ApplicationDbContext _dbContext;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<ApplicationRole> _roleManager;
 
-        public DatabaseSeeder(ApplicationDbContext applicationDbContext)
+        public DatabaseSeeder(ApplicationDbContext applicationDbContext,
+            UserManager<ApplicationUser> userManager,
+            RoleManager<ApplicationRole> roleManager)
         {
             _dbContext = applicationDbContext;
+            _userManager = userManager;
+            _roleManager = roleManager;
         }
 
         /// <summary>
         /// Create the database and migrate if it doesn't exist
         /// </summary>
         public DatabaseSeeder EnsureDatabaseCreated()
-{
+        {
             if (!_dbContext.Database.CanConnect())
-{
+            {
                 RelationalDatabaseFacadeExtensions.Migrate(_dbContext.Database);
             }
 
@@ -30,7 +39,7 @@ namespace EmployeeRecordSystem.Data
         }
 
         public DatabaseSeeder ApplyPendingMigrations()
-{
+        {
             var pendingMigrations = _dbContext.Database.GetPendingMigrations();
             if (pendingMigrations.Any())
             {
@@ -40,12 +49,42 @@ namespace EmployeeRecordSystem.Data
             return this;
         }
 
-        public DatabaseSeeder Seed()
+        public async Task SeedAsync()
         {
-            //SeedAdmin();
-            //SeedRoles(); // role vs. position?
+            if (! await RoleExistsAsync(Roles.Admin))
+                await _roleManager.CreateAsync(new(Roles.Admin));
 
-            return this;
+            if (! await RoleExistsAsync(Roles.Supervisor))
+                await _roleManager.CreateAsync(new(Roles.Supervisor));
+
+            if (! await RoleExistsAsync(Roles.Employee))
+                await _roleManager.CreateAsync(new(Roles.Employee));
+
+            bool adminExist = await _userManager.FindByNameAsync("admin@admin.com") is not null;
+            if (!adminExist)
+                await SeedAdminAsync();
+        }
+
+        private async Task SeedAdminAsync()
+        {
+            var admin = new ApplicationUser
+            {
+                FirstName = "Admin",
+                LastName = "Admin",
+                Email = "admin@admin.com",
+                EmailConfirmed = true,
+                UserName = "admin@admin.com",
+            };
+
+            var password = "Admin1234!";
+
+            await _userManager.CreateAsync(admin, password);
+            await _userManager.AddToRoleAsync(admin, Roles.Admin);
+        }
+
+        private async Task<bool> RoleExistsAsync(string roleName)
+        {
+            return await _roleManager.FindByNameAsync(roleName) is not null;
         }
     }
 }

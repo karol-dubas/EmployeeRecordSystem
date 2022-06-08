@@ -34,9 +34,9 @@ var app = builder.Build();
 var serviceProvider = app.Services.CreateScope().ServiceProvider;
 var databaseSeeder = serviceProvider.GetRequiredService<DatabaseSeeder>();
 
-databaseSeeder.EnsureDatabaseCreated()
-    .ApplyPendingMigrations()
-    .Seed();
+await databaseSeeder.EnsureDatabaseCreated()
+                    .ApplyPendingMigrations()
+                    .SeedAsync();
 
 
 // Configure the HTTP request pipeline.
