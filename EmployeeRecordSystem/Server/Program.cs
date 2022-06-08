@@ -27,7 +27,17 @@ builder.Services.AddAuthentication()
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
+builder.Services.AddScoped<DatabaseSeeder>();
+
 var app = builder.Build();
+
+var serviceProvider = app.Services.CreateScope().ServiceProvider;
+var databaseSeeder = serviceProvider.GetRequiredService<DatabaseSeeder>();
+
+databaseSeeder.EnsureDatabaseCreated()
+    .ApplyPendingMigrations()
+    .Seed();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

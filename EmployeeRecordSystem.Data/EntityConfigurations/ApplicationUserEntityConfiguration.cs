@@ -31,10 +31,6 @@ namespace EmployeeRecordSystem.Data.EntityConfigurations
                 .WithMany(c => c.Users)
                 .HasForeignKey(c => c.GroupId);
 
-            builder.HasOne(c => c.Position)
-                .WithMany(c => c.Users)
-                .HasForeignKey(c => c.PositionId);
-
             builder.HasOne(c => c.UserBilling)
                 .WithOne(c => c.User)
                 .HasForeignKey<ApplicationUser>(c => c.UserBillingId)

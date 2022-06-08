@@ -16,7 +16,6 @@ namespace EmployeeRecordSystem.Data
         }
 
         public DbSet<Group> Groups { get; set; }
-        public DbSet<Position> Positions { get; set; }
         public DbSet<UserBilling> UserBillings { get; set; }
         public DbSet<UserOperation> UserOperations { get; set; }
 

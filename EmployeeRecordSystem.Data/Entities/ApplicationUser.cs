@@ -15,9 +15,6 @@ namespace EmployeeRecordSystem.Data.Entities
         public Guid? GroupId { get; set; }
         public virtual Group Group { get; set; }
 
-        public Guid? PositionId { get; set; }
-        public virtual Position Position { get; set; }
-
         public Guid UserBillingId { get; set; }
         public virtual UserBilling UserBilling { get; set; } = new();
 
