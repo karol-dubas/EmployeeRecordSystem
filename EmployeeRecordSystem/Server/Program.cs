@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using EmployeeRecordSystem.Server.Services;
+using System.Reflection;
+using EmployeeRecordSystem.Server.Installers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,7 +36,12 @@ builder.Services.AddAuthentication()
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
+
+builder.Services.AddSwaggerGen();
+
 builder.Services.AddScoped<DatabaseSeeder>();
+builder.Services.RegisterServices();
 
 var app = builder.Build();
 
@@ -44,12 +52,14 @@ await databaseSeeder.EnsureDatabaseCreated()
                     .ApplyPendingMigrations()
                     .SeedAsync();
 
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
     app.UseWebAssemblyDebugging();
+
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 else
 {
@@ -75,3 +85,6 @@ app.MapControllers();
 app.MapFallbackToFile("index.html");
 
 app.Run();
+
+// Make the implicit Program class public so test projects can access it
+public partial class Program { }
