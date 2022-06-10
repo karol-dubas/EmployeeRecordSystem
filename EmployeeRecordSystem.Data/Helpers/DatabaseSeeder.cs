@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EmployeeRecordSystem.Data
+namespace EmployeeRecordSystem.Data.Helpers
 {
     public class DatabaseSeeder
     {
@@ -51,13 +51,13 @@ namespace EmployeeRecordSystem.Data
 
         public async Task SeedAsync()
         {
-            if (! await RoleExistsAsync(Roles.Admin))
+            if (!await RoleExistsAsync(Roles.Admin))
                 await _roleManager.CreateAsync(new(Roles.Admin));
 
-            if (! await RoleExistsAsync(Roles.Supervisor))
+            if (!await RoleExistsAsync(Roles.Supervisor))
                 await _roleManager.CreateAsync(new(Roles.Supervisor));
 
-            if (! await RoleExistsAsync(Roles.Employee))
+            if (!await RoleExistsAsync(Roles.Employee))
                 await _roleManager.CreateAsync(new(Roles.Employee));
 
             bool adminExist = await _userManager.FindByNameAsync("admin@admin.com") is not null;

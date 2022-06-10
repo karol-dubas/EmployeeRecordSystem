@@ -19,6 +19,8 @@ namespace EmployeeRecordSystem.Data.Entities
         public Guid UserBillingId { get; set; }
         public virtual UserBilling UserBilling { get; set; } = new();
 
+        public virtual List<Request> Requests { get; set; }
+
         public virtual List<UserOperation> UserOperations { get; set; } = new();
     }
 }
