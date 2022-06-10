@@ -20,6 +20,7 @@ namespace EmployeeRecordSystem.Server.Services
         GroupDto Get(Guid groupId);
         List<GroupDto> GetAll();
         GroupDto Rename(Guid groupId, RenameGroupRequest request);
+        void Delete(Guid groupId);
     }
 
     [ScopedRegistration]
@@ -64,6 +65,16 @@ namespace EmployeeRecordSystem.Server.Services
             group.Name = request.Name;
             SaveChanges();
             return _mapper.Map<GroupDto>(group);
+        }
+
+        public void Delete(Guid groupId)
+        {
+            var group = _dbContext.Groups.SingleOrDefault(g => g.Id == groupId);
+
+            // TODO: null check
+
+            _dbContext.Groups.Remove(group);
+            SaveChanges();
         }
     }
 }

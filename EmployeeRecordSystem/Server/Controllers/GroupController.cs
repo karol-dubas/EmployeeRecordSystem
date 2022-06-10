@@ -46,5 +46,12 @@ namespace EmployeeRecordSystem.Server.Controllers
             var response = _groupService.Rename(groupId, request);
             return Ok(response);
         }
+
+        [HttpDelete("{groupId}")]
+        public IActionResult Delete([FromRoute] Guid groupId)
+        {
+            _groupService.Delete(groupId);
+            return NoContent();
+        }
     }
 }
