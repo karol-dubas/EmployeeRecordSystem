@@ -9,7 +9,7 @@ namespace EmployeeRecordSystem.Data.Entities
     {
         public Guid Id { get; set; }
         public decimal HourlyPay { get; set; }
-        public TimeSpan MinutesWorked { get; set; }
+        public TimeSpan TimeWorked { get; set; }
         public decimal Balance { get; set; }
 
         public virtual ApplicationUser User { get; set; }

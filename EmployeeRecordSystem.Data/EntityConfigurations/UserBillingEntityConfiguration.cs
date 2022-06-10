@@ -22,7 +22,7 @@ namespace EmployeeRecordSystem.Data.EntityConfigurations
 
             // TimeSpan to ticks conversion
             // https://docs.microsoft.com/en-us/ef/core/modeling/value-conversions?tabs=data-annotations#built-in-converters
-            builder.Property(c => c.Balance).HasConversion<long>();
+            builder.Property(c => c.TimeWorked).HasConversion<long>();
         }
     }
 }
