@@ -39,5 +39,12 @@ namespace EmployeeRecordSystem.Server.Controllers
             var response = _groupService.GetAll();
             return Ok(response);
         }
+
+        [HttpPatch("{groupId}")]
+        public IActionResult Rename([FromRoute] Guid groupId, [FromBody] RenameGroupRequest request)
+        {
+            var response = _groupService.Rename(groupId, request);
+            return Ok(response);
+        }
     }
 }
