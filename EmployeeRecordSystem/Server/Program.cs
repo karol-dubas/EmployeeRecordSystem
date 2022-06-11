@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using EmployeeRecordSystem.Server.Services;
 using System.Reflection;
 using EmployeeRecordSystem.Server.Installers;
+using EmployeeRecordSystem.Data.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 

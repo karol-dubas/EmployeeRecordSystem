@@ -28,6 +28,8 @@ namespace EmployeeRecordSystem.Data.EntityConfigurations
                 .HasMaxLength(34)
                 .IsRequired(false);
 
+            builder.Ignore(c => c.Role);
+
             builder.Property(c => c.UserName).IsRequired();
             builder.Property(c => c.PasswordHash).IsRequired();
 
