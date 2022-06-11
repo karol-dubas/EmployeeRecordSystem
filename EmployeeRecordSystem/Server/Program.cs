@@ -9,6 +9,7 @@ using EmployeeRecordSystem.Server.Services;
 using System.Reflection;
 using EmployeeRecordSystem.Server.Installers;
 using EmployeeRecordSystem.Data.Helpers;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,7 +40,19 @@ builder.Services.AddRazorPages();
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Version = "v1",
+        Title = "Employee record system",
+    });
+
+    // Set the comments path for the Swagger JSON and UI.
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    c.IncludeXmlComments(xmlPath);
+});
 
 builder.Services.AddScoped<DatabaseSeeder>();
 builder.Services.RegisterServices();

@@ -21,6 +21,8 @@ namespace EmployeeRecordSystem.Server.Services
         List<GroupDto> GetAll();
         GroupDto Rename(Guid groupId, RenameGroupRequest request);
         void Delete(Guid groupId);
+        void AssignEmployeeToGroup(Guid groupId, Guid employeeId);
+        void RemoveEmployeeFromGroup(Guid employeeId);
     }
 
     [ScopedRegistration]
@@ -74,6 +76,30 @@ namespace EmployeeRecordSystem.Server.Services
             // TODO: null check
 
             _dbContext.Groups.Remove(group);
+            SaveChanges();
+        }
+
+        public void AssignEmployeeToGroup(Guid groupId, Guid employeeId)
+        {
+            var employee = _dbContext.Users.SingleOrDefault(u => u.Id == employeeId);
+
+            // TODO: user null check
+
+            var group = _dbContext.Groups.SingleOrDefault(u => u.Id == groupId);
+
+            // TODO: group null check
+
+            employee.GroupId = group.Id;
+            SaveChanges();
+        }
+
+        public void RemoveEmployeeFromGroup(Guid employeeId)
+        {
+            var employee = _dbContext.Users.SingleOrDefault(u => u.Id == employeeId);
+
+            // TODO: user null check
+
+            employee.GroupId = null;
             SaveChanges();
         }
     }

@@ -19,6 +19,9 @@ namespace EmployeeRecordSystem.Server.Controllers
             _groupService = groupService;
         }
 
+        /// <summary>
+        /// Create
+        /// </summary>
         [HttpPost]
         public IActionResult Create([FromBody] CreateGroupRequest request)
         {
@@ -26,6 +29,9 @@ namespace EmployeeRecordSystem.Server.Controllers
             return CreatedAtAction(nameof(Get), new { groupId = response.Id} , response);
         }
 
+        /// <summary>
+        /// Get
+        /// </summary>
         [HttpGet("{groupId}")]
         public IActionResult Get([FromRoute] Guid groupId)
         {
@@ -33,6 +39,9 @@ namespace EmployeeRecordSystem.Server.Controllers
             return Ok(response);
         }
 
+        /// <summary>
+        /// Get all
+        /// </summary>
         [HttpGet]
         public IActionResult GetAll()
         {
@@ -40,6 +49,9 @@ namespace EmployeeRecordSystem.Server.Controllers
             return Ok(response);
         }
 
+        /// <summary>
+        /// Rename
+        /// </summary>
         [HttpPatch("{groupId}")]
         public IActionResult Rename([FromRoute] Guid groupId, [FromBody] RenameGroupRequest request)
         {
@@ -47,6 +59,29 @@ namespace EmployeeRecordSystem.Server.Controllers
             return Ok(response);
         }
 
+        /// <summary>
+        /// Assign employee to a group
+        /// </summary>
+        [HttpPatch("{groupId}/employee/{employeeId}")]
+        public IActionResult AssignEmployeeToGroup([FromRoute] Guid groupId, [FromRoute] Guid employeeId)
+        {
+            _groupService.AssignEmployeeToGroup(groupId, employeeId);
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Remove employee from the group
+        /// </summary>
+        [HttpDelete("employee/{employeeId}")]
+        public IActionResult RemoveEmployeeFromGroup([FromRoute] Guid employeeId)
+        {
+            _groupService.RemoveEmployeeFromGroup(employeeId);
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Delete
+        /// </summary>
         [HttpDelete("{groupId}")]
         public IActionResult Delete([FromRoute] Guid groupId)
         {
