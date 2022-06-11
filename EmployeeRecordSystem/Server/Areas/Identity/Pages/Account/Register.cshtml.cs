@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using EmployeeRecordSystem.Shared.Constants;
 
 namespace EmployeeRecordSystem.Server.Areas.Identity.Pages.Account
 {
@@ -98,6 +99,21 @@ namespace EmployeeRecordSystem.Server.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+            [Required]
+            [MaxLength(50)]
+            [Display(Name = "First Name")]
+            public string FirstName { get; set; }
+
+            [Required]
+            [MaxLength(50)]
+            [Display(Name = "Last Name")]
+            public string LastName { get; set; }
+
+            [Required]
+            [Range(0d, 1000d)]
+            [Display(Name = "Hourly pay")]
+            public decimal HourlyPay { get; set; }
         }
 
 
@@ -117,7 +133,12 @@ namespace EmployeeRecordSystem.Server.Areas.Identity.Pages.Account
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+                user.FirstName = Input.FirstName;
+                user.LastName = Input.LastName;
+                user.UserBilling.HourlyPay = Input.HourlyPay;
                 var result = await _userManager.CreateAsync(user, Input.Password);
+
+                await _userManager.AddToRoleAsync(user, Roles.Employee);
 
                 if (result.Succeeded)
                 {
