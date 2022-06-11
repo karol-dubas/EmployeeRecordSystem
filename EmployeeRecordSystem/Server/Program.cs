@@ -10,6 +10,7 @@ using System.Reflection;
 using EmployeeRecordSystem.Server.Installers;
 using EmployeeRecordSystem.Data.Helpers;
 using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Any;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,6 +47,12 @@ builder.Services.AddSwaggerGen(c =>
     {
         Version = "v1",
         Title = "Employee record system",
+    });
+
+    c.MapType<TimeSpan>(() => new OpenApiSchema
+    {
+        Type = "string",
+        Example = new OpenApiString("0.00:00:00")
     });
 
     // Set the comments path for the Swagger JSON and UI.
