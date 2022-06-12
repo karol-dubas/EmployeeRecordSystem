@@ -24,6 +24,7 @@ namespace EmployeeRecordSystem.Server.Services
         void ChangeHourlyPay(Guid employeeId, ChangeEmployeeHourlyPayRequest request);
         void ChangeWorkTimes(ChangeEmployeesWorkTimeRequest request);
         List<BalanceLogDto> GetBalanceLog(Guid employeeId);
+        void ConvertWorkTimeToBalance();
     }
 
     [ScopedRegistration]
@@ -133,6 +134,33 @@ namespace EmployeeRecordSystem.Server.Services
             // TODO: null check
 
             return _mapper.Map<List<BalanceLogDto>>(employee.BalanceLogs);
+        }
+
+        public void ConvertWorkTimeToBalance()
+        {
+            var userBillings = _dbContext.UserBillings.ToList();
+
+            foreach (var userBilling in userBillings)
+            {
+                decimal hourlyPay = userBilling.HourlyPay;
+                TimeSpan timeWorked = userBilling.TimeWorked;
+                decimal balanceBefore = userBilling.Balance;
+
+                decimal balanceToAdd = hourlyPay * (decimal)timeWorked.TotalHours;
+                userBilling.TimeWorked = TimeSpan.Zero;
+                decimal balanceAfter = userBilling.Balance += balanceToAdd;
+
+                var balanceLog = new BalanceLog()
+                {
+                    BalanceBefore = balanceBefore,
+                    BalanceAfter = balanceAfter,
+                    UserId = userBilling.UserId
+                };
+
+                _dbContext.BalanceLogs.Add(balanceLog);
+            }
+
+            SaveChanges();
         }
     }
 }

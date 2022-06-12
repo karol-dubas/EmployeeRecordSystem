@@ -41,7 +41,7 @@ namespace EmployeeRecordSystem.Data.EntityConfigurations
 
             builder.HasOne(c => c.UserBilling)
                 .WithOne(c => c.User)
-                .HasForeignKey<ApplicationUser>(c => c.UserBillingId)
+                .HasForeignKey<UserBilling>(c => c.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasMany(c => c.BalanceLogs)

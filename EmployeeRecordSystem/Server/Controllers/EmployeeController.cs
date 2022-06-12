@@ -78,5 +78,15 @@ namespace EmployeeRecordSystem.Server.Controllers
             _employeeService.ChangeWorkTimes(request);
             return NoContent();
         }
+
+        /// <summary>
+        /// Convert time worked of all employees to the balance
+        /// </summary>
+        [HttpPatch("work-time/convert")]
+        public IActionResult ConvertWorkTimeToBalance()
+        {
+            _employeeService.ConvertWorkTimeToBalance();
+            return NoContent();
+        }
     }
 }

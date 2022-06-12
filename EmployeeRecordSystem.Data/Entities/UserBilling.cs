@@ -12,6 +12,7 @@ namespace EmployeeRecordSystem.Data.Entities
         public TimeSpan TimeWorked { get; set; }
         public decimal Balance { get; set; }
 
+        public Guid UserId { get; set; }
         public virtual ApplicationUser User { get; set; }
     }
 }
