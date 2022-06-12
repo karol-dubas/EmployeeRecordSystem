@@ -10,11 +10,11 @@ using EmployeeRecordSystem.Data.Entities;
 
 namespace EmployeeRecordSystem.Data.EntityConfigurations
 {
-    public class RequestEntityConfiguration : IEntityTypeConfiguration<Request>
+    public class WithdrawalRequestEntityConfiguration : IEntityTypeConfiguration<WithdrawalRequest>
     {
-        public void Configure(EntityTypeBuilder<Request> builder)
+        public void Configure(EntityTypeBuilder<WithdrawalRequest> builder)
         {
-            builder.ToTable("requests");
+            builder.ToTable("withdrawal-requests");
 
             builder.HasKey(t => t.Id);
             builder.Property(t => t.Id)
@@ -23,7 +23,7 @@ namespace EmployeeRecordSystem.Data.EntityConfigurations
 
             builder.Property(p => p.ProcessedAt).IsRequired(false);
             builder.Property(p => p.CreatedAt).IsRequired();
-            builder.Property(p => p.RequestStatusTypeCode).IsRequired();
+            builder.Property(p => p.WithdrawalRequestStatusTypeCode).IsRequired();
         }
     }
 }

@@ -8,11 +8,11 @@ using EmployeeRecordSystem.Data.Entities;
 
 namespace EmployeeRecordSystem.Data.EntityConfigurations
 {
-    public class UserOperationEntityConfiguration : IEntityTypeConfiguration<UserOperation>
+    public class BalanceLogEntityConfiguration : IEntityTypeConfiguration<BalanceLog>
     {
-        public void Configure(EntityTypeBuilder<UserOperation> builder)
+        public void Configure(EntityTypeBuilder<BalanceLog> builder)
         {
-            builder.ToTable("user-operations");
+            builder.ToTable("balance-logs");
 
             builder.Property(c => c.Id)
                 .ValueGeneratedOnAdd()

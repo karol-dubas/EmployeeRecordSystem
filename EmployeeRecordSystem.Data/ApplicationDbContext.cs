@@ -17,9 +17,9 @@ namespace EmployeeRecordSystem.Data
 
         public DbSet<Group> Groups { get; set; }
         public DbSet<UserBilling> UserBillings { get; set; }
-        public DbSet<UserOperation> UserOperations { get; set; }
-        public DbSet<Request> Requests { get; set; }
-        public DbSet<RequestStatusType> RequestStatuses { get; set; }
+        public DbSet<BalanceLog> BalanceLogs { get; set; }
+        public DbSet<WithdrawalRequest> WithdrawalRequests { get; set; }
+        public DbSet<WithdrawalRequestStatusType> WithdrawalRequestStatuses { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

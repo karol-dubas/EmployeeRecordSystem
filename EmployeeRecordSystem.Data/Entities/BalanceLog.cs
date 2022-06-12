@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace EmployeeRecordSystem.Data.Entities
 {
-    public class UserOperation
+    public class BalanceLog
     {
         public Guid Id { get; set; }
         public decimal Amount { get; set; }

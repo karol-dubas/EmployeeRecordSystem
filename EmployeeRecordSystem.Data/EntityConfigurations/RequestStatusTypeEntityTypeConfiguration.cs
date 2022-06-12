@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace UserTaskService.Infrastructure.EntityConfiguration
 {
-    public class RequestStatusTypeEntityTypeConfiguration : IEntityTypeConfiguration<RequestStatusType>
+    public class RequestStatusTypeEntityTypeConfiguration : IEntityTypeConfiguration<WithdrawalRequestStatusType>
     {
-        public void Configure(EntityTypeBuilder<RequestStatusType> builder)
+        public void Configure(EntityTypeBuilder<WithdrawalRequestStatusType> builder)
         {
             builder.ToTable("request-status-types");
 
@@ -21,7 +21,7 @@ namespace UserTaskService.Infrastructure.EntityConfiguration
                 .HasMaxLength(50)
                 .IsRequired();
 
-            builder.HasData(Enumeration.GetAll<RequestStatusType>().ToArray());
+            builder.HasData(Enumeration.GetAll<WithdrawalRequestStatusType>().ToArray());
         }
     }
 }

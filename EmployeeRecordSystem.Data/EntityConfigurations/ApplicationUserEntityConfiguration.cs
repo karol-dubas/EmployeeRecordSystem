@@ -42,12 +42,12 @@ namespace EmployeeRecordSystem.Data.EntityConfigurations
                 .HasForeignKey<ApplicationUser>(c => c.UserBillingId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasMany(c => c.UserOperations)
+            builder.HasMany(c => c.BalanceLogs)
                 .WithOne(c => c.User)
                 .HasForeignKey(c => c.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasMany(c => c.Requests)
+            builder.HasMany(c => c.WithdrawalRequests)
                 .WithOne(c => c.User)
                 .HasForeignKey(c => c.UserId)
                 .OnDelete(DeleteBehavior.Cascade);

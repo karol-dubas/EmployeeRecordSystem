@@ -23,8 +23,8 @@ namespace EmployeeRecordSystem.Data.Entities
         public Guid UserBillingId { get; set; }
         public virtual UserBilling UserBilling { get; set; } = new();
 
-        public virtual List<Request> Requests { get; set; } = new();
+        public virtual List<WithdrawalRequest> WithdrawalRequests { get; set; } = new();
 
-        public virtual List<UserOperation> UserOperations { get; set; } = new();
+        public virtual List<BalanceLog> BalanceLogs { get; set; } = new();
     }
 }
