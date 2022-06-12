@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EmployeeRecordSystem.Shared.Constants;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,5 +19,10 @@ namespace EmployeeRecordSystem.Data.Entities
 
         public Guid UserId { get; set; }
         public virtual ApplicationUser User { get; set; }
+
+        public bool IsAlreadyProcessed()
+        {
+            return this.WithdrawalRequestStatusTypeCode != WithdrawalRequestStatusTypeCodes.Pending;
+        }
     }
 }

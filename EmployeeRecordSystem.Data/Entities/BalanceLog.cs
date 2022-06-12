@@ -8,7 +8,7 @@ namespace EmployeeRecordSystem.Data.Entities
     public class BalanceLog
     {
         public Guid Id { get; set; }
-        public decimal Amount { get; set; }
+        public decimal BalanceBefore { get; set; }
         public decimal BalanceAfter { get; set; }
         public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 

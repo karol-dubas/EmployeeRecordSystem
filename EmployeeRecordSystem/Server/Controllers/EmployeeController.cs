@@ -40,7 +40,17 @@ namespace EmployeeRecordSystem.Server.Controllers
         }
 
         /// <summary>
-        /// Edit employee: FirstName, LastName, BankAccountNumber
+        /// Get employee's balance log
+        /// </summary>
+        [HttpGet("{employeeId}/balance-log")]
+        public IActionResult GetBalanceLog([FromRoute] Guid employeeId)
+        {
+            var response = _employeeService.GetBalanceLog(employeeId);
+            return Ok(response);
+        }
+
+        /// <summary>
+        /// Edit employee's: First Name, Last Name, Bank account number
         /// </summary>
         [HttpPut("{employeeId}")]             
         public IActionResult Edit([FromRoute] Guid employeeId, [FromBody] EditEmployeeRequest request)
@@ -50,9 +60,9 @@ namespace EmployeeRecordSystem.Server.Controllers
         }
 
         /// <summary>
-        /// Change employee hourly pay
+        /// Change employee's hourly pay
         /// </summary>
-        [HttpPatch("hourly-pay/{employeeId}")]
+        [HttpPatch("{employeeId}/hourly-pay")]
         public IActionResult ChangeHourlyPay([FromRoute] Guid employeeId, [FromBody] ChangeEmployeeHourlyPayRequest request)
         {
             _employeeService.ChangeHourlyPay(employeeId, request);
@@ -62,7 +72,7 @@ namespace EmployeeRecordSystem.Server.Controllers
         /// <summary>
         /// Change the work time of employees
         /// </summary>
-        [HttpPatch("work-time/")]
+        [HttpPatch("work-time")]
         public IActionResult ChangeWorkTime([FromBody] ChangeEmployeesWorkTimeRequest request)
         {
             _employeeService.ChangeWorkTimes(request);

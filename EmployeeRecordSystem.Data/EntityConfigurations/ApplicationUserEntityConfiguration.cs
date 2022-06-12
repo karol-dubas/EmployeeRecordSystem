@@ -30,6 +30,8 @@ namespace EmployeeRecordSystem.Data.EntityConfigurations
 
             builder.Ignore(c => c.Role);
 
+            builder.Ignore(c => c.FullName);
+
             builder.Property(c => c.UserName).IsRequired();
             builder.Property(c => c.PasswordHash).IsRequired();
 

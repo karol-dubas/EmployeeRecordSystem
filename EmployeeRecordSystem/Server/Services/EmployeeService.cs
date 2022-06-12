@@ -23,6 +23,7 @@ namespace EmployeeRecordSystem.Server.Services
         void Edit(Guid employeeId, EditEmployeeRequest request);
         void ChangeHourlyPay(Guid employeeId, ChangeEmployeeHourlyPayRequest request);
         void ChangeWorkTimes(ChangeEmployeesWorkTimeRequest request);
+        List<BalanceLogDto> GetBalanceLog(Guid employeeId);
     }
 
     [ScopedRegistration]
@@ -121,6 +122,17 @@ namespace EmployeeRecordSystem.Server.Services
             }
 
             return queryable;
+        }
+
+        public List<BalanceLogDto> GetBalanceLog(Guid employeeId)
+        {
+            var employee = _dbContext.Users
+                .Include(u => u.BalanceLogs)
+                .SingleOrDefault(u => u.Id == employeeId);
+
+            // TODO: null check
+
+            return _mapper.Map<List<BalanceLogDto>>(employee.BalanceLogs);
         }
     }
 }
