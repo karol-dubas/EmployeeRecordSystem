@@ -24,6 +24,9 @@ namespace EmployeeRecordSystem.Data.EntityConfigurations
             builder.Property(p => p.ProcessedAt).IsRequired(false);
             builder.Property(p => p.CreatedAt).IsRequired();
             builder.Property(p => p.WithdrawalRequestStatusTypeCode).IsRequired();
+
+            builder.Property(p => p.Amount)
+                .HasPrecision(18, 2);
         }
     }
 }

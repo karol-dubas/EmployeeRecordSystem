@@ -18,6 +18,12 @@ namespace EmployeeRecordSystem.Data.EntityConfigurations
                 .ValueGeneratedOnAdd()
                 .IsRequired();
 
+            builder.Property(p => p.BalanceBefore)
+                .HasPrecision(18, 2);
+
+            builder.Property(p => p.BalanceAfter)
+                .HasPrecision(18, 2);
+
             builder.Property(c => c.CreatedAt).IsRequired();
         }
     }

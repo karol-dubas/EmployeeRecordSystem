@@ -20,6 +20,12 @@ namespace EmployeeRecordSystem.Data.EntityConfigurations
                 .ValueGeneratedOnAdd()
                 .IsRequired();
 
+            builder.Property(p => p.Balance)
+                .HasPrecision(18, 2);
+
+            builder.Property(p => p.HourlyPay)
+                .HasPrecision(18, 2);
+
             // TimeSpan to ticks conversion
             // https://docs.microsoft.com/en-us/ef/core/modeling/value-conversions?tabs=data-annotations#built-in-converters
             builder.Property(c => c.TimeWorked).HasConversion<long>();
