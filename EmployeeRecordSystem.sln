@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmployeeRecordSystem.Shared
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmployeeRecordSystem.Data", "EmployeeRecordSystem.Data\EmployeeRecordSystem.Data.csproj", "{5ABE9E5C-6572-42FC-BB59-6D4E41255DDE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeRecordSystem.Tests", "EmployeeRecordSystem.Tests\EmployeeRecordSystem.Tests.csproj", "{827DADBE-9502-4B2A-9B3D-F393A43DB58A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmployeeRecordSystem.Tests", "EmployeeRecordSystem.Tests\EmployeeRecordSystem.Tests.csproj", "{827DADBE-9502-4B2A-9B3D-F393A43DB58A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

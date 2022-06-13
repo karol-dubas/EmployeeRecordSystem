@@ -10,6 +10,7 @@
                     else
                     {
                         <p role="alert">You are not authorized to access this resource.</p>
+                        <p role="alert">App.razor</p>
                     }
                 </NotAuthorized>
             </AuthorizeRouteView>
@@ -19,6 +20,7 @@
             <PageTitle>Not found</PageTitle>
             <LayoutView Layout="@typeof(MainLayout)">
                 <p role="alert">Sorry, there's nothing at this address.</p>
+                <p role="alert">App.razor</p>
             </LayoutView>
         </NotFound>
     </Router>
