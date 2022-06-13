@@ -2,8 +2,20 @@
 
 <PageTitle>Index</PageTitle>
 
-<h1>Hello, world!</h1>
+<h2>Roles</h2>
+<ul>
+    <li><b>Logged in: </b><AuthorizeView> true</AuthorizeView></li>
+    <li><b>Employee role: </b><AuthorizeView Roles="@Roles.Employee"> true</AuthorizeView></li>
+    <li><b>Supervisor role: </b><AuthorizeView Roles="@Roles.Supervisor"> true</AuthorizeView></li>
+    <li><b>Admin role: </b><AuthorizeView Roles="@Roles.Admin"> true</AuthorizeView></li>
+</ul>
 
-Welcome to your new app.
-
-<SurveyPrompt Title="How is Blazor working for you?" />
+<h2>Claims</h2>
+<AuthorizeView>
+    <ul>
+        @foreach (var claim in context.User.Claims)
+        {
+            <li><b>@claim.Type</b>: @claim.Value</li>
+        }
+    </ul>
+</AuthorizeView>

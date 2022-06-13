@@ -11,6 +11,7 @@ using EmployeeRecordSystem.Server.Installers;
 using EmployeeRecordSystem.Data.Helpers;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Any;
+using System.IdentityModel.Tokens.Jwt;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,7 +32,15 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddIdentityServer()
-    .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
+    .AddApiAuthorization<ApplicationUser, ApplicationDbContext>(options =>
+    {
+        // Add the role claim to user claims collection
+
+        // For Identity resources
+        options.IdentityResources["openid"].UserClaims.Add("role");
+        // And for API resources
+        options.ApiResources.Single().UserClaims.Add("role");
+    });
 
 builder.Services.AddAuthentication()
     .AddIdentityServerJwt();
