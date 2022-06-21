@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using EmployeeRecordSystem.Data;
 using EmployeeRecordSystem.Data.Entities;
-using EmployeeRecordSystem.Server.Queries;
 using EmployeeRecordSystem.Shared.Constants;
+using EmployeeRecordSystem.Shared.Queries;
 using EmployeeRecordSystem.Shared.Requests;
 using EmployeeRecordSystem.Shared.Responses;
 using Microsoft.EntityFrameworkCore;

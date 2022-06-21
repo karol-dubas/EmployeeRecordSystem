@@ -2,6 +2,7 @@
 using AutoMapper.QueryableExtensions;
 using EmployeeRecordSystem.Data;
 using EmployeeRecordSystem.Data.Entities;
+using EmployeeRecordSystem.Shared.Queries;
 using EmployeeRecordSystem.Shared.Requests;
 using EmployeeRecordSystem.Shared.Responses;
 using Microsoft.EntityFrameworkCore;
@@ -17,8 +18,7 @@ namespace EmployeeRecordSystem.Server.Services
     public interface IGroupService
     {
         GroupDto Create(CreateGroupRequest request);
-        GroupDto Get(Guid groupId);
-        List<GroupDto> GetAll();
+        List<GroupDto> GetAll(GroupQuery query);
         GroupDto Rename(Guid groupId, RenameGroupRequest request);
         void Delete(Guid groupId);
         void AssignEmployeeToGroup(Guid groupId, Guid employeeId);
@@ -38,24 +38,15 @@ namespace EmployeeRecordSystem.Server.Services
             return _mapper.Map<GroupDto>(group);
         }
 
-        public List<GroupDto> GetAll()
+        public List<GroupDto> GetAll(GroupQuery query)
         {
-            var groups = _dbContext.Groups
-                .AsNoTracking()
-                .ToList();
+            var queryable = _dbContext.Groups
+                .AsNoTracking();
 
+            queryable = ApplyGetAllFilter(query, queryable);
+
+            var groups = queryable.ToList();
             return _mapper.Map<List<GroupDto>>(groups);
-        }
-
-        public GroupDto Get(Guid groupId)
-        {
-            var group = _dbContext.Groups
-                .AsNoTracking()
-                .SingleOrDefault(g => g.Id == groupId);
-
-            // TODO: null check
-
-            return _mapper.Map<GroupDto>(group);
         }
 
         public GroupDto Rename(Guid groupId, RenameGroupRequest request)
@@ -101,6 +92,17 @@ namespace EmployeeRecordSystem.Server.Services
 
             employee.GroupId = null;
             SaveChanges();
+        }
+
+        private IQueryable<Group> ApplyGetAllFilter(GroupQuery query, IQueryable<Group> queryable)
+        {
+            if (query.Id != default)
+            {
+                queryable = queryable
+                    .Where(g => g.Id == query.Id);
+            }
+
+            return queryable;
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using EmployeeRecordSystem.Data.Entities;
-using EmployeeRecordSystem.Server.Queries;
 using EmployeeRecordSystem.Server.Services;
+using EmployeeRecordSystem.Shared.Queries;
 using EmployeeRecordSystem.Shared.Requests;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

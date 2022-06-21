@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using EmployeeRecordSystem.Data.Entities;
 using EmployeeRecordSystem.Server.Services;
+using EmployeeRecordSystem.Shared.Queries;
 using EmployeeRecordSystem.Shared.Requests;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -26,26 +27,16 @@ namespace EmployeeRecordSystem.Server.Controllers
         public IActionResult Create([FromBody] CreateGroupRequest request)
         {
             var response = _groupService.Create(request);
-            return CreatedAtAction(nameof(Get), new { groupId = response.Id} , response);
-        }
-
-        /// <summary>
-        /// Get
-        /// </summary>
-        [HttpGet("{groupId}")]
-        public IActionResult Get([FromRoute] Guid groupId)
-        {
-            var response = _groupService.Get(groupId);
-            return Ok(response);
+            return CreatedAtAction(nameof(GetAll), new { Id = response.Id }, response);
         }
 
         /// <summary>
         /// Get all
         /// </summary>
         [HttpGet]
-        public IActionResult GetAll()
+        public IActionResult GetAll([FromQuery] GroupQuery query)
         {
-            var response = _groupService.GetAll();
+            var response = _groupService.GetAll(query);
             return Ok(response);
         }
 

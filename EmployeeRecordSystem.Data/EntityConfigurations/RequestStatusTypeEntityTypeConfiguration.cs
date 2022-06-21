@@ -3,7 +3,7 @@ using EmployeeRecordSystem.Data.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace UserTaskService.Infrastructure.EntityConfiguration
+namespace EmployeeRecordSystem.Data.EntityConfigurations
 {
     public class RequestStatusTypeEntityTypeConfiguration : IEntityTypeConfiguration<WithdrawalRequestStatusType>
     {

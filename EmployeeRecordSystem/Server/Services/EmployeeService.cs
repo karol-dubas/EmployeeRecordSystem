@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using EmployeeRecordSystem.Data;
 using EmployeeRecordSystem.Data.Entities;
-using EmployeeRecordSystem.Server.Queries;
 using EmployeeRecordSystem.Shared.Constants;
+using EmployeeRecordSystem.Shared.Queries;
 using EmployeeRecordSystem.Shared.Requests;
 using EmployeeRecordSystem.Shared.Responses;
 using Microsoft.AspNetCore.Identity;
@@ -113,6 +113,13 @@ namespace EmployeeRecordSystem.Server.Services
 
         private static IQueryable<ApplicationUser> ApplyGetAllFilter(EmployeeQuery query, IQueryable<ApplicationUser> queryable)
         {
+            if (query.WithoutGroup)
+            {
+                queryable = queryable
+                    .Include(u => u.Group)
+                    .Where(u => u.GroupId == null);
+            }
+
             if (query.GroupId != default)
             {
                 // TODO: group null check

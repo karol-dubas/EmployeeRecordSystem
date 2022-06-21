@@ -2,5 +2,5 @@
 
 public class CreateGroupRequest
 {
-    public string Name { get; init; }
+    public string Name { get; set; }
 }
