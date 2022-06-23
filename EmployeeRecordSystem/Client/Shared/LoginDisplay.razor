@@ -6,16 +6,20 @@
 
 <AuthorizeView>
     <Authorized>
-        <a href="authentication/profile">Hello, @context.User.Identity?.Name!</a>
-        <button class="nav-link btn btn-link" @onclick="BeginSignOut">Log out</button>
+        <div class="gap-4 d-flex flex-wrap">
+            <MudButton Variant="Variant.Filled" Color="Color.Inherit" EndIcon="@Icons.Filled.Settings" href="authentication/profile">Konto</MudButton>
+            <MudButton Variant="Variant.Filled" @onclick="BeginSignOut" EndIcon="@Icons.Outlined.Logout" Color="Color.Inherit">Wyloguj</MudButton>
+        </div>
     </Authorized>
     <NotAuthorized>
-        <a href="authentication/register">Register</a>
-        <a href="authentication/login">Log in</a>
+        <div class="gap-4 d-flex flex-wrap">
+            <MudButton Variant="Variant.Filled" Color="Color.Inherit" EndIcon="@Icons.Outlined.GroupAdd" href="authentication/register">Zarejestruj</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Inherit" EndIcon="@Icons.Outlined.Login" href="authentication/login">Zaloguj</MudButton>
+        </div>
     </NotAuthorized>
 </AuthorizeView>
 
-@code{
+@code {
     private async Task BeginSignOut(MouseEventArgs args)
     {
         await SignOutManager.SetSignOutState();

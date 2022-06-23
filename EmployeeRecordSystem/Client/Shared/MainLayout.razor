@@ -1,17 +1,75 @@
 ﻿@inherits LayoutComponentBase
+@implements IDisposable
+@inject BreadcrumbState _breadcrumbs
 
-<div class="page">
-    <div class="sidebar">
+<MudLayout>
+    <MudAppBar Elevation="1" Color="Color.Tertiary">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
+        <MudSpacer />
+        <LoginDisplay />
+    </MudAppBar>
+    <MudDrawer @bind-Open="@openDrawer" Elevation="1" Color="Color.Secondary">
+        <MudDrawerHeader Style="border-bottom: 1px solid var(--mud-palette-secondary-lighten);">
+            <MudText Typo="Typo.h6" Class="my-2">System ewidencji pracowników</MudText>
+        </MudDrawerHeader>
         <NavMenu />
-    </div>
+    </MudDrawer>
+    <MudMainContent Class="pt-16 px-16 primary" Style="height: 100vh;">
+        <MudContainer Class="mt-6">
+            <MudPaper Elevation="0" Class="mb-4">
+                <MudBreadcrumbs Items="_breadcrumbs.Items" Class="py-3" Style="font-size: 14px;"></MudBreadcrumbs>
+            </MudPaper>
+            <MudPaper Class="pa-5" Elevation="0">
+                @Body
+            </MudPaper>
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
 
-    <main>
-        <div class="top-row px-4 auth">
-            <LoginDisplay />
-        </div>
+<MudThemeProvider Theme="MyCustomTheme" />
+<MudDialogProvider />
+<MudSnackbarProvider />
 
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-</div>
+@code {
+    bool openDrawer = true;
+
+    protected override void OnInitialized()
+    {
+        _breadcrumbs.OnChange += StateHasChanged;
+    }
+
+    void ToggleDrawer()
+    {
+        openDrawer = !openDrawer;
+    }
+
+    MudTheme MyCustomTheme = new MudTheme
+        {
+            Palette = new()
+            {
+                // breadcrumb and main container colors
+                Surface = "#FFFFFF",
+
+                // main content colors
+                Primary = Colors.Grey.Lighten3,
+                TextPrimary = Colors.Grey.Darken4,
+
+                // nav menu color
+                Secondary = "#101247",
+                SecondaryContrastText = Colors.Grey.Lighten5,
+                TextSecondary = Colors.Grey.Lighten5,
+                SecondaryLighten = "#2c2e66",
+
+                // White
+                Tertiary = "#FFFFFF",
+                TertiaryContrastText = Colors.Grey.Darken3,
+            },
+
+            LayoutProperties = new()
+            {
+                DrawerWidthLeft = "290px"
+            }
+        };
+
+    void IDisposable.Dispose() => _breadcrumbs.OnChange -= StateHasChanged;
+}

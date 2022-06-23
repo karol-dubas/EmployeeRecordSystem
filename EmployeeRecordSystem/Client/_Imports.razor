@@ -11,3 +11,17 @@
 @using EmployeeRecordSystem.Client.Shared
 @using EmployeeRecordSystem.Shared.Constants
 @using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using EmployeeRecordSystem.Shared
+@using MudBlazor
+@using EmployeeRecordSystem.Shared.Responses
+@using EmployeeRecordSystem.Shared.Requests
+@using EmployeeRecordSystem.Client.Helpers
+@using EmployeeRecordSystem.Client.HttpServices
+@using EmployeeRecordSystem.Shared.Queries
+@using EmployeeRecordSystem.Client.Navigation
+@using Newtonsoft.Json
+
+@* Authorize all pages.
+Authentication.razor file must contain '@attribute [AllowAnonymous]' for redirection to work properly *@
+@attribute [Authorize]

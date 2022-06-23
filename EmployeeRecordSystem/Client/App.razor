@@ -3,14 +3,16 @@
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
                 <NotAuthorized>
+                    @*Check route authorization ex. razor component with @attribute [Authorize(Roles="Administrator")]*@
                     @if (context.User.Identity?.IsAuthenticated != true)
                     {
+                        // If not logged in
                         <RedirectToLogin />
                     }
                     else
                     {
+                        // Logged, but not authorized
                         <p role="alert">You are not authorized to access this resource.</p>
-                        <p role="alert">App.razor</p>
                     }
                 </NotAuthorized>
             </AuthorizeRouteView>
@@ -19,8 +21,8 @@
         <NotFound>
             <PageTitle>Not found</PageTitle>
             <LayoutView Layout="@typeof(MainLayout)">
+                @*Wrong route*@
                 <p role="alert">Sorry, there's nothing at this address.</p>
-                <p role="alert">App.razor</p>
             </LayoutView>
         </NotFound>
     </Router>

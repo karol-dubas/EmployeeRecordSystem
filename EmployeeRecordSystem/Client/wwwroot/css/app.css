@@ -1,24 +1,12 @@
-﻿:root {
-    --primary-color: #ececec;
-    --secondary-color: #181725;
-    --accent-color: #11e497;
-}
-
-.primary {
-    background-color: var(--primary-color);
+﻿.primary {
+    background-color: var(--mud-palette-primary);
+    color: var(--mud-palette-primary-text);
 }
 
 .secondary {
-    background-color: var(--secondary-color);
-    color: #e8e8e8;
+    background-color: var(--mud-palette-secondary);
+    color: var(--mud-palette-secondary-text);
 }
-
-.accent {
-    background-color: var(--accent-color);
-    color: white;
-}
-
-@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
