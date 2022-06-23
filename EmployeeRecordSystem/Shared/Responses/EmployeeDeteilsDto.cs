@@ -6,8 +6,7 @@ public class EmployeeDeteilsDto
     public string FirstName { get; init; }
     public string LastName { get; init; }
     public string BankAccountNumber { get; init; }
-    public string GroupName { get; init; }
-    public string UserBillingHourlyPay { get; init; }
-    public TimeSpan UserBillingTimeWorked { get; init; }
-    public string UserBillingBalance { get; init; }
+    public GroupDto Group { get; init; }
+    public UserBillingDto UserBilling { get; init; }
+
 }

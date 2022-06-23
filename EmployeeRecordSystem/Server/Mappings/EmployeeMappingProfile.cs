@@ -18,6 +18,7 @@ namespace EmployeeRecordSystem.Server.Mappings
             CreateMap<ApplicationUser, EmployeeInGroupDto>();
             CreateMap<EditEmployeeRequest, ApplicationUser>();
             CreateMap<BalanceLog, BalanceLogDto>();
+            CreateMap<UserBilling, UserBillingDto>();
         }
     }
 }

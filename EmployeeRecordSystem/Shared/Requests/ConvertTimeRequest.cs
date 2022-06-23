@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace EmployeeRecordSystem.Shared.Queries
 {
-    public class GroupQuery
+    public class ConvertTimeRequest
     {
-        public Guid Id { get; set; }
+        public Guid GroupId { get; set; }
     }
 }

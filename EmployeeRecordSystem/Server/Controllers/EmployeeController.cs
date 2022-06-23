@@ -20,7 +20,7 @@ namespace EmployeeRecordSystem.Server.Controllers
         }
 
         /// <summary>
-        /// Get details with user billing
+        /// Get details with user billing etc
         /// </summary>
         [HttpGet("{employeeId}")]
         public IActionResult GetDetails([FromRoute] Guid employeeId)
@@ -83,7 +83,7 @@ namespace EmployeeRecordSystem.Server.Controllers
         /// Convert time worked of all employees to the balance
         /// </summary>
         [HttpPatch("work-time/convert")]
-        public IActionResult ConvertWorkTimeToBalance()
+        public IActionResult ConvertWorkTimeToBalance([FromQuery] ConvertTimeRequest query)
         {
             _employeeService.ConvertWorkTimeToBalance();
             return NoContent();

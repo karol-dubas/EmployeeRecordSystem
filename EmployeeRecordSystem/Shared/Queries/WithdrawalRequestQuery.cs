@@ -8,8 +8,8 @@ namespace EmployeeRecordSystem.Shared.Queries
 {
     public class WithdrawalRequestQuery
     {
-        public Guid? Id { get; init; }
-        public Guid? EmployeeId { get; init; }
+        public Guid Id { get; init; }
+        public Guid EmployeeId { get; init; }
         public string WithdrawalRequestStatus { get; init; }
     }
 }
