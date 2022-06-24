@@ -1,0 +1,83 @@
+﻿@page "/withdrawal-requests/pending"
+@inject WithdrawalRequestHttpService _withdrawalRequestHttpService
+@inject NavigationManager _nav
+@inject BreadcrumbState _breadcrumbs
+
+<MudTable Items="@pendingWithdrawalRequests" Dense="true" Hover="true" Bordered="true" Striped="false" Filter="null">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Oczekujące żądania wypłaty</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="searchString" Placeholder="Wyszukaj" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Stworzono</MudTh>
+        <MudTh>Kwota</MudTh>
+        <MudTh>Pracownik</MudTh>
+        <MudTh>Nr konta bankowego</MudTh>
+        <MudTh></MudTh>
+        <MudTh></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context.CreatedAt</MudTd>
+        <MudTd>@context.Amount</MudTd>
+        <MudTd @onclick="() => NavigateToEmployee(context.UserId)" class="cursor-pointer">@context.UserFullName</MudTd>
+        <MudTd>@context.UserBankAccountNumber</MudTd>
+        <MudTd><MudIconButton Icon="@Icons.Material.Filled.CheckCircle" Size="Size.Small" Color="Color.Success" @onclick="() => AcceptWithdrawalRequest(context.Id)"></MudIconButton></MudTd>
+        <MudTd><MudIconButton Icon="@Icons.Filled.Cancel" Size="Size.Small" Color="Color.Error" @onclick="() => DenyWithdrawalRequest(context.Id)"></MudIconButton></MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+@code {
+    List<WithdrawalRequestDto> pendingWithdrawalRequests = new();
+    string searchString; // TODO: table search
+
+    protected override async Task OnInitializedAsync()
+    {
+        _breadcrumbs.Items = new BreadcrumbBuilder()
+            .AddHome()
+            .AddPendingWithdrawalRequests()
+            .Build();
+
+        await GetPendingWithdrawalRequestsAsync();
+    }
+
+    async Task GetPendingWithdrawalRequestsAsync()
+    {
+        var query = new WithdrawalRequestQuery()
+            {
+                WithdrawalRequestStatus = WithdrawalRequestStatusTypeCodes.Pending
+            };
+
+        pendingWithdrawalRequests = await _withdrawalRequestHttpService.GetAllAsync(query);
+    }
+
+    void NavigateToEmployee(Guid employeeId)
+    {
+        _nav.NavigateToEmployeeDetails(employeeId);
+    }
+
+    async Task AcceptWithdrawalRequest(Guid withdrawalRequestId)
+    {
+        var request = new ProcessWithdrawalRequestRequest()
+        {
+            ChangeStatusTo = WithdrawalRequestStatusTypeCodes.Accepted
+        };
+
+        await _withdrawalRequestHttpService.ProcessAsync(withdrawalRequestId, request);
+        await GetPendingWithdrawalRequestsAsync();
+    }
+
+    async Task DenyWithdrawalRequest(Guid withdrawalRequestId)
+    {
+        var request = new ProcessWithdrawalRequestRequest()
+        {
+            ChangeStatusTo = WithdrawalRequestStatusTypeCodes.Denied
+        };
+
+        await _withdrawalRequestHttpService.ProcessAsync(withdrawalRequestId, request);
+        await GetPendingWithdrawalRequestsAsync();
+    }
+}
