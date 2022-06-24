@@ -2,5 +2,5 @@
 
 public class ChangeEmployeeHourlyPayRequest
 {
-    public decimal HourlyPay { get; init; }
+    public decimal HourlyPay { get; set; }
 }

@@ -1,0 +1,26 @@
+﻿<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Add" Class="mr-3 mb-n1"/>
+            Dodaj żądanie wypłaty
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudNumericField T="decimal" Label="Kwota" @bind-Value="request.Amount" Min="0" Max="Balance" HelperText='@($"Saldo: {Balance}")'></MudNumericField>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Anuluj</MudButton>
+        <MudButton Color="Color.Secondary" OnClick="Submit">Dodaj</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public decimal Balance { get; set; }
+
+    CreateWithdrawalRequestRequest request { get; set; } = new();
+
+    void Cancel() => MudDialog.Cancel();
+    void Submit() =>  MudDialog.Close(request);
+}

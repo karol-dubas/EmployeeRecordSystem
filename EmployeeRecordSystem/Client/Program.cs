@@ -4,6 +4,7 @@ using EmployeeRecordSystem.Client.Navigation;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using MudBlazor;
 using MudBlazor.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -17,11 +18,23 @@ builder.Services.AddHttpClient("EmployeeRecordSystem.ServerAPI", client => clien
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("EmployeeRecordSystem.ServerAPI"));
 
 builder.Services.AddApiAuthorization();
-builder.Services.AddMudServices();
+builder.Services.AddMudServices(config =>
+{
+    config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomRight;
+
+    config.SnackbarConfiguration.PreventDuplicates = false;
+    config.SnackbarConfiguration.NewestOnTop = false;
+    config.SnackbarConfiguration.ShowCloseIcon = true;
+    config.SnackbarConfiguration.VisibleStateDuration = 3000;
+    config.SnackbarConfiguration.HideTransitionDuration = 500;
+    config.SnackbarConfiguration.ShowTransitionDuration = 500;
+    config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
+});
 
 builder.Services.AddScoped<EmployeeHttpService>();
 builder.Services.AddScoped<WithdrawalRequestHttpService>();
 builder.Services.AddScoped<GroupHttpService>();
 builder.Services.AddScoped<BreadcrumbState>();
+builder.Services.AddScoped<RoleHttpService>();
 
 await builder.Build().RunAsync();

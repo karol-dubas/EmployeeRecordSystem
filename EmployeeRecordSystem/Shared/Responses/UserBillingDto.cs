@@ -8,8 +8,8 @@ namespace EmployeeRecordSystem.Shared.Responses
 {
     public class UserBillingDto
     {
-        public string HourlyPay { get; init; }
-        public TimeSpan TimeWorked { get; init; }
-        public string Balance { get; init; }
+        public decimal HourlyPay { get; set; }
+        public TimeSpan TimeWorked { get; set; }
+        public decimal Balance { get; set; }
     }
 }

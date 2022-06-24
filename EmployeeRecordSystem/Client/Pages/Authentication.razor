@@ -2,6 +2,9 @@
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 <RemoteAuthenticatorView Action="@Action" />
 
+@*_Imports.razor has '@attribute [Authorize]', so this page must have this attribute for proper redirection*@
+@attribute [AllowAnonymous]
+
 @code{
-    [Parameter] public string? Action { get; set; }
+    [Parameter] public string Action { get; set; }
 }

@@ -1,0 +1,173 @@
+﻿@page "/employee/details/{employeeId:guid}"
+@inject EmployeeHttpService _employeeHttpService
+@inject GroupHttpService _groupHttpService
+@inject RoleHttpService _roleHttpService
+@inject NavigationManager _nav
+@inject BreadcrumbState _breadcrumbs
+@inject IDialogService _dialogService
+@inject ISnackbar _snackbar
+
+@if (employee is null)
+{
+    <MudPaper Class="d-flex justify-center" Elevation="0">
+        <MudProgressCircular Color="Color.Secondary" Indeterminate="true" />
+    </MudPaper>
+}
+else
+{
+    <div class="pa-4">
+        <MudStack Spacing="3">
+            <MudTextField @bind-Value="employee.FirstName" Label="Imię" Disabled="!editMode" Variant="Variant.Text"></MudTextField>
+            <MudTextField @bind-Value="employee.LastName" Label="Nazwisko" Disabled="!editMode" Variant="Variant.Text"></MudTextField>
+            <MudTextField @bind-Value="employee.BankAccountNumber" Label="Numer konta bankowego" Disabled="!editMode" Variant="Variant.Text"></MudTextField>
+
+            <MudSelect ToStringFunc="roleToString" T="RoleDto" @bind-Value="selectedRole" Label="Rola" Disabled="!editMode">
+                @foreach (var role in roles)
+                {
+                    <MudSelectItem Value="@role" />
+                }
+            </MudSelect>
+            <MudStack Row="true" AlignItems="AlignItems.End">
+                <MudSelect ToStringFunc="groupToString" T="GroupDto" @bind-Value="selectedGroup" Label="Grupa" Disabled="!editMode">
+                    @foreach (var group in groups)
+                    {
+                        <MudSelectItem Value="@group" />
+                    }
+                </MudSelect>
+                <MudButton Variant="Variant.Filled" Size="Size.Small" @onclick="RemoveFromGroup" Class="@visibleOnEdit">Usuń z grupy</MudButton>
+            </MudStack>
+            <MudNumericField @bind-Value="employee.UserBilling.HourlyPay" Label="Stawka godzinowa" Disabled="!editMode" Variant="Variant.Text" Min="0" Max="1000" Step="0.5M"></MudNumericField>
+            <MudStack Row="true" AlignItems="AlignItems.End">
+                <MudTextField @bind-Value="employee.UserBilling.TimeWorked" Label="Czas przepracowany" Disabled="true" Variant="Variant.Text"></MudTextField>
+                <MudButton Variant="Variant.Filled" Size="Size.Small" @onclick="ChangeWorkTime" Class="@visibleOnEdit">Edytuj czas pracy</MudButton>
+            </MudStack>
+
+            <MudStack Row="true" AlignItems="AlignItems.End">
+                <MudTextField @bind-Value="employee.UserBilling.Balance" Label="Saldo" Disabled="true" Variant="Variant.Text"></MudTextField>
+                <MudButton Variant="Variant.Filled" Size="Size.Small" @onclick="() => _nav.NavigateToEmployeeBalanceLogs(EmployeeId)">Historia salda</MudButton>
+                <MudButton Variant="Variant.Filled" Size="Size.Small" @onclick="() => _nav.NavigateToEmployeeWithdrawalRequests(EmployeeId)">Wypłaty</MudButton>
+            </MudStack>
+
+            <div class="mt-5">
+                @if (!editMode)
+                {
+                    <MudStack Row="true">
+                        <MudButton Variant="Variant.Filled" Size="Size.Small" @onclick="() => editMode = true">Edytuj</MudButton>
+                    </MudStack>
+                }
+                else
+                {
+                    <MudStack Row="true">
+                        <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Success" @onclick="Save">Zapisz</MudButton>
+                        <MudButton Variant="Variant.Filled" Size="Size.Small" @onclick="() => editMode = false">Anuluj</MudButton>
+                        <MudSpacer />
+                        <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Error" @onclick="DeleteAccount">Usuń konto</MudButton>
+                    </MudStack>
+                }
+            </div>
+        </MudStack>
+    </div>
+}
+
+
+@code {
+    [Parameter] public Guid EmployeeId { get; set; }
+
+    bool editMode = false;
+    string visibleOnEdit => editMode == true ? "" : "d-none";
+    EmployeeDeteilsDto employee;
+    List<GroupDto> groups;
+    List<RoleDto> roles;
+    GroupDto selectedGroup;
+    RoleDto selectedRole;
+    Func<GroupDto, string> groupToString = g => g == null ? "Brak grupy" : g.Name;
+    Func<RoleDto, string> roleToString = g => g.Name;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _breadcrumbs.Items = new BreadcrumbBuilder()
+            .AddHome()
+            .AddEmployeeDetails()
+            .Build();
+
+        await GetEmployee();
+        groups = await _groupHttpService.GetAllAsync();
+        roles = await _roleHttpService.GetAllAsync();
+
+        selectedGroup = employee.Group;
+        selectedRole = roles.Single(r => r.Name == employee.Role);
+    }
+
+    async Task GetEmployee()
+    {
+        employee = null;
+        employee = await _employeeHttpService.GetDetailsAsync(EmployeeId);
+    }
+
+    async Task Save()
+    {
+        bool groupChanged = employee.Group?.Id != selectedGroup?.Id;
+        if (groupChanged)
+            await _groupHttpService.AssignEmployeeToGroupAsync(selectedGroup.Id, EmployeeId);
+
+        bool roleChanged = employee.Role != selectedRole.Name;
+        if (roleChanged)
+            await _roleHttpService.ChangeEmployeeRoleAsync(EmployeeId, selectedRole.Id);
+
+        await ChangeHourlyPay();
+
+        var request = new EditEmployeeRequest()
+        {
+            BankAccountNumber = employee.BankAccountNumber,
+            FirstName = employee.FirstName,
+            LastName = employee.LastName
+        };
+
+        await _employeeHttpService.EditAsync(EmployeeId, request);
+
+        editMode = false;
+        _snackbar.Add("Użytkownik edytowany pomyślnie", Severity.Success);
+    }
+
+    async Task ChangeHourlyPay()
+    {
+        var request = new ChangeEmployeeHourlyPayRequest()
+            {
+                HourlyPay = employee.UserBilling.HourlyPay
+            };
+
+        await _employeeHttpService.ChangeHourlyPayAsync(EmployeeId, request);
+    }
+
+    async Task ChangeWorkTime()
+    {
+        // TODO: common group modal
+
+        //var request = new ChangeEmployeesWorkTimeRequest()
+        //{
+        //    EmployeeIds = new List<string> { EmployeeId },
+        //    WorkTime = ,
+        //    WorkTimeOperation = ,
+        //};
+
+        //await _employeeHttpService.ChangeWorkTimeAsync(EmployeeId, request);
+    }
+
+    async Task DeleteAccount()
+    {
+        bool? result = await _dialogService.ShowMessageBox(
+            "Uwaga",
+            "Czy na pewno chcesz usunąć?",
+            yesText: "Usuń", cancelText: "Anuluj");
+
+        StateHasChanged();
+
+        // TODO: delete account (Identity redirect?)
+        //if (result)
+    }
+
+    async Task RemoveFromGroup()
+    {
+        await _groupHttpService.RemoveEmployeeFromGroupAsync(EmployeeId);
+    }
+}

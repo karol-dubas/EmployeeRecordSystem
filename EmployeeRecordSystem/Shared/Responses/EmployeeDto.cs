@@ -9,8 +9,8 @@ namespace EmployeeRecordSystem.Shared.Responses
     public class EmployeeInGroupDto
     {
         public Guid Id { get; set; }
-        public string FirstName { get; init; }
-        public string LastName { get; init; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
         public string Role { get; set; }
     }
 }

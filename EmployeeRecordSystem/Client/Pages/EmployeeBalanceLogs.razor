@@ -1,0 +1,47 @@
+﻿@page "/employee/balance-logs/{employeeId:guid}"
+@inject EmployeeHttpService _employeeHttpService
+@inject BreadcrumbState _breadcrumbs
+
+<MudTable Items="@balanceLogs" Dense="true" Hover="true" Bordered="true" Striped="true" Filter="null">
+    <ColGroup>
+        <col style="width: 33%;" />
+        <col style="width: 33%;" />
+        <col style="width: 33%;" />
+    </ColGroup>
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Historia salda</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="searchString" Placeholder="Wyszukaj" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Saldo przed</MudTh>
+        <MudTh>Saldo po</MudTh>
+        <MudTh>Utworzono</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context.BalanceBefore</MudTd>
+        <MudTd>@context.BalanceAfter</MudTd>
+        <MudTd>@context.CreatedAt</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+@code {
+    [Parameter] public Guid EmployeeId { get; set; }
+
+    string searchString; // TODO: search
+    List<BalanceLogDto> balanceLogs = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _breadcrumbs.Items = new BreadcrumbBuilder()
+            .AddHome()
+            .AddEmployeeDetails()
+            .AddEmployeeBalanceLogs()
+            .Build();
+
+        balanceLogs = await _employeeHttpService.GetBalanceLogAsync(EmployeeId);
+    }
+}

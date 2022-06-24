@@ -2,7 +2,7 @@
 
 public class BalanceLogDto
 {
-    public decimal BalanceBefore { get; init; }
-    public decimal BalanceAfter { get; init; }
-    public DateTimeOffset CreatedAt { get; init; }
+    public decimal BalanceBefore { get; set; }
+    public decimal BalanceAfter { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
 }

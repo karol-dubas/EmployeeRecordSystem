@@ -1,0 +1,89 @@
+﻿@page "/employee/withdrawal-requests/{employeeId:guid}"
+@inject WithdrawalRequestHttpService _withdrawalRequestHttpService
+@inject EmployeeHttpService _employeeHttpService
+@inject NavigationManager _nav
+@inject IDialogService _dialogService
+@inject BreadcrumbState _breadcrumbs
+
+<div class="d-flex justify-end">
+    <MudButton @onclick="CreateWithdrawalRequest" Variant="Variant.Filled">
+        Dodaj żądanie wypłaty
+    </MudButton>
+</div>
+
+<MudTable Items="@withdrawalRequests" Dense="true" Hover="true" Bordered="true" Striped="true" Filter="null" Class="mt-5">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Żądania wypłaty</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="searchString" Placeholder="Wyszukaj" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Stworzono</MudTh>
+        <MudTh>Kwota</MudTh>
+        <MudTh>Status</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context.CreatedAt</MudTd>
+        <MudTd>@context.Amount</MudTd>
+        <MudTd>@context.WithdrawalRequestStatus</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+@code {
+    [Parameter] public Guid EmployeeId { get; set; }
+
+    List<WithdrawalRequestDto> withdrawalRequests = new();
+    string searchString; // TODO: table search
+
+    protected override async Task OnInitializedAsync()
+    {
+        _breadcrumbs.Items = new BreadcrumbBuilder()
+            .AddHome()
+            .AddEmployeeDetails()
+            .AddEmployeeWithdrawalRequests()
+            .Build();
+
+        await GetEmployeeWithdrawalRequests();
+    }
+
+    async Task GetEmployeeWithdrawalRequests()
+    {
+        var query = new WithdrawalRequestQuery()
+            {
+                EmployeeId = EmployeeId
+            };
+
+        withdrawalRequests = await _withdrawalRequestHttpService.GetAllAsync(query);
+
+        withdrawalRequests.ForEach(wr =>
+        {
+            var result = wr.WithdrawalRequestStatus switch
+            {
+                WithdrawalRequestStatusTypeCodes.Accepted => "Akceptowany",
+                WithdrawalRequestStatusTypeCodes.Denied => "Odrzucony",
+                WithdrawalRequestStatusTypeCodes.Pending => "Oczekujący",
+                _ => throw new InvalidOperationException()
+            };
+
+            wr.WithdrawalRequestStatus = result;
+        });
+    }
+
+    async Task CreateWithdrawalRequest()
+    {
+        var employee = await _employeeHttpService.GetDetailsAsync(EmployeeId);
+        var parameters = new DialogParameters { ["balance"]= employee.UserBilling.Balance };
+        var dialog = _dialogService.Show<AddWithdrawalRequestDialog>("", parameters);
+        var result = await dialog.Result;
+
+        if (!result.Cancelled)
+        {
+            var request = result.Data as CreateWithdrawalRequestRequest;
+            var newWithdrawalRequest = await _withdrawalRequestHttpService.CreateAsync(EmployeeId, request);
+            await GetEmployeeWithdrawalRequests();
+        }
+    }
+}

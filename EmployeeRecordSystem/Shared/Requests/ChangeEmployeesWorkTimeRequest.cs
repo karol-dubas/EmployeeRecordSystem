@@ -4,7 +4,7 @@ namespace EmployeeRecordSystem.Shared.Requests;
 
 public class ChangeEmployeesWorkTimeRequest
 {
-    public List<Guid> EmployeeIds { get; init; }
-    public string WorkTimeOperation { get; init; }
-    public TimeSpan WorkTime { get; init; }
+    public List<Guid> EmployeeIds { get; set; }
+    public string WorkTimeOperation { get; set; }
+    public TimeSpan WorkTime { get; set; }
 }

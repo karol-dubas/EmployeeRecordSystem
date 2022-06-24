@@ -2,6 +2,6 @@
 
 public class EmployeeQuery
 {
-    public Guid GroupId { get; init; }
-    public bool WithoutGroup { get; init; }
+    public Guid GroupId { get; set; }
+    public bool WithoutGroup { get; set; }
 }
