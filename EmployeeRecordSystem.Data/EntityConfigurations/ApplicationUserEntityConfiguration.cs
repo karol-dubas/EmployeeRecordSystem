@@ -37,7 +37,8 @@ namespace EmployeeRecordSystem.Data.EntityConfigurations
 
             builder.HasOne(c => c.Group)
                 .WithMany(c => c.Users)
-                .HasForeignKey(c => c.GroupId);
+                .HasForeignKey(c => c.GroupId)
+                .OnDelete(DeleteBehavior.SetNull);
 
             builder.HasOne(c => c.UserBilling)
                 .WithOne(c => c.User)
