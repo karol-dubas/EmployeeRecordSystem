@@ -34,7 +34,7 @@ builder.Services.AddMudServices(config =>
 builder.Services.AddScoped<EmployeeHttpService>();
 builder.Services.AddScoped<WithdrawalRequestHttpService>();
 builder.Services.AddScoped<GroupHttpService>();
-builder.Services.AddScoped<BreadcrumbState>();
+builder.Services.AddScoped<BreadcrumbStateContainer>();
 builder.Services.AddScoped<RoleHttpService>();
 
 await builder.Build().RunAsync();

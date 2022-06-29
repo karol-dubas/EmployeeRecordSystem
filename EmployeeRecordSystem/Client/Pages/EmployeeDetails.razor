@@ -3,7 +3,7 @@
 @inject GroupHttpService _groupHttpService
 @inject RoleHttpService _roleHttpService
 @inject NavigationManager _nav
-@inject BreadcrumbState _breadcrumbs
+@inject BreadcrumbStateContainer _breadcrumbs
 @inject IDialogService _dialogService
 @inject ISnackbar _snackbar
 
@@ -39,7 +39,7 @@ else
             <MudNumericField @bind-Value="employee.UserBilling.HourlyPay" Label="Stawka godzinowa" Disabled="!editMode" Variant="Variant.Text" Min="0" Max="1000" Step="0.5M"></MudNumericField>
             <MudStack Row="true" AlignItems="AlignItems.End">
                 <MudTextField @bind-Value="employee.UserBilling.TimeWorked" Label="Czas przepracowany" Disabled="true" Variant="Variant.Text"></MudTextField>
-                <MudButton Variant="Variant.Filled" Size="Size.Small" @onclick="ChangeWorkTime" Class="@visibleOnEdit">Edytuj czas pracy</MudButton>
+                <MudButton Variant="Variant.Filled" Size="Size.Small" @onclick="EditWorkTime" Class="@visibleOnEdit">Edytuj czas pracy</MudButton>
             </MudStack>
 
             <MudStack Row="true" AlignItems="AlignItems.End">
@@ -96,12 +96,27 @@ else
 
         selectedGroup = employee.Group;
         selectedRole = roles.Single(r => r.Name == employee.Role);
+
+        ChangeDisplayValue();
     }
 
     async Task GetEmployee()
     {
-        employee = null;
         employee = await _employeeHttpService.GetDetailsAsync(EmployeeId);
+    }
+
+    void ChangeDisplayValue()
+    {
+        var result = employee.Role switch
+        {
+            Roles.Admin => "Administrator",
+            Roles.Supervisor => "Kierownik",
+            Roles.Employee => "Pracownik",
+            _ => throw new InvalidOperationException()
+        };
+
+        employee.Role = result;
+        // TODO: update input
     }
 
     async Task Save()
@@ -139,18 +154,31 @@ else
         await _employeeHttpService.ChangeHourlyPayAsync(EmployeeId, request);
     }
 
-    async Task ChangeWorkTime()
+    async Task EditWorkTime()
     {
-        // TODO: common group modal
+        var employeeInGroupDto = new EmployeeInGroupDto
+        {
+            Id = EmployeeId,
+            FirstName = employee.FirstName,
+            LastName = employee.LastName,
+            HourlyPay = employee.UserBilling.HourlyPay.ToString(),
+            Role = employee.Role,
+            TimeWorked = employee.UserBilling.TimeWorked.ToString()
+        };
 
-        //var request = new ChangeEmployeesWorkTimeRequest()
-        //{
-        //    EmployeeIds = new List<string> { EmployeeId },
-        //    WorkTime = ,
-        //    WorkTimeOperation = ,
-        //};
+        var parameters = new DialogParameters { ["employees"] = new List<EmployeeInGroupDto> { employeeInGroupDto }};
 
-        //await _employeeHttpService.ChangeWorkTimeAsync(EmployeeId, request);
+        var options = new DialogOptions() { MaxWidth = MaxWidth.Small, FullWidth = true };
+        var result = await _dialogService.Show<EditWorkTimeDialog>("", parameters, options).Result;
+
+        if (result.Cancelled)
+            return;
+
+        var request = result.Data as ChangeEmployeesWorkTimeRequest;
+        await _employeeHttpService.ChangeWorkTimeAsync(request);
+
+        _snackbar.Add("Zmieniono czas pracy pracownika", Severity.Success);
+        await GetEmployee();
     }
 
     async Task DeleteAccount()

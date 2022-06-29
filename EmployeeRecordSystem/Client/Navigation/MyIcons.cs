@@ -11,5 +11,6 @@ namespace EmployeeRecordSystem.Client.Navigation
         public static readonly string Groups = Icons.Filled.Groups;
         public static readonly string MyGroup = Icons.Filled.Group;
         public static readonly string PendingWithdrawalRequests = Icons.Filled.RequestPage;
+        public static readonly string WorkTime = Icons.Sharp.AccessTime;
     }
 }

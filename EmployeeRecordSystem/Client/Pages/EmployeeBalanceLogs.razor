@@ -1,6 +1,6 @@
 ﻿@page "/employee/balance-logs/{employeeId:guid}"
 @inject EmployeeHttpService _employeeHttpService
-@inject BreadcrumbState _breadcrumbs
+@inject BreadcrumbStateContainer _breadcrumbs
 
 <MudTable Items="@balanceLogs" Dense="true" Hover="true" Bordered="true" Striped="true" Filter="null">
     <ColGroup>

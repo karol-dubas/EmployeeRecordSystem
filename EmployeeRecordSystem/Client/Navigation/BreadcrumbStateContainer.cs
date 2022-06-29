@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EmployeeRecordSystem.Client.Navigation
 {
-    public class BreadcrumbState
+    public class BreadcrumbStateContainer
     {
         private List<BreadcrumbItem> _items = new();
 

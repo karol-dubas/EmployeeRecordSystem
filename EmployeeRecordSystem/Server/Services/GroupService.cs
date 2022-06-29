@@ -41,6 +41,7 @@ namespace EmployeeRecordSystem.Server.Services
         public List<GroupDto> GetAll(GroupQuery query)
         {
             var queryable = _dbContext.Groups
+                .Include(g => g.Users)
                 .AsNoTracking();
 
             queryable = ApplyGetAllFilter(query, queryable);

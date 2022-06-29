@@ -15,7 +15,9 @@ namespace EmployeeRecordSystem.Server.Mappings
         public EmployeeMappingProfile()
         {
             CreateMap<ApplicationUser, EmployeeDeteilsDto>();
-            CreateMap<ApplicationUser, EmployeeInGroupDto>();
+            CreateMap<ApplicationUser, EmployeeInGroupDto>()
+                .ForMember(m => m.HourlyPay, c => c.MapFrom(s => s.UserBilling.HourlyPay))
+                .ForMember(m => m.TimeWorked, c => c.MapFrom(s => s.UserBilling.TimeWorked));
             CreateMap<EditEmployeeRequest, ApplicationUser>();
             CreateMap<BalanceLog, BalanceLogDto>();
             CreateMap<UserBilling, UserBillingDto>();

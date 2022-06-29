@@ -1,0 +1,69 @@
+﻿<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-3 mb-n1" />
+            Edytuj czas pracy
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudStack Spacing="6">
+            <MudTable Items="Employees" MultiSelection="true" @bind-SelectedItems="selectedEmployees" Hover="true" Dense="true" Bordered="true">
+                <HeaderContent>
+                    <MudTh>Imię</MudTh>
+                    <MudTh>Nazwisko</MudTh>
+                    <MudTh>Rola</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd>@context.FirstName</MudTd>
+                    <MudTd>@context.LastName</MudTd>
+                    <MudTd>@context.Role</MudTd>
+                </RowTemplate>
+            </MudTable>
+            <MudStack Row="true" Class="align-end" Spacing="8">
+                <div style="width: 100px;">
+                    <MudTimePicker Color="Color.Secondary" Label="Czas pracy" @bind-Time="timeInput" />
+                </div>
+                <MudStack Row="true" Spacing="3" Class="align-center">
+                    <span>Odejmij</span>
+                    <MudSwitch @bind-Checked="workTimeOperationChecked"
+                               ThumbIcon="@(workTimeOperationChecked == true ? Icons.Material.Filled.Add : Icons.Material.Filled.Remove)"
+                               ThumbIconColor="@(workTimeOperationChecked == true ? Color.Success : Color.Error)">
+                    </MudSwitch>
+                    <span style="margin: -20px;">Dodaj</span>
+                </MudStack>
+            </MudStack>
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Anuluj</MudButton>
+        <MudButton Color="Color.Secondary" OnClick="Submit">Zmień</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public List<EmployeeInGroupDto> Employees { get; set; } = new();
+
+    ChangeEmployeesWorkTimeRequest request = new();
+    HashSet<EmployeeInGroupDto> selectedEmployees = new();
+    TimeSpan? timeInput = new();
+    bool workTimeOperationChecked = true;
+
+    protected override void OnInitialized()
+    {
+        Employees.ForEach(e => selectedEmployees.Add(e));
+    }
+
+    void Cancel() => MudDialog.Cancel();
+    void Submit()
+    {
+        var selectedIds = selectedEmployees.Select(se => se.Id).ToList();
+        request.EmployeeIds.AddRange(selectedIds);
+
+        request.WorkTime = timeInput is null ? TimeSpan.Zero : timeInput.Value;
+        request.WorkTimeOperation = workTimeOperationChecked == true ? WorkTimeOperations.Add : WorkTimeOperations.Subtract;
+
+        MudDialog.Close(request);
+    }
+}

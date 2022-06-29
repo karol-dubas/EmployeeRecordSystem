@@ -1,7 +1,7 @@
 ﻿@page "/withdrawal-requests/pending"
 @inject WithdrawalRequestHttpService _withdrawalRequestHttpService
 @inject NavigationManager _nav
-@inject BreadcrumbState _breadcrumbs
+@inject BreadcrumbStateContainer _breadcrumbs
 
 <MudTable Items="@pendingWithdrawalRequests" Dense="true" Hover="true" Bordered="true" Striped="false" Filter="null">
     <ToolBarContent>

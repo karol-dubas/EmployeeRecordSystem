@@ -1,0 +1,23 @@
+﻿<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Add" Class="mr-3 mb-n1"/>
+            Dodaj grupę
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudTextField T="string" Label="Nazwa" @bind-Value="request.Name"></MudTextField>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Anuluj</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Dodaj</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    CreateGroupRequest request { get; set; } = new();
+
+    void Cancel() => MudDialog.Cancel();
+    void Submit() =>  MudDialog.Close(request);
+}

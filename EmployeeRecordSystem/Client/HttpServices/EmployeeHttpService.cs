@@ -55,13 +55,13 @@ namespace EmployeeRecordSystem.Client.HttpServices
             var response = await _httpClient.PatchAsync($"{_basePath}/{employeeId}/hourly-pay", content);
         }
 
-        public async Task ChangeWorkTimeAsync(Guid employeeId, ChangeEmployeesWorkTimeRequest request)
+        public async Task ChangeWorkTimeAsync(ChangeEmployeesWorkTimeRequest request)
         {
             var content = HttpHelper.ToHttpContent(request);
-            var response = await _httpClient.PatchAsync($"{_basePath}/{employeeId}/work-time", content);
+            var response = await _httpClient.PatchAsync($"{_basePath}/work-time", content);
         }
 
-        public async Task ConvertWorkTimeToBalanceAsync(ConvertTimeRequest request)
+        public async Task ConvertWorkTimeToBalanceAsync(ConvertTimeRequest request = null)
         {
             var content = HttpHelper.ToHttpContent(request);
             var response = await _httpClient.PatchAsync($"{_basePath}/work-time/convert", content);

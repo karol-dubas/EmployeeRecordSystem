@@ -41,7 +41,11 @@ namespace EmployeeRecordSystem.Server.Services
 
         public List<EmployeeInGroupDto> GetAll(EmployeeQuery query)
         {
-            var queryable = _dbContext.Users.AsNoTracking();
+            var queryable = _dbContext.Users
+                .Include(e => e.Group)
+                .Include(e => e.UserBilling)
+                .AsNoTracking();
+
             queryable = ApplyGetAllFilter(query, queryable);
 
             var employees = queryable.ToList();

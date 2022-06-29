@@ -30,26 +30,26 @@
 
     async Task NavigateToEmployeeDetails()
     {
-        Guid userId = Guid.Parse(await _auth.GetUserIdAsync());
+        Guid userId = await _auth.GetUserIdAsync();
         _nav.NavigateToEmployeeDetails(userId);
     }
 
     async Task NavigateToBalanceLogs()
     {
-        Guid userId = Guid.Parse(await _auth.GetUserIdAsync());
+        Guid userId = await _auth.GetUserIdAsync();
         _nav.NavigateToEmployeeBalanceLogs(userId);
     }
 
     async Task NavigateToEmployeeWithdrawalRequests()
     {
-        Guid userId = Guid.Parse(await _auth.GetUserIdAsync());
+        Guid userId = await _auth.GetUserIdAsync();
         _nav.NavigateToEmployeeWithdrawalRequests(userId);
     }
 
     async Task NavigateToEmployeeGroup()
     {
-        // TODO: show nav item if has group
-        Guid userId = Guid.Parse(await _auth.GetUserIdAsync());
+        // TODO: show nav item only if has group
+        Guid userId = await _auth.GetUserIdAsync();
         var employee = await _employeeHttpService.GetDetailsAsync(userId);
 
         _nav.NavigateToGroup(employee.Group.Id);
