@@ -16,29 +16,30 @@
 <MudPaper Elevation="25" Class="mb-8">
     <MudToolBar>
         <MudTooltip Text="Ukryj puste grupy">
-            <MudIconButton Icon="@Icons.Filled.Compress" @onclick="HideEmptyGroups" />
+            <MudIconButton Icon="@Icons.Filled.Compress" Color="Color.Primary" @onclick="HideEmptyGroups" />
         </MudTooltip>
         <MudTooltip Text="Zwiń/rozwiń">
-            <MudIconButton Icon="@Icons.Filled.ExpandMore" @onclick="ToggleExpand" />
+            <MudIconButton Icon="@Icons.Filled.ExpandMore" Color="Color.Primary" @onclick="ToggleExpand" />
         </MudTooltip>
         <MudTooltip Text="@PageNames.MyGroup">
-            <MudIconButton Icon="@MyIcons.MyGroup" @onclick="NavigateToEmployeeGroup" />
+            <MudIconButton Icon="@MyIcons.MyGroup" Color="Color.Primary" @onclick="NavigateToEmployeeGroup" />
         </MudTooltip>
         <MudSpacer />
         <MudTooltip Text="Dodaj nową grupę">
-            <MudIconButton Icon="@Icons.Filled.Add" @onclick="CreateGroup" />
+            <MudIconButton Icon="@Icons.Filled.Add" Color="Color.Primary" @onclick="CreateGroup" />
         </MudTooltip>
         <MudTooltip Text="Przekonwertuj czas pracy wszystkich pracowników na saldo">
-            <MudIconButton Icon="@Icons.Filled.AttachMoney" @onclick="() => ConvertWorkTimeToBalance()" />
+            <MudIconButton Icon="@Icons.Filled.AttachMoney" Color="Color.Warning" @onclick="() => ConvertWorkTimeToBalance()" />
         </MudTooltip>
     </MudToolBar>
 </MudPaper>
 
 <MudPaper Elevation="25">
-    <MudTable Hover="true" FixedHeader="true"
+    @*Table for employees*@
+    <MudTable Hover="true"
               Items="@items"
               GroupBy="@_groupDefinition"
-              GroupHeaderStyle="background-color:var(--mud-palette-primary)"
+              GroupHeaderStyle="background-color:var(--mud-palette-background)"
               Dense="true">
         <HeaderContent>
             <MudTh>Imię</MudTh>
@@ -50,50 +51,40 @@
         </HeaderContent>
         <GroupHeaderTemplate>
             <MudTh Class="mud-table-cell-custom-group" colspan="6">
-                <code class="d-none">@(currentGroup = context.Items.Select(i => i.Group).First())</code>
                 <div class="d-flex">
-                    @currentGroup.Name
+                    @(context.Items.Select(i => i.Group).First().Name)
                     <MudSpacer />
-                    @if (IsContainerForEmployeesWithNoGroup(currentGroup))
-                    {
-                        <MudTooltip Text="Usuń grupę">
-                            <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" @onclick="() => DeleteGroup(currentGroup.Id)" />
-                        </MudTooltip>
-                        <MudTooltip Text="Zmień nazwę grupy">
-                            <MudIconButton Icon="@Icons.Filled.DriveFileRenameOutline" Size="Size.Small" Color="Color.Secondary" @onclick="() => RenameGroup(currentGroup.Id)" />
-                        </MudTooltip>
-                        @if (!currentGroup.IsEmpty)
-                        {
-                            <MudTooltip Text="Edytuj czas pracy pracowników">
-                                <MudIconButton Icon="@MyIcons.WorkTime" Size="Size.Small" Color="Color.Secondary" @onclick="() => EditGroupWorkTime(context.Items)" />
-                            </MudTooltip>
-                        }
-                    }
-                    @if (!currentGroup.IsEmpty)
-                    {
-                        <MudTooltip Text="Przekonweruj czas pracy pracowników na ich saldo">
-                            <MudIconButton Icon="@Icons.Filled.AttachMoney" Size="Size.Small" Color="Color.Secondary" @onclick="() => ConvertWorkTimeToBalance(currentGroup.Id)" />
-                        </MudTooltip>
-                    }
+                    <MudTooltip Text="Usuń grupę">
+                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" @onclick="() => DeleteGroup((Guid)context.Key)" />
+                    </MudTooltip>
+                    <MudTooltip Text="Zmień nazwę grupy">
+                        <MudIconButton Icon="@Icons.Filled.DriveFileRenameOutline" Size="Size.Small" Color="Color.Primary" @onclick="() => RenameGroup((Guid)context.Key)" />
+                    </MudTooltip>
+                    <MudTooltip Text="Edytuj czas pracy pracowników">
+                        <MudIconButton Icon="@MyIcons.WorkTime" Size="Size.Small" Color="Color.Primary" @onclick="() => EditGroupWorkTime(context.Items)" />
+                    </MudTooltip>
+                    <MudTooltip Text="Przekonweruj czas pracy pracowników na ich saldo">
+                        <MudIconButton Icon="@Icons.Filled.AttachMoney" Size="Size.Small" Color="Color.Warning" @onclick="() => ConvertWorkTimeToBalance((Guid)context.Key)" />
+                    </MudTooltip>
                 </div>
             </MudTh>
         </GroupHeaderTemplate>
         <RowTemplate>
-            <MudTd>@context.FirstName</MudTd>
-            <MudTd>@context.LastName</MudTd>
-            <MudTd>@context.HourlyPay</MudTd>
-            <MudTd>@context.TimeWorked</MudTd>
-            <MudTd>@context.Role</MudTd>
-            <MudTd>
+            <MudTd DataLabel="Imię">@context.FirstName</MudTd>
+            <MudTd DataLabel="Nazwisko">@context.LastName</MudTd>
+            <MudTd DataLabel="Stawka godzinowa">@context.HourlyPay</MudTd>
+            <MudTd DataLabel="Czas przepracowany">@context.TimeWorked</MudTd>
+            <MudTd DataLabel="Rola">@context.Role</MudTd>
+            <MudTd DataLabel="">
                 <div class="d-flex gap-3 justify-end">
-                    @if (IsContainerForEmployeesWithNoGroup(context.Group))
+                    @if (!IsContainerForEmployeesWithNoGroup(context.Group))
                     {
                         <MudTooltip Text="Usuń pracownika z grupy">
                             <MudIconButton Icon="@Icons.Material.Filled.PersonRemove" Size="Size.Small" Color="Color.Error" @onclick="() => RemoveFormGroup(context.Id)" />
                         </MudTooltip>
                     }
                     <MudTooltip Text="Zmień grupę pracownika">
-                        <MudMenu Icon="@Icons.Material.Filled.SwapVert" Size="Size.Small" Color="Color.Secondary">
+                        <MudMenu Icon="@Icons.Material.Filled.SwapVert" Size="Size.Small" Color="Color.Primary">
                             @foreach (var group in allGroups)
                             {
                                 <MudMenuItem @onclick="() => ChangeGroup(context.Id, group.Id)">@group.Name</MudMenuItem>
@@ -101,31 +92,73 @@
                         </MudMenu>
                     </MudTooltip>
                     <MudTooltip Text="@PageNames.EmployeeDetails">
-                        <MudIconButton Icon="@MyIcons.EmployeeDetails" Size="Size.Small" Color="Color.Secondary" @onclick="() => _nav.NavigateToEmployeeDetails(context.Id)" />
+                        <MudIconButton Icon="@MyIcons.EmployeeDetails" Size="Size.Small" Color="Color.Primary" @onclick="() => _nav.NavigateToEmployeeDetails(context.Id)" />
                     </MudTooltip>
                     <MudTooltip Text="Edytuj czas pracy pracownika">
-                        <MudIconButton Icon="@MyIcons.WorkTime" Size="Size.Small" Color="Color.Secondary" @onclick="() => EditEmployeeWorkTime(context)" />
+                        <MudIconButton Icon="@MyIcons.WorkTime" Size="Size.Small" Color="Color.Primary" @onclick="() => EditEmployeeWorkTime(context)" />
                     </MudTooltip>
                 </div>
             </MudTd>
         </RowTemplate>
     </MudTable>
+    @*Table for empty groups*@
+    <MudTable Hover="true"
+              Items="@items2"
+              GroupBy="@_groupDefinition2"
+              GroupHeaderStyle="background-color:var(--mud-palette-background)"
+              HeaderClass="d-none"
+              Dense="true">
+        <HeaderContent>
+            <MudTh>Imię</MudTh>
+            <MudTh>Nazwisko</MudTh>
+            <MudTh>Stawka godzinowa</MudTh>
+            <MudTh>Czas przepracowany</MudTh>
+            <MudTh>Rola</MudTh>
+            <MudTh></MudTh>
+        </HeaderContent>
+        <GroupHeaderTemplate>
+            <MudTh Class="mud-table-cell-custom-group" colspan="6">
+                <div class="d-flex">
+                    @(context.Items.Select(i => i.Group).First().Name)
+                    <MudSpacer />
+                    <MudTooltip Text="Usuń grupę">
+                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" @onclick="() => DeleteGroup((Guid)context.Key)" />
+                    </MudTooltip>
+                    <MudTooltip Text="Zmień nazwę grupy">
+                        <MudIconButton Icon="@Icons.Filled.DriveFileRenameOutline" Size="Size.Small" Color="Color.Primary" @onclick="() => RenameGroup((Guid)context.Key)" />
+                    </MudTooltip>
+                </div>
+            </MudTh>
+        </GroupHeaderTemplate>
+        <RowTemplate>
+            <MudTd DataLabel="Imię"></MudTd>
+            <MudTd DataLabel="Nazwisko"></MudTd>
+            <MudTd DataLabel="Stawka godzinowa"></MudTd>
+            <MudTd DataLabel="Czas przepracowany"></MudTd>
+            <MudTd DataLabel="Rola"></MudTd>
+            <MudTd DataLabel=""></MudTd>
+        </RowTemplate>
+    </MudTable>
 </MudPaper>
 
 @code {
-    // TODO: collapse and hide icon if group is empty
-
     [Parameter] public Guid GroupId { get; set; }
 
     List<EmployeeInGroupDto> items = new();
+    List<EmployeeInGroupDto> items2 = new();
     List<GroupDto> allGroups = new();
-    GroupDto currentGroup = new();
 
     TableGroupDefinition<EmployeeInGroupDto> _groupDefinition = new()
         {
-            Indentation = false,
             Expandable = true,
             IsInitiallyExpanded = true,
+            Selector = s => s.Group.Id
+        };
+
+    TableGroupDefinition<EmployeeInGroupDto> _groupDefinition2 = new()
+        {
+            Expandable = false,
+            IsInitiallyExpanded = false,
             Selector = s => s.Group.Id
         };
 
@@ -136,32 +169,32 @@
             .AddGroups()
             .Build();
 
-        allGroups = await _groupHttpService.GetAllAsync();
         await GetItems();
     }
 
-    bool IsContainerForEmployeesWithNoGroup(GroupDto group) => group.Id != Guid.Empty;
+    bool IsContainerForEmployeesWithNoGroup(GroupDto group) => group.Id == Guid.Empty;
 
     async Task GetItems()
     {
+        this.allGroups = await _groupHttpService.GetAllAsync();
         var employees = await _employeeHttpService.GetAllAsync();
 
-        // Add employees to container if has no group
-        foreach (var employee in employees)
-        {
-            if (employee.Group is null)
-                employee.Group = new GroupDto { Id = Guid.Empty };
-        }
-
-        ChangeDisplayValue(employees);
-        this.items = employees;
+        // Add employees without group to a special container
+        employees
+        .Where(e => e.Group is null)
+        .ToList()
+        .ForEach(e => e.Group = new GroupDto { Id = Guid.Empty });
 
         // Add empty groups
         var emptyGroups = allGroups.Where(g => g.IsEmpty)
             .ToList()
-            .Select(g => new EmployeeInGroupDto { Group = g });
+            .Select(g => new EmployeeInGroupDto { Group = g })
+            .ToList();
 
-        this.items.AddRange(emptyGroups);
+        ChangeDisplayValue(employees);
+
+        this.items = employees;
+        this.items2 = emptyGroups;
     }
 
     void ChangeDisplayValue(List<EmployeeInGroupDto> employees)

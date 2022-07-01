@@ -15,15 +15,18 @@
         <MudTh>Pracownik</MudTh>
         <MudTh>Nr konta bankowego</MudTh>
         <MudTh></MudTh>
-        <MudTh></MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd>@context.CreatedAt</MudTd>
-        <MudTd>@context.Amount</MudTd>
-        <MudTd @onclick="() => NavigateToEmployee(context.UserId)" class="cursor-pointer">@context.UserFullName</MudTd>
-        <MudTd>@context.UserBankAccountNumber</MudTd>
-        <MudTd><MudIconButton Icon="@Icons.Material.Filled.CheckCircle" Size="Size.Small" Color="Color.Success" @onclick="() => AcceptWithdrawalRequest(context.Id)"></MudIconButton></MudTd>
-        <MudTd><MudIconButton Icon="@Icons.Filled.Cancel" Size="Size.Small" Color="Color.Error" @onclick="() => DenyWithdrawalRequest(context.Id)"></MudIconButton></MudTd>
+        <MudTd DataLabel="Stworzono">@context.CreatedAt</MudTd>
+        <MudTd DataLabel="Kwota">@context.Amount</MudTd>
+        <MudTd DataLabel="Pracownik" @onclick="() => NavigateToEmployee(context.UserId)" class="cursor-pointer">@context.UserFullName</MudTd>
+        <MudTd DataLabel="Nr konta bankowego">@context.UserBankAccountNumber</MudTd>
+        <MudTd DataLabel="">
+            <MudChipSet Class="d-flex justify-center gap-8">
+                <MudChip Icon="@Icons.Material.Filled.CheckCircle" Size="Size.Small" Color="Color.Success" @onclick="() => AcceptWithdrawalRequest(context.Id)">Akceptuj</MudChip>
+                <MudChip Icon="@Icons.Material.Filled.Cancel" Size="Size.Small" Color="Color.Error" @onclick="() => DenyWithdrawalRequest(context.Id)">Odrzuć</MudChip>
+            </MudChipSet>
+        </MudTd>
     </RowTemplate>
     <PagerContent>
         <MudTablePager />
@@ -62,9 +65,9 @@
     async Task AcceptWithdrawalRequest(Guid withdrawalRequestId)
     {
         var request = new ProcessWithdrawalRequestRequest()
-        {
-            ChangeStatusTo = WithdrawalRequestStatusTypeCodes.Accepted
-        };
+            {
+                ChangeStatusTo = WithdrawalRequestStatusTypeCodes.Accepted
+            };
 
         await _withdrawalRequestHttpService.ProcessAsync(withdrawalRequestId, request);
         await GetPendingWithdrawalRequestsAsync();
@@ -73,9 +76,9 @@
     async Task DenyWithdrawalRequest(Guid withdrawalRequestId)
     {
         var request = new ProcessWithdrawalRequestRequest()
-        {
-            ChangeStatusTo = WithdrawalRequestStatusTypeCodes.Denied
-        };
+            {
+                ChangeStatusTo = WithdrawalRequestStatusTypeCodes.Denied
+            };
 
         await _withdrawalRequestHttpService.ProcessAsync(withdrawalRequestId, request);
         await GetPendingWithdrawalRequestsAsync();

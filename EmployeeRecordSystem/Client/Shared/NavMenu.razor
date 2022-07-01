@@ -3,25 +3,24 @@
 @inject EmployeeHttpService _employeeHttpService
 
 <MudNavMenu Margin="Margin.Normal" Class="mt-5">
-    <MudNavLink @onclick="NavigateToHome" Icon="@MyIcons.Home" IconColor="NavItemIconColor">@PageNames.Home</MudNavLink>
+    <MudNavLink @onclick="NavigateToHome" Icon="@MyIcons.Home">@PageNames.Home</MudNavLink>
     <MudNavGroup Title="Pracownik" Expanded="true">
-        <MudNavLink @onclick="NavigateToEmployeeDetails" Icon="@MyIcons.EmployeeDetails" IconColor="NavItemIconColor">@PageNames.EmployeeDetails</MudNavLink>
-        <MudNavLink @onclick="NavigateToBalanceLogs" Icon="@MyIcons.BalanceLogs" IconColor="NavItemIconColor">@PageNames.BalanceLogs</MudNavLink>
-        <MudNavLink @onclick="NavigateToEmployeeWithdrawalRequests" Icon="@MyIcons.WithdrawalRequests" IconColor="NavItemIconColor">Wypłaty</MudNavLink>
+        <MudNavLink @onclick="NavigateToEmployeeDetails" Icon="@MyIcons.EmployeeDetails">@PageNames.EmployeeDetails</MudNavLink>
+        <MudNavLink @onclick="NavigateToBalanceLogs" Icon="@MyIcons.BalanceLogs">@PageNames.BalanceLogs</MudNavLink>
+        <MudNavLink @onclick="NavigateToEmployeeWithdrawalRequests" Icon="@MyIcons.WithdrawalRequests">Wypłaty</MudNavLink>
     </MudNavGroup>
     <MudNavGroup Title="Grupy" Expanded="true">
-        <MudNavLink @onclick="() => _nav.NavigateToGroups()" Icon="@MyIcons.Groups" IconColor="NavItemIconColor">@PageNames.Groups</MudNavLink>
-        <MudNavLink @onclick="NavigateToEmployeeGroup" Icon="@MyIcons.MyGroup" IconColor="NavItemIconColor">@PageNames.MyGroup</MudNavLink>
+        <MudNavLink @onclick="() => _nav.NavigateToGroups()" Icon="@MyIcons.Groups">@PageNames.Groups</MudNavLink>
+        <MudNavLink @onclick="NavigateToEmployeeGroup" Icon="@MyIcons.MyGroup">@PageNames.MyGroup</MudNavLink>
     </MudNavGroup>
     <MudNavGroup Title="Wnioski" Expanded="true">
-        <MudNavLink @onclick="_nav.NavigateToPendingWithdrawalRequests" Icon="@MyIcons.PendingWithdrawalRequests" IconColor="NavItemIconColor">@PageNames.PendingWithdrawalRequests</MudNavLink>
+        <MudNavLink @onclick="_nav.NavigateToPendingWithdrawalRequests" Icon="@MyIcons.PendingWithdrawalRequests">@PageNames.PendingWithdrawalRequests</MudNavLink>
     </MudNavGroup>
 </MudNavMenu>
 
 @code {
     bool collapseNavMenu = true;
     string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
-    Color NavItemIconColor = Color.Primary;
 
     void NavigateToHome()
     {

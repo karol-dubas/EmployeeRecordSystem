@@ -21,7 +21,7 @@
             </MudTable>
             <MudStack Row="true" Class="align-end" Spacing="8">
                 <div style="width: 100px;">
-                    <MudTimePicker Color="Color.Secondary" Label="Czas pracy" @bind-Time="timeInput" />
+                    <MudTimePicker Label="Czas pracy" @bind-Time="timeInput" />
                 </div>
                 <MudStack Row="true" Spacing="3" Class="align-center">
                     <span>Odejmij</span>
@@ -36,7 +36,7 @@
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Anuluj</MudButton>
-        <MudButton Color="Color.Secondary" OnClick="Submit">Zmień</MudButton>
+        <MudButton OnClick="Submit">Zmień</MudButton>
     </DialogActions>
 </MudDialog>
 

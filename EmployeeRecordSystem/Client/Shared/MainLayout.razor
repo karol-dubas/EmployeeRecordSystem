@@ -3,18 +3,18 @@
 @inject BreadcrumbStateContainer _breadcrumbs
 
 <MudLayout>
-    <MudAppBar Elevation="1" Color="Color.Tertiary">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
+    <MudAppBar Elevation="1">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Edge="Edge.Start" OnClick="@ToggleDrawer" />
         <MudSpacer />
         <LoginDisplay />
     </MudAppBar>
-    <MudDrawer @bind-Open="@openDrawer" Elevation="1" Color="Color.Secondary">
-        <MudDrawerHeader Style="border-bottom: 1px solid var(--mud-palette-secondary-lighten);">
+    <MudDrawer @bind-Open="@openDrawer" Elevation="1">
+        <MudDrawerHeader Style="border-bottom: 1px solid grey;">
             <MudText Typo="Typo.h6" Class="my-2">System ewidencji pracowników</MudText>
         </MudDrawerHeader>
         <NavMenu />
     </MudDrawer>
-    <MudMainContent Class="pt-16 px-16 primary" Style="height: 100vh;">
+    <MudMainContent Class="pt-16 px-lg-16" Style="height: 100vh;">
         <MudContainer Class="mt-6">
             <MudPaper Elevation="0" Class="mb-4">
                 <MudBreadcrumbs Items="_breadcrumbs.Items" Class="py-3" Style="font-size: 14px;"></MudBreadcrumbs>
@@ -47,22 +47,15 @@
         {
             Palette = new()
             {
-                // breadcrumb and main container colors
-                Surface = "#FFFFFF",
+                AppbarBackground = "#ffffffff",
 
-                // main content colors
-                Primary = Colors.Grey.Lighten3,
-                TextPrimary = Colors.Grey.Darken4,
+                Primary = "#0a0f36",
 
-                // nav menu color
-                Secondary = "#101247",
-                SecondaryContrastText = Colors.Grey.Lighten5,
-                TextSecondary = Colors.Grey.Lighten5,
-                SecondaryLighten = "#2c2e66",
+                DrawerText = "#ffffffff",
+                DrawerBackground = "#0a0f36",
+                DrawerIcon = "#ffffffff",
 
-                // White
-                Tertiary = "#FFFFFF",
-                TertiaryContrastText = Colors.Grey.Darken3,
+                Background = Colors.Grey.Lighten3,
 
                 TextDisabled = Colors.Grey.Darken4
             },

@@ -2,12 +2,7 @@
 @inject EmployeeHttpService _employeeHttpService
 @inject BreadcrumbStateContainer _breadcrumbs
 
-<MudTable Items="@balanceLogs" Dense="true" Hover="true" Bordered="true" Striped="true" Filter="null">
-    <ColGroup>
-        <col style="width: 33%;" />
-        <col style="width: 33%;" />
-        <col style="width: 33%;" />
-    </ColGroup>
+<MudTable Items="@balanceLogs" Dense="true" Hover="true" Bordered="true" Striped="true" Filter="null" Breakpoint="Breakpoint.Sm">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Historia salda</MudText>
         <MudSpacer />
@@ -19,9 +14,9 @@
         <MudTh>Utworzono</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd>@context.BalanceBefore</MudTd>
-        <MudTd>@context.BalanceAfter</MudTd>
-        <MudTd>@context.CreatedAt</MudTd>
+        <MudTd DataLabel="Saldo przed">@context.BalanceBefore</MudTd>
+        <MudTd DataLabel="Saldo po">@context.BalanceAfter</MudTd>
+        <MudTd DataLabel="Utworzono">@context.CreatedAt</MudTd>
     </RowTemplate>
     <PagerContent>
         <MudTablePager />

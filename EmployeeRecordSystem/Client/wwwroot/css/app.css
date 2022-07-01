@@ -1,14 +1,4 @@
-﻿.primary {
-    background-color: var(--mud-palette-primary);
-    color: var(--mud-palette-primary-text);
-}
-
-.secondary {
-    background-color: var(--mud-palette-secondary);
-    color: var(--mud-palette-secondary-text);
-}
-
-html, body {
+﻿html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
