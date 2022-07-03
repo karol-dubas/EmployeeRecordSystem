@@ -62,9 +62,9 @@
         {
             var result = wr.WithdrawalRequestStatus switch
             {
-                WithdrawalRequestStatusTypeCodes.Accepted => "Akceptowany",
-                WithdrawalRequestStatusTypeCodes.Denied => "Odrzucony",
-                WithdrawalRequestStatusTypeCodes.Pending => "Oczekujący",
+                WithdrawalRequestStatusTypeCodes.Accepted => "akceptowany",
+                WithdrawalRequestStatusTypeCodes.Denied => "odrzucony",
+                WithdrawalRequestStatusTypeCodes.Pending => "oczekujący",
                 _ => throw new InvalidOperationException()
             };
 

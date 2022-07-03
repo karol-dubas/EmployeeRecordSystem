@@ -9,11 +9,13 @@
         <MudTextField @bind-Value="searchString" Placeholder="Wyszukaj" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
     </ToolBarContent>
     <HeaderContent>
+        <MudTh>Typ operacji</MudTh>
         <MudTh>Saldo przed</MudTh>
         <MudTh>Saldo po</MudTh>
         <MudTh>Utworzono</MudTh>
     </HeaderContent>
     <RowTemplate>
+        <MudTd DataLabel="Typ operacji">@GetOperationType(context)</MudTd>
         <MudTd DataLabel="Saldo przed">@context.BalanceBefore</MudTd>
         <MudTd DataLabel="Saldo po">@context.BalanceAfter</MudTd>
         <MudTd DataLabel="Utworzono">@context.CreatedAt</MudTd>
@@ -39,4 +41,11 @@
 
         balanceLogs = await _employeeHttpService.GetBalanceLogAsync(EmployeeId);
     }
+
+    string GetOperationType(BalanceLogDto dto) => dto switch
+    {
+        _ when (dto.BalanceBefore > dto.BalanceAfter) => "wypłata",
+        _ when (dto.BalanceAfter > dto.BalanceBefore) => "należność",
+        _ => ""
+    };
 }
