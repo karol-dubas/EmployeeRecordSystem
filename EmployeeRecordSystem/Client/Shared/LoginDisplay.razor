@@ -7,13 +7,15 @@
 <AuthorizeView>
     <Authorized>
         <div class="gap-4 d-flex flex-wrap">
+            <AuthorizeView Roles="@Roles.Admin" Context="test">
+                <MudButton Variant="Variant.Filled" Color="Color.Inherit" EndIcon="@Icons.Outlined.GroupAdd" href="authentication/register">Zarejestruj</MudButton>
+            </AuthorizeView>
             <MudButton Variant="Variant.Filled" Color="Color.Inherit" EndIcon="@Icons.Filled.Settings" href="authentication/profile">Konto</MudButton>
             <MudButton Variant="Variant.Filled" @onclick="BeginSignOut" EndIcon="@Icons.Outlined.Logout" Color="Color.Inherit">Wyloguj</MudButton>
         </div>
     </Authorized>
     <NotAuthorized>
         <div class="gap-4 d-flex flex-wrap">
-            <MudButton Variant="Variant.Filled" Color="Color.Inherit" EndIcon="@Icons.Outlined.GroupAdd" href="authentication/register">Zarejestruj</MudButton>
             <MudButton Variant="Variant.Filled" Color="Color.Inherit" EndIcon="@Icons.Outlined.Login" href="authentication/login">Zaloguj</MudButton>
         </div>
     </NotAuthorized>

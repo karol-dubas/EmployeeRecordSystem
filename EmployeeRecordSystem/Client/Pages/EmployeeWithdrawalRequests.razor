@@ -52,9 +52,9 @@
     async Task GetEmployeeWithdrawalRequests()
     {
         var query = new WithdrawalRequestQuery()
-            {
-                EmployeeId = EmployeeId
-            };
+        {
+            EmployeeId = EmployeeId
+        };
 
         withdrawalRequests = await _withdrawalRequestHttpService.GetAllAsync(query);
 
