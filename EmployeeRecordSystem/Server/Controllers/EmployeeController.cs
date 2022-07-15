@@ -20,7 +20,7 @@ namespace EmployeeRecordSystem.Server.Controllers
         }
 
         /// <summary>
-        /// Get details with user billing etc
+        /// Get details with employee billing etc
         /// </summary>
         [HttpGet("{employeeId}")]
         public IActionResult GetDetails([FromRoute] Guid employeeId)

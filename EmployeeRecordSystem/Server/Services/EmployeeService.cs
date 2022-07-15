@@ -30,10 +30,10 @@ namespace EmployeeRecordSystem.Server.Services
     [ScopedRegistration]
     public class EmployeeService : BaseService, IEmployeeService
     {
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserManager<Employee> _userManager;
 
         public EmployeeService(ApplicationDbContext dbContext, IMapper mapper,
-            UserManager<ApplicationUser> userManager)
+            UserManager<Employee> userManager)
             : base(dbContext, mapper)
         {
             _userManager = userManager;
@@ -43,63 +43,63 @@ namespace EmployeeRecordSystem.Server.Services
         {
             var queryable = _dbContext.Users
                 .Include(e => e.Group)
-                .Include(e => e.UserBilling)
+                .Include(e => e.EmployeeBilling)
                 .AsNoTracking();
 
             queryable = ApplyGetAllFilter(query, queryable);
 
             var employees = queryable.ToList();
-            employees.ForEach(u => u.Role = GetUserRole(u));
+            employees.ForEach(u => u.Role = GetEmployeeRole(u));
 
             return _mapper.Map<List<EmployeeInGroupDto>>(employees);
         }
 
         public EmployeeDeteilsDto GetDetails(Guid employeeId)
         {
-            var user = _dbContext.Users
+            var employee = _dbContext.Users
                 .AsNoTracking()
                 .Include(u => u.Group)
-                .Include(u => u.UserBilling)
+                .Include(u => u.EmployeeBilling)
                 .SingleOrDefault(u => u.Id == employeeId);
 
-            user.Role = GetUserRole(user);
+            employee.Role = GetEmployeeRole(employee);
 
-            // TODO: user null check
+            // TODO: employee null check
 
-            return _mapper.Map<EmployeeDeteilsDto>(user);
+            return _mapper.Map<EmployeeDeteilsDto>(employee);
         }
 
-        private string GetUserRole(ApplicationUser user)
+        private string GetEmployeeRole(Employee employee)
         {
-            return _userManager.GetRolesAsync(user).Result.Single();
+            return _userManager.GetRolesAsync(employee).Result.Single();
         }
 
         public void Edit(Guid employeeId, EditEmployeeRequest request)
         {
-            var user = _dbContext.Users.SingleOrDefault(u => u.Id == employeeId);
+            var employee = _dbContext.Users.SingleOrDefault(u => u.Id == employeeId);
 
             // TODO: null check
 
-            _mapper.Map(request, user);
+            _mapper.Map(request, employee);
             SaveChanges();
         }
 
         public void ChangeHourlyPay(Guid employeeId, ChangeEmployeeHourlyPayRequest request)
         {
             var employee = _dbContext.Users
-                .Include(u => u.UserBilling)
+                .Include(u => u.EmployeeBilling)
                 .SingleOrDefault(u => u.Id == employeeId);
 
             // TODO: null check
 
-            employee.UserBilling.HourlyPay = request.HourlyPay;
+            employee.EmployeeBilling.HourlyPay = request.HourlyPay;
             SaveChanges();
         }
 
         public void ChangeWorkTimes(ChangeEmployeesWorkTimeRequest request)
         {
             var employees = _dbContext.Users
-                .Include(u => u.UserBilling)
+                .Include(u => u.EmployeeBilling)
                 .Where(u => request.EmployeeIds.Contains(u.Id))
                 .ToList();
 
@@ -107,15 +107,15 @@ namespace EmployeeRecordSystem.Server.Services
                 return;
 
             if (request.WorkTimeOperation is WorkTimeOperations.Subtract)
-                employees.ForEach(e => e.UserBilling.TimeWorked -= request.WorkTime);
+                employees.ForEach(e => e.EmployeeBilling.TimeWorked -= request.WorkTime);
 
             if (request.WorkTimeOperation is WorkTimeOperations.Add)
-                employees.ForEach(e => e.UserBilling.TimeWorked += request.WorkTime);
+                employees.ForEach(e => e.EmployeeBilling.TimeWorked += request.WorkTime);
 
             SaveChanges();
         }
 
-        private static IQueryable<ApplicationUser> ApplyGetAllFilter(EmployeeQuery query, IQueryable<ApplicationUser> queryable)
+        private static IQueryable<Employee> ApplyGetAllFilter(EmployeeQuery query, IQueryable<Employee> queryable)
         {
             if (query.WithoutGroup)
             {
@@ -149,23 +149,23 @@ namespace EmployeeRecordSystem.Server.Services
 
         public void ConvertWorkTimeToBalance()
         {
-            var userBillings = _dbContext.UserBillings.ToList();
+            var employeeBillings = _dbContext.EmployeeBillings.ToList();
 
-            foreach (var userBilling in userBillings)
+            foreach (var billing in employeeBillings)
             {
-                decimal hourlyPay = userBilling.HourlyPay;
-                TimeSpan timeWorked = userBilling.TimeWorked;
-                decimal balanceBefore = userBilling.Balance;
+                decimal hourlyPay = billing.HourlyPay;
+                TimeSpan timeWorked = billing.TimeWorked;
+                decimal balanceBefore = billing.Balance;
 
                 decimal balanceToAdd = hourlyPay * (decimal)timeWorked.TotalHours;
-                userBilling.TimeWorked = TimeSpan.Zero;
-                decimal balanceAfter = userBilling.Balance += balanceToAdd;
+                billing.TimeWorked = TimeSpan.Zero;
+                decimal balanceAfter = billing.Balance += balanceToAdd;
 
                 var balanceLog = new BalanceLog()
                 {
                     BalanceBefore = balanceBefore,
                     BalanceAfter = balanceAfter,
-                    UserId = userBilling.UserId
+                    EmployeeId = billing.EmployeeId
                 };
 
                 _dbContext.BalanceLogs.Add(balanceLog);

@@ -9,12 +9,12 @@ using EmployeeRecordSystem.Data.Entities;
 
 namespace EmployeeRecordSystem.Data.EntityConfigurations
 {
-    public class UserBillingEntityConfiguration
-        : IEntityTypeConfiguration<UserBilling>
+    public class EmployeeBillingEntityConfiguration
+        : IEntityTypeConfiguration<EmployeeBilling>
     {
-        public void Configure(EntityTypeBuilder<UserBilling> builder)
+        public void Configure(EntityTypeBuilder<EmployeeBilling> builder)
         {
-            builder.ToTable("user-billings");
+            builder.ToTable("employee-billings");
 
             builder.Property(c => c.Id)
                 .ValueGeneratedOnAdd()

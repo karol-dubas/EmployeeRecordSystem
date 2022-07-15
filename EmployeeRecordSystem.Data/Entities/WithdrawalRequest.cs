@@ -17,8 +17,8 @@ namespace EmployeeRecordSystem.Data.Entities
         public string WithdrawalRequestStatusTypeCode { get; set; }
         public WithdrawalRequestStatusType WithdrawalRequestStatusType { get; set; }
 
-        public Guid UserId { get; set; }
-        public virtual ApplicationUser User { get; set; }
+        public Guid EmployeeId { get; set; }
+        public virtual Employee Employee { get; set; }
 
         public bool IsAlreadyProcessed()
         {

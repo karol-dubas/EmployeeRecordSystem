@@ -7,6 +7,6 @@ public class EmployeeDeteilsDto
     public string LastName { get; set; }
     public string BankAccountNumber { get; set; }
     public GroupDto Group { get; set; }
-    public UserBillingDto UserBilling { get; set; }
+    public EmployeeBillingDto EmployeeBilling { get; set; }
 
 }

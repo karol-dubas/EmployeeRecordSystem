@@ -10,12 +10,10 @@ using EmployeeRecordSystem.Data.Entities;
 
 namespace EmployeeRecordSystem.Data.EntityConfigurations
 {
-    public class ApplicationUserEntityConfiguration : IEntityTypeConfiguration<ApplicationUser>
+    public class EmployeeEntityConfiguration : IEntityTypeConfiguration<Employee>
     {
-        public void Configure(EntityTypeBuilder<ApplicationUser> builder)
+        public void Configure(EntityTypeBuilder<Employee> builder)
         {
-            builder.ToTable("users");
-
             builder.Property(c => c.FirstName)
                 .HasMaxLength(50)
                 .IsRequired();
@@ -36,23 +34,23 @@ namespace EmployeeRecordSystem.Data.EntityConfigurations
             builder.Property(c => c.PasswordHash).IsRequired();
 
             builder.HasOne(c => c.Group)
-                .WithMany(c => c.Users)
+                .WithMany(c => c.Employees)
                 .HasForeignKey(c => c.GroupId)
                 .OnDelete(DeleteBehavior.SetNull);
 
-            builder.HasOne(c => c.UserBilling)
-                .WithOne(c => c.User)
-                .HasForeignKey<UserBilling>(c => c.UserId)
+            builder.HasOne(c => c.EmployeeBilling)
+                .WithOne(c => c.Employee)
+                .HasForeignKey<EmployeeBilling>(c => c.EmployeeId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasMany(c => c.BalanceLogs)
-                .WithOne(c => c.User)
-                .HasForeignKey(c => c.UserId)
+                .WithOne(c => c.Employee)
+                .HasForeignKey(c => c.EmployeeId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasMany(c => c.WithdrawalRequests)
-                .WithOne(c => c.User)
-                .HasForeignKey(c => c.UserId)
+                .WithOne(c => c.Employee)
+                .HasForeignKey(c => c.EmployeeId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

@@ -14,13 +14,13 @@ namespace EmployeeRecordSystem.Server.Mappings
     {
         public EmployeeMappingProfile()
         {
-            CreateMap<ApplicationUser, EmployeeDeteilsDto>();
-            CreateMap<ApplicationUser, EmployeeInGroupDto>()
-                .ForMember(m => m.HourlyPay, c => c.MapFrom(s => s.UserBilling.HourlyPay))
-                .ForMember(m => m.TimeWorked, c => c.MapFrom(s => s.UserBilling.TimeWorked));
-            CreateMap<EditEmployeeRequest, ApplicationUser>();
+            CreateMap<Employee, EmployeeDeteilsDto>();
+            CreateMap<Employee, EmployeeInGroupDto>()
+                .ForMember(m => m.HourlyPay, c => c.MapFrom(s => s.EmployeeBilling.HourlyPay))
+                .ForMember(m => m.TimeWorked, c => c.MapFrom(s => s.EmployeeBilling.TimeWorked));
+            CreateMap<EditEmployeeRequest, Employee>();
             CreateMap<BalanceLog, BalanceLogDto>();
-            CreateMap<UserBilling, UserBillingDto>();
+            CreateMap<EmployeeBilling, EmployeeBillingDto>();
         }
     }
 }

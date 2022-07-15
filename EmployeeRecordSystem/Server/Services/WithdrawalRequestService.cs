@@ -35,7 +35,7 @@ namespace EmployeeRecordSystem.Server.Services
 
             var withdrawalRequest = new WithdrawalRequest()
             {
-                User = employee,
+                Employee = employee,
                 Amount = request.Amount,
                 WithdrawalRequestStatusTypeCode = WithdrawalRequestStatusType.Pending.Code
             };
@@ -49,7 +49,7 @@ namespace EmployeeRecordSystem.Server.Services
         public List<WithdrawalRequestDto> GetAll(WithdrawalRequestQuery query)
         {
             var queryable = _dbContext.WithdrawalRequests
-                .Include(wr => wr.User)
+                .Include(wr => wr.Employee)
                 .AsNoTracking();
 
             queryable = ApplyGetAllFilter(query, queryable);
@@ -61,8 +61,8 @@ namespace EmployeeRecordSystem.Server.Services
         public void Process(Guid withdrawalRequestId, ProcessWithdrawalRequestRequest request)
         {
             var withdrawalRequest = _dbContext.WithdrawalRequests
-                .Include(wr => wr.User)
-                .ThenInclude(u => u.UserBilling)
+                .Include(wr => wr.Employee)
+                .ThenInclude(u => u.EmployeeBilling)
                 .SingleOrDefault(wr => wr.Id == withdrawalRequestId);
 
             // TODO: null check withdrawalRequest & withdrawalRequest.User
@@ -121,14 +121,14 @@ namespace EmployeeRecordSystem.Server.Services
                 BalanceBefore = balanceBefore,
                 BalanceAfter = balanceAfter,
                 CreatedAt = DateTimeOffset.UtcNow,
-                User = withdrawalRequest.User
+                Employee = withdrawalRequest.Employee
             };
         }
 
         private Tuple<decimal, decimal> SubtractUsersBalance(WithdrawalRequest withdrawalRequest)
         {
-            decimal balanceBefore = withdrawalRequest.User.UserBilling.Balance;
-            decimal balanceAfter = withdrawalRequest.User.UserBilling.Balance -= withdrawalRequest.Amount;
+            decimal balanceBefore = withdrawalRequest.Employee.EmployeeBilling.Balance;
+            decimal balanceAfter = withdrawalRequest.Employee.EmployeeBilling.Balance -= withdrawalRequest.Amount;
 
             if (balanceAfter < 0)
             {
@@ -145,8 +145,8 @@ namespace EmployeeRecordSystem.Server.Services
                 // TODO: employee null check
 
                 queryable = queryable
-                    .Include(wr => wr.User)
-                    .Where(wr => wr.UserId == query.EmployeeId);
+                    .Include(wr => wr.Employee)
+                    .Where(wr => wr.EmployeeId == query.EmployeeId);
             }
 
             if (query.WithdrawalRequestStatus != default)

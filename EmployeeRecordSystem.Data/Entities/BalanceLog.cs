@@ -12,7 +12,7 @@ namespace EmployeeRecordSystem.Data.Entities
         public decimal BalanceAfter { get; set; }
         public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 
-        public Guid UserId { get; set; }
-        public virtual ApplicationUser User { get; set; }
+        public Guid EmployeeId { get; set; }
+        public virtual Employee Employee { get; set; }
     }
 }

@@ -41,7 +41,7 @@ namespace EmployeeRecordSystem.Server.Services
         public List<GroupDto> GetAll(GroupQuery query)
         {
             var queryable = _dbContext.Groups
-                .Include(g => g.Users)
+                .Include(g => g.Employees)
                 .AsNoTracking();
 
             queryable = ApplyGetAllFilter(query, queryable);
@@ -75,7 +75,7 @@ namespace EmployeeRecordSystem.Server.Services
         {
             var employee = _dbContext.Users.SingleOrDefault(u => u.Id == employeeId);
 
-            // TODO: user null check
+            // TODO: employee null check
 
             var group = _dbContext.Groups.SingleOrDefault(u => u.Id == groupId);
 
@@ -89,7 +89,7 @@ namespace EmployeeRecordSystem.Server.Services
         {
             var employee = _dbContext.Users.SingleOrDefault(u => u.Id == employeeId);
 
-            // TODO: user null check
+            // TODO: employee null check
 
             employee.GroupId = null;
             SaveChanges();

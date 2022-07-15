@@ -11,6 +11,6 @@ namespace EmployeeRecordSystem.Data.Entities
         public Guid Id { get; set; }
         public string Name { get; set; }
 
-        public virtual List<ApplicationUser> Users { get; set; } = new();
+        public virtual List<Employee> Employees { get; set; } = new();
     }
 }

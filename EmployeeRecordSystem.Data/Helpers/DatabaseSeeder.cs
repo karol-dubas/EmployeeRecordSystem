@@ -13,11 +13,11 @@ namespace EmployeeRecordSystem.Data.Helpers
     public class DatabaseSeeder
     {
         private readonly ApplicationDbContext _dbContext;
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserManager<Employee> _userManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
 
         public DatabaseSeeder(ApplicationDbContext applicationDbContext,
-            UserManager<ApplicationUser> userManager,
+            UserManager<Employee> userManager,
             RoleManager<ApplicationRole> roleManager)
         {
             _dbContext = applicationDbContext;
@@ -71,7 +71,7 @@ namespace EmployeeRecordSystem.Data.Helpers
 
         private async Task SeedAdminAsync()
         {
-            var admin = new ApplicationUser
+            var admin = new Employee
             {
                 FirstName = "Admin",
                 LastName = "Admin",

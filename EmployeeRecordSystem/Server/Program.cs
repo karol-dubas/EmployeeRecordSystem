@@ -21,7 +21,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
+builder.Services.AddDefaultIdentity<Employee>(options =>
 {
     options.SignIn.RequireConfirmedEmail = false;
     options.SignIn.RequireConfirmedAccount = false;
@@ -32,12 +32,13 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddIdentityServer()
-    .AddApiAuthorization<ApplicationUser, ApplicationDbContext>(options =>
+    .AddApiAuthorization<Employee, ApplicationDbContext>(options =>
     {
-        // Add the role claim to user claims collection
+        // Add the role claim to employee claims collection:
 
         // For Identity resources
         options.IdentityResources["openid"].UserClaims.Add("role");
+
         // And for API resources
         options.ApiResources.Single().UserClaims.Add("role");
     });

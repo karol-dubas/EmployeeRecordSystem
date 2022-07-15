@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace EmployeeRecordSystem.Data.Entities
 {
-    public partial class ApplicationUser : IdentityUser<Guid>
+    public class Employee : IdentityUser<Guid>
     {
-        public ApplicationUser() { }
-        public ApplicationUser(string userName) : base(userName) { }
+        public Employee() { }
+        public Employee(string userName) : base(userName) { }
 
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -24,7 +24,7 @@ namespace EmployeeRecordSystem.Data.Entities
         public Guid? GroupId { get; set; }
         public virtual Group Group { get; set; }
 
-        public virtual UserBilling UserBilling { get; set; } = new();
+        public virtual EmployeeBilling EmployeeBilling { get; set; } = new();
 
         public virtual List<WithdrawalRequest> WithdrawalRequests { get; set; } = new();
 

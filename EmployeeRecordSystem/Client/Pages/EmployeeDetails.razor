@@ -36,14 +36,14 @@ else
                 </MudSelect>
                 <MudButton Variant="Variant.Filled" Size="Size.Small" @onclick="RemoveFromGroup" Class="@visibleOnEdit">Usuń z grupy</MudButton>
             </MudStack>
-            <MudNumericField @bind-Value="employee.UserBilling.HourlyPay" Label="Stawka godzinowa" Disabled="!editMode" Variant="Variant.Text" Min="0" Max="1000" Step="0.5M"></MudNumericField>
+            <MudNumericField @bind-Value="employee.EmployeeBilling.HourlyPay" Label="Stawka godzinowa" Disabled="!editMode" Variant="Variant.Text" Min="0" Max="1000" Step="0.5M"></MudNumericField>
             <MudStack Row="true" AlignItems="AlignItems.End">
-                <MudTextField @bind-Value="employee.UserBilling.TimeWorked" Label="Czas przepracowany" Disabled="true" Variant="Variant.Text"></MudTextField>
+                <MudTextField @bind-Value="employee.EmployeeBilling.TimeWorked" Label="Czas przepracowany" Disabled="true" Variant="Variant.Text"></MudTextField>
                 <MudButton Variant="Variant.Filled" Size="Size.Small" @onclick="EditWorkTime" Class="@visibleOnEdit">Edytuj czas pracy</MudButton>
             </MudStack>
 
             <MudStack Row="true" AlignItems="AlignItems.End">
-                <MudTextField @bind-Value="employee.UserBilling.Balance" Label="Saldo" Disabled="true" Variant="Variant.Text"></MudTextField>
+                <MudTextField @bind-Value="employee.EmployeeBilling.Balance" Label="Saldo" Disabled="true" Variant="Variant.Text"></MudTextField>
                 <MudButton Variant="Variant.Filled" Size="Size.Small" @onclick="() => _nav.NavigateToEmployeeBalanceLogs(EmployeeId)">Historia salda</MudButton>
                 <MudButton Variant="Variant.Filled" Size="Size.Small" @onclick="() => _nav.NavigateToEmployeeWithdrawalRequests(EmployeeId)">Wypłaty</MudButton>
             </MudStack>
@@ -148,7 +148,7 @@ else
     {
         var request = new ChangeEmployeeHourlyPayRequest()
             {
-                HourlyPay = employee.UserBilling.HourlyPay
+                HourlyPay = employee.EmployeeBilling.HourlyPay
             };
 
         await _employeeHttpService.ChangeHourlyPayAsync(EmployeeId, request);
@@ -161,9 +161,9 @@ else
             Id = EmployeeId,
             FirstName = employee.FirstName,
             LastName = employee.LastName,
-            HourlyPay = employee.UserBilling.HourlyPay.ToString(),
+            HourlyPay = employee.EmployeeBilling.HourlyPay.ToString(),
             Role = employee.Role,
-            TimeWorked = employee.UserBilling.TimeWorked.ToString()
+            TimeWorked = employee.EmployeeBilling.TimeWorked.ToString()
         };
 
         var parameters = new DialogParameters { ["employees"] = new List<EmployeeInGroupDto> { employeeInGroupDto }};

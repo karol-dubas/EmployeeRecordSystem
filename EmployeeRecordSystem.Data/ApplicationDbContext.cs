@@ -7,7 +7,7 @@ using Microsoft.Extensions.Options;
 
 namespace EmployeeRecordSystem.Data
 {
-    public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser, ApplicationRole, Guid>
+    public class ApplicationDbContext : ApiAuthorizationDbContext<Employee, ApplicationRole, Guid>
     {
         public ApplicationDbContext(
             DbContextOptions options,
@@ -16,7 +16,7 @@ namespace EmployeeRecordSystem.Data
         }
 
         public DbSet<Group> Groups { get; set; }
-        public DbSet<UserBilling> UserBillings { get; set; }
+        public DbSet<EmployeeBilling> EmployeeBillings { get; set; }
         public DbSet<BalanceLog> BalanceLogs { get; set; }
         public DbSet<WithdrawalRequest> WithdrawalRequests { get; set; }
         public DbSet<WithdrawalRequestStatusType> WithdrawalRequestStatuses { get; set; }

@@ -16,7 +16,7 @@ namespace EmployeeRecordSystem.Server.Mappings
         {
             CreateMap<CreateGroupRequest, Group>();
             CreateMap<Group, GroupDto>()
-                .ForMember(m => m.IsEmpty, c => c.MapFrom(s => s.Users.Count == 0));
+                .ForMember(m => m.IsEmpty, c => c.MapFrom(s => s.Employees.Count == 0));
         }
     }
 }

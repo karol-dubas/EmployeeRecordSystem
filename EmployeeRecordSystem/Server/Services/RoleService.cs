@@ -22,12 +22,12 @@ namespace EmployeeRecordSystem.Server.Services
     [ScopedRegistration]
     public class RoleService : BaseService, IRoleService
     {
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserManager<Employee> _userManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
 
         public RoleService(ApplicationDbContext dbContext,
             IMapper mapper,
-            UserManager<ApplicationUser> userManager,
+            UserManager<Employee> userManager,
             RoleManager<ApplicationRole> roleManager)
             : base(dbContext, mapper)
         {

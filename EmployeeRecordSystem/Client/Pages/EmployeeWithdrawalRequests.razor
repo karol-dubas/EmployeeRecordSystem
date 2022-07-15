@@ -75,7 +75,7 @@
     async Task CreateWithdrawalRequest()
     {
         var employee = await _employeeHttpService.GetDetailsAsync(EmployeeId);
-        var parameters = new DialogParameters { ["balance"]= employee.UserBilling.Balance };
+        var parameters = new DialogParameters { ["balance"]= employee.EmployeeBilling.Balance };
         var dialog = _dialogService.Show<AddWithdrawalRequestDialog>("", parameters);
         var result = await dialog.Result;
 
