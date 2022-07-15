@@ -40,6 +40,10 @@ namespace EmployeeRecordSystem.Data.Helpers
 
         public DatabaseSeeder ApplyPendingMigrations()
         {
+            bool isTestDb = !_dbContext.Database.IsRelational();
+            if (isTestDb)
+                return this;
+
             var pendingMigrations = _dbContext.Database.GetPendingMigrations();
             if (pendingMigrations.Any())
             {
