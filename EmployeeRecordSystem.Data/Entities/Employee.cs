@@ -15,6 +15,7 @@ namespace EmployeeRecordSystem.Data.Entities
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string BankAccountNumber { get; set; }
+        public string Note { get; set; }
         public string Role { get; set; }
         public string FullName 
         {

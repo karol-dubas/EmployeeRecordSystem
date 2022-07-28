@@ -20,6 +20,7 @@ else
             <MudTextField @bind-Value="employee.FirstName" Label="Imię" Disabled="!editMode" Variant="Variant.Text"></MudTextField>
             <MudTextField @bind-Value="employee.LastName" Label="Nazwisko" Disabled="!editMode" Variant="Variant.Text"></MudTextField>
             <MudTextField @bind-Value="employee.BankAccountNumber" Label="Numer konta bankowego" Disabled="!editMode" Variant="Variant.Text"></MudTextField>
+            <MudTextField @bind-Value="employee.Note" Label="Notatka" Disabled="!editMode" Variant="Variant.Text" Lines="2"></MudTextField>
 
             <MudSelect ToStringFunc="roleToString" T="RoleDto" @bind-Value="selectedRole" Label="Rola" Disabled="!editMode">
                 @foreach (var role in roles)
@@ -135,7 +136,8 @@ else
         {
             BankAccountNumber = employee.BankAccountNumber,
             FirstName = employee.FirstName,
-            LastName = employee.LastName
+            LastName = employee.LastName,
+            Note = employee.Note
         };
 
         await _employeeHttpService.EditAsync(EmployeeId, request);

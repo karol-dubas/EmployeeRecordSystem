@@ -47,10 +47,11 @@
             <MudTh>Stawka godzinowa</MudTh>
             <MudTh>Czas przepracowany</MudTh>
             <MudTh>Rola</MudTh>
+            <MudTh>Notatka</MudTh>
             <MudTh></MudTh>
         </HeaderContent>
         <GroupHeaderTemplate>
-            <MudTh Class="mud-table-cell-custom-group" colspan="6">
+            <MudTh Class="mud-table-cell-custom-group" colspan="7">
                 <div class="d-flex">
                     @(context.Items.Select(i => i.Group).First().Name)
                     <MudSpacer />
@@ -75,6 +76,14 @@
             <MudTd DataLabel="Stawka godzinowa">@context.HourlyPay</MudTd>
             <MudTd DataLabel="Czas przepracowany">@context.TimeWorked</MudTd>
             <MudTd DataLabel="Rola">@context.Role</MudTd>
+            <MudTd DataLabel="Notatka">
+                @if (!string.IsNullOrWhiteSpace(context.Note))
+                {
+                    <MudTooltip Text="@context.Note">
+                        <MudIcon Icon="@Icons.Outlined.StickyNote2" Color="Color.Primary" />
+                    </MudTooltip>
+                }
+            </MudTd>
             <MudTd DataLabel="">
                 <div class="d-flex gap-3 justify-end">
                     @if (!IsContainerForEmployeesWithNoGroup(context.Group))
@@ -114,10 +123,11 @@
             <MudTh>Stawka godzinowa</MudTh>
             <MudTh>Czas przepracowany</MudTh>
             <MudTh>Rola</MudTh>
+            <MudTh>Notatka</MudTh>
             <MudTh></MudTh>
         </HeaderContent>
         <GroupHeaderTemplate>
-            <MudTh Class="mud-table-cell-custom-group" colspan="6">
+            <MudTh Class="mud-table-cell-custom-group" colspan="7">
                 <div class="d-flex">
                     @(context.Items.Select(i => i.Group).First().Name)
                     <MudSpacer />
@@ -136,6 +146,7 @@
             <MudTd DataLabel="Stawka godzinowa"></MudTd>
             <MudTd DataLabel="Czas przepracowany"></MudTd>
             <MudTd DataLabel="Rola"></MudTd>
+            <MudTd DataLabel="Notatka"></MudTd>
             <MudTd DataLabel=""></MudTd>
         </RowTemplate>
     </MudTable>

@@ -26,6 +26,10 @@ namespace EmployeeRecordSystem.Data.EntityConfigurations
                 .HasMaxLength(34)
                 .IsRequired(false);
 
+            builder.Property(c => c.Note)
+                .HasMaxLength(300)
+                .IsRequired(false);
+
             builder.Ignore(c => c.Role);
 
             builder.Ignore(c => c.FullName);

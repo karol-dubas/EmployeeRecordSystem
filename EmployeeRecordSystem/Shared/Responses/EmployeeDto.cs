@@ -14,6 +14,7 @@ namespace EmployeeRecordSystem.Shared.Responses
         public string Role { get; set; }
         public string HourlyPay { get; set; }
         public string TimeWorked { get; set; }
+        public string Note { get; set; }
         public GroupDto Group { get; set; }
     }
 }
