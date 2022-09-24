@@ -2,6 +2,7 @@
 using AutoMapper.QueryableExtensions;
 using EmployeeRecordSystem.Data;
 using EmployeeRecordSystem.Data.Entities;
+using EmployeeRecordSystem.Server.Exceptions;
 using EmployeeRecordSystem.Shared.Queries;
 using EmployeeRecordSystem.Shared.Requests;
 using EmployeeRecordSystem.Shared.Responses;
@@ -54,7 +55,8 @@ namespace EmployeeRecordSystem.Server.Services
         {
             var group = _dbContext.Groups.SingleOrDefault(g => g.Id == groupId);
 
-            // TODO: null check
+            if (group is null)
+                throw new NotFoundException("Group");
 
             group.Name = request.Name;
             SaveChanges();
@@ -65,7 +67,8 @@ namespace EmployeeRecordSystem.Server.Services
         {
             var group = _dbContext.Groups.SingleOrDefault(g => g.Id == groupId);
 
-            // TODO: null check
+            if (group is null)
+                throw new NotFoundException("Group");
 
             _dbContext.Groups.Remove(group);
             SaveChanges();
@@ -75,11 +78,13 @@ namespace EmployeeRecordSystem.Server.Services
         {
             var employee = _dbContext.Users.SingleOrDefault(u => u.Id == employeeId);
 
-            // TODO: employee null check
+            if (employee is null)
+                throw new NotFoundException("Employee");
 
             var group = _dbContext.Groups.SingleOrDefault(u => u.Id == groupId);
 
-            // TODO: group null check
+            if (group is null)
+                throw new NotFoundException("Group");
 
             employee.GroupId = group.Id;
             SaveChanges();
@@ -89,7 +94,8 @@ namespace EmployeeRecordSystem.Server.Services
         {
             var employee = _dbContext.Users.SingleOrDefault(u => u.Id == employeeId);
 
-            // TODO: employee null check
+            if (employee is null)
+                throw new NotFoundException("Employee");
 
             employee.GroupId = null;
             SaveChanges();

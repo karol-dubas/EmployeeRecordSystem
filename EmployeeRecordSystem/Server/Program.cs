@@ -12,6 +12,7 @@ using EmployeeRecordSystem.Data.Helpers;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Any;
 using System.IdentityModel.Tokens.Jwt;
+using EmployeeRecordSystem.Server.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -72,6 +73,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 builder.Services.AddScoped<DatabaseSeeder>();
+builder.Services.AddScoped<ErrorHandlingMiddleware>();
 builder.Services.RegisterServices();
 
 var app = builder.Build();
@@ -99,6 +101,7 @@ else
     app.UseHsts();
 }
 
+app.UseMiddleware<ErrorHandlingMiddleware>();
 app.UseHttpsRedirection();
 
 app.UseBlazorFrameworkFiles();
@@ -109,7 +112,6 @@ app.UseRouting();
 app.UseIdentityServer();
 app.UseAuthentication();
 app.UseAuthorization();
-
 
 app.MapRazorPages();
 app.MapControllers();

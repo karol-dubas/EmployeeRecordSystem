@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using EmployeeRecordSystem.Data;
 using EmployeeRecordSystem.Data.Entities;
+using EmployeeRecordSystem.Server.Exceptions;
 using EmployeeRecordSystem.Shared.Responses;
 using Microsoft.AspNetCore.Identity;
 using System;
@@ -44,10 +45,14 @@ namespace EmployeeRecordSystem.Server.Services
         public void ChangeEmployeeRole(Guid employeeId, Guid roleId)
         {
             var employee = _dbContext.Users.SingleOrDefault(e => e.Id == employeeId);
-            // TODO: employee null check
+
+            if (employee is null)
+                throw new NotFoundException("Employee");
 
             var newRole = _roleManager.FindByIdAsync(roleId.ToString()).Result;
-            // TODO: role null check
+
+            if (newRole is null)
+                throw new NotFoundException("Role");
 
             var currentRole = _userManager.GetRolesAsync(employee).Result.Single();
             _userManager.RemoveFromRoleAsync(employee, currentRole).Wait();

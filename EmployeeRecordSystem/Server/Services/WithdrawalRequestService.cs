@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using EmployeeRecordSystem.Data;
 using EmployeeRecordSystem.Data.Entities;
+using EmployeeRecordSystem.Server.Exceptions;
 using EmployeeRecordSystem.Shared.Constants;
 using EmployeeRecordSystem.Shared.Queries;
 using EmployeeRecordSystem.Shared.Requests;
@@ -31,7 +32,8 @@ namespace EmployeeRecordSystem.Server.Services
         {
             var employee = _dbContext.Users.Find(employeeId);
 
-            // TODO: employee null check
+            if (employee is null)
+                throw new NotFoundException("Employee");
 
             var withdrawalRequest = new WithdrawalRequest()
             {
@@ -65,12 +67,14 @@ namespace EmployeeRecordSystem.Server.Services
                 .ThenInclude(u => u.EmployeeBilling)
                 .SingleOrDefault(wr => wr.Id == withdrawalRequestId);
 
-            // TODO: null check withdrawalRequest & withdrawalRequest.User
+            if (withdrawalRequest is null)
+                throw new NotFoundException("Withdrawal request");
+
+            if (withdrawalRequest.Employee is null)
+                throw new NotFoundException("Employee");
 
             if (withdrawalRequest.IsAlreadyProcessed())
-            {
-                // TODO: throw exception (withdrawal request already processed)
-            }
+                throw new InvalidOperationException("Withdrawal request already processed");
 
             if (WithdrawalRequestAccepted(request))
             {
@@ -131,9 +135,7 @@ namespace EmployeeRecordSystem.Server.Services
             decimal balanceAfter = withdrawalRequest.Employee.EmployeeBilling.Balance -= withdrawalRequest.Amount;
 
             if (balanceAfter < 0)
-            {
-                //TODO: throw exception (balance < 0)
-            }
+                throw new ArgumentOutOfRangeException("The withdrawal amount must be equal to or greater than the balance");
 
             return Tuple.Create(balanceBefore, balanceAfter);
         }
@@ -142,7 +144,9 @@ namespace EmployeeRecordSystem.Server.Services
         {
             if (query.EmployeeId != default)
             {
-                // TODO: employee null check
+                bool employeeExists = _dbContext.Users.Any(e => e.Id == query.EmployeeId);
+                if (!employeeExists)
+                    throw new NotFoundException("Employee");
 
                 queryable = queryable
                     .Include(wr => wr.Employee)

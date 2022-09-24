@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using EmployeeRecordSystem.Data;
 using EmployeeRecordSystem.Data.Entities;
+using EmployeeRecordSystem.Server.Exceptions;
 using EmployeeRecordSystem.Shared.Constants;
 using EmployeeRecordSystem.Shared.Queries;
 using EmployeeRecordSystem.Shared.Requests;
@@ -62,10 +63,11 @@ namespace EmployeeRecordSystem.Server.Services
                 .Include(u => u.EmployeeBilling)
                 .SingleOrDefault(u => u.Id == employeeId);
 
+            if (employee is null)
+                throw new NotFoundException("Employee");
+
             employee.Role = GetEmployeeRole(employee);
-
-            // TODO: employee null check
-
+         
             return _mapper.Map<EmployeeDeteilsDto>(employee);
         }
 
@@ -78,7 +80,8 @@ namespace EmployeeRecordSystem.Server.Services
         {
             var employee = _dbContext.Users.SingleOrDefault(u => u.Id == employeeId);
 
-            // TODO: null check
+            if (employee is null)
+                throw new NotFoundException("Employee");
 
             _mapper.Map(request, employee);
             SaveChanges();
@@ -90,7 +93,8 @@ namespace EmployeeRecordSystem.Server.Services
                 .Include(u => u.EmployeeBilling)
                 .SingleOrDefault(u => u.Id == employeeId);
 
-            // TODO: null check
+            if (employee is null)
+                throw new NotFoundException("Employee");
 
             employee.EmployeeBilling.HourlyPay = request.HourlyPay;
             SaveChanges();
@@ -115,7 +119,7 @@ namespace EmployeeRecordSystem.Server.Services
             SaveChanges();
         }
 
-        private static IQueryable<Employee> ApplyGetAllFilter(EmployeeQuery query, IQueryable<Employee> queryable)
+        private IQueryable<Employee> ApplyGetAllFilter(EmployeeQuery query, IQueryable<Employee> queryable)
         {
             if (query.WithoutGroup)
             {
@@ -126,7 +130,9 @@ namespace EmployeeRecordSystem.Server.Services
 
             if (query.GroupId != default)
             {
-                // TODO: group null check
+                bool groupExists = _dbContext.Groups.Any(g => g.Id == query.GroupId);
+                if (!groupExists)
+                    throw new NotFoundException("Group");
 
                 queryable = queryable
                     .Include(u => u.Group)
@@ -142,7 +148,8 @@ namespace EmployeeRecordSystem.Server.Services
                 .Include(u => u.BalanceLogs)
                 .SingleOrDefault(u => u.Id == employeeId);
 
-            // TODO: null check
+            if (employee is null)
+                throw new NotFoundException("Employee");
 
             return _mapper.Map<List<BalanceLogDto>>(employee.BalanceLogs);
         }
