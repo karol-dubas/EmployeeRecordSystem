@@ -37,4 +37,4 @@ builder.Services.AddScoped<GroupHttpService>();
 builder.Services.AddScoped<BreadcrumbStateContainer>();
 builder.Services.AddScoped<RoleHttpService>();
 
-await builder.Build().RunAsync();
+await builder.Build().RunAsync()
