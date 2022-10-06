@@ -10,6 +10,8 @@ using Microsoft.VisualStudio.Web.CodeGeneration.Design;
 using Microsoft.AspNetCore.Hosting;
 using EmployeeRecordSystem.Server.Controllers;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.EntityFrameworkCore;
+using EmployeeRecordSystem.Data;
 
 namespace EmployeeRecordSystem.Tests
 {
@@ -31,6 +33,10 @@ namespace EmployeeRecordSystem.Tests
             {
                 builder.ConfigureServices(services =>
                 {
+                    var dbContextOptions = services.Single(service => service.ServiceType == typeof(DbContextOptions<ApplicationDbContext>));
+                    services.Remove(dbContextOptions);
+                    services.AddDbContext<ApplicationDbContext>(options => options.UseInMemoryDatabase("RestaurantDb"));
+
                     _controllerTypes.ForEach(c => services.AddScoped(c));
                 });
             });
