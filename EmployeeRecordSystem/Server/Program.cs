@@ -43,6 +43,7 @@ builder.Services.AddIdentityServer()
         // And for API resources
         options.ApiResources.Single().UserClaims.Add("role");
     });
+JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Remove("role");
 
 builder.Services.AddAuthentication()
     .AddIdentityServerJwt();
