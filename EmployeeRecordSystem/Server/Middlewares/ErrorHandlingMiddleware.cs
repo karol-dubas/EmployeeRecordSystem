@@ -1,7 +1,9 @@
 ﻿using EmployeeRecordSystem.Server.Exceptions;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Authentication;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,15 +13,15 @@ namespace EmployeeRecordSystem.Server.Middlewares
     {
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
-			try
-			{
+            try
+            {
                 await next.Invoke(context);
-			}
-			catch (NotFoundException e)
-			{
+            }
+            catch (NotFoundException e)
+            {
                 context.Response.StatusCode = 404;
                 await context.Response.WriteAsync(e.Message);
-			}
+            }
             catch (InvalidOperationException e)
             {
                 context.Response.StatusCode = 409;
@@ -28,6 +30,11 @@ namespace EmployeeRecordSystem.Server.Middlewares
             catch (ArgumentOutOfRangeException e)
             {
                 context.Response.StatusCode = 400;
+                await context.Response.WriteAsync(e.Message);
+            }
+            catch (ForbidException e)
+            {
+                context.Response.StatusCode = 403;
                 await context.Response.WriteAsync(e.Message);
             }
         }

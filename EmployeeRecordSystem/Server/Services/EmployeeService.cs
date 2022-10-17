@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Linq.Expressions;
+using AutoMapper;
 using EmployeeRecordSystem.Data;
 using EmployeeRecordSystem.Data.Entities;
 using EmployeeRecordSystem.Server.Exceptions;
@@ -8,177 +9,206 @@ using EmployeeRecordSystem.Shared.Requests;
 using EmployeeRecordSystem.Shared.Responses;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static EmployeeRecordSystem.Server.Installers.ServiceAttributes;
 
-namespace EmployeeRecordSystem.Server.Services
+namespace EmployeeRecordSystem.Server.Services;
+
+public interface IEmployeeService
 {
-    public interface IEmployeeService
+    EmployeeDeteilsDto GetDetails(Guid employeeId);
+    List<EmployeeInGroupDto> GetAll(EmployeeQuery query);
+    void Edit(Guid employeeId, EditEmployeeRequest request);
+    void ChangeHourlyPay(Guid employeeId, ChangeEmployeeHourlyPayRequest request);
+    void ChangeWorkTimes(ChangeEmployeesWorkTimeRequest request);
+    List<BalanceLogDto> GetBalanceLog(Guid employeeId);
+    void ConvertWorkTimeToBalance(ConvertTimeRequest request);
+}
+
+[ScopedRegistration]
+public class EmployeeService : BaseService, IEmployeeService
+{
+    private readonly IAuthorizationService _authorizationService;
+    private readonly UserManager<Employee> _userManager;
+
+    public EmployeeService(
+        ApplicationDbContext dbContext,
+        IMapper mapper,
+        UserManager<Employee> userManager,
+        IAuthorizationService authorizationService)
+        : base(dbContext, mapper)
     {
-        EmployeeDeteilsDto GetDetails(Guid employeeId);
-        List<EmployeeInGroupDto> GetAll(EmployeeQuery query);
-        void Edit(Guid employeeId, EditEmployeeRequest request);
-        void ChangeHourlyPay(Guid employeeId, ChangeEmployeeHourlyPayRequest request);
-        void ChangeWorkTimes(ChangeEmployeesWorkTimeRequest request);
-        List<BalanceLogDto> GetBalanceLog(Guid employeeId);
-        void ConvertWorkTimeToBalance();
+        _userManager = userManager;
+        _authorizationService = authorizationService;
     }
 
-    [ScopedRegistration]
-    public class EmployeeService : BaseService, IEmployeeService
+    public List<EmployeeInGroupDto> GetAll(EmployeeQuery query)
     {
-        private readonly UserManager<Employee> _userManager;
+        var queryable = _dbContext.Users
+            .Include(e => e.Group)
+            .Include(e => e.EmployeeBilling)
+            .AsNoTracking();
 
-        public EmployeeService(ApplicationDbContext dbContext, IMapper mapper,
-            UserManager<Employee> userManager)
-            : base(dbContext, mapper)
+        queryable = ApplyGetAllFilter(query, queryable);
+
+        var employees = queryable.ToList();
+        employees.ForEach(u => u.Role = GetEmployeeRole(u));
+
+        return _mapper.Map<List<EmployeeInGroupDto>>(employees);
+    }
+
+    public EmployeeDeteilsDto GetDetails(Guid employeeId)
+    {
+        bool isAuthorized = _authorizationService.EqualsUserHttpId(employeeId) ||
+                            _authorizationService.IsAdmin();
+        if (!isAuthorized)
+            throw new ForbidException();
+
+        var employee = _dbContext.Users
+            .AsNoTracking()
+            .Include(u => u.Group)
+            .Include(u => u.EmployeeBilling)
+            .SingleOrDefault(u => u.Id == employeeId);
+
+        if (employee is null)
+            throw new NotFoundException("Employee");
+
+        employee.Role = GetEmployeeRole(employee);
+
+        return _mapper.Map<EmployeeDeteilsDto>(employee);
+    }
+
+    public void Edit(Guid employeeId, EditEmployeeRequest request)
+    {
+        bool isAuthorized = _authorizationService.EqualsUserHttpId(employeeId) ||
+                            _authorizationService.IsAdmin();
+        if (!isAuthorized)
+            throw new ForbidException();
+
+        var employee = _dbContext.Users.SingleOrDefault(u => u.Id == employeeId);
+
+        if (employee is null)
+            throw new NotFoundException("Employee");
+
+        _mapper.Map(request, employee);
+        SaveChanges();
+    }
+
+    public void ChangeHourlyPay(Guid employeeId, ChangeEmployeeHourlyPayRequest request)
+    {
+        var employee = _dbContext.Users
+            .Include(u => u.EmployeeBilling)
+            .SingleOrDefault(u => u.Id == employeeId);
+
+        if (employee is null)
+            throw new NotFoundException("Employee");
+
+        employee.EmployeeBilling.HourlyPay = request.HourlyPay;
+        SaveChanges();
+    }
+
+    public void ChangeWorkTimes(ChangeEmployeesWorkTimeRequest request)
+    {
+        var employees = _dbContext.Users
+            .Include(u => u.EmployeeBilling)
+            .Where(u => request.EmployeeIds.Contains(u.Id))
+            .ToList();
+
+        if (!employees.Any())
+            return;
+
+        switch (request.WorkTimeOperation)
         {
-            _userManager = userManager;
-        }
-
-        public List<EmployeeInGroupDto> GetAll(EmployeeQuery query)
-        {
-            var queryable = _dbContext.Users
-                .Include(e => e.Group)
-                .Include(e => e.EmployeeBilling)
-                .AsNoTracking();
-
-            queryable = ApplyGetAllFilter(query, queryable);
-
-            var employees = queryable.ToList();
-            employees.ForEach(u => u.Role = GetEmployeeRole(u));
-
-            return _mapper.Map<List<EmployeeInGroupDto>>(employees);
-        }
-
-        public EmployeeDeteilsDto GetDetails(Guid employeeId)
-        {
-            var employee = _dbContext.Users
-                .AsNoTracking()
-                .Include(u => u.Group)
-                .Include(u => u.EmployeeBilling)
-                .SingleOrDefault(u => u.Id == employeeId);
-
-            if (employee is null)
-                throw new NotFoundException("Employee");
-
-            employee.Role = GetEmployeeRole(employee);
-         
-            return _mapper.Map<EmployeeDeteilsDto>(employee);
-        }
-
-        private string GetEmployeeRole(Employee employee)
-        {
-            return _userManager.GetRolesAsync(employee).Result.Single();
-        }
-
-        public void Edit(Guid employeeId, EditEmployeeRequest request)
-        {
-            var employee = _dbContext.Users.SingleOrDefault(u => u.Id == employeeId);
-
-            if (employee is null)
-                throw new NotFoundException("Employee");
-
-            _mapper.Map(request, employee);
-            SaveChanges();
-        }
-
-        public void ChangeHourlyPay(Guid employeeId, ChangeEmployeeHourlyPayRequest request)
-        {
-            var employee = _dbContext.Users
-                .Include(u => u.EmployeeBilling)
-                .SingleOrDefault(u => u.Id == employeeId);
-
-            if (employee is null)
-                throw new NotFoundException("Employee");
-
-            employee.EmployeeBilling.HourlyPay = request.HourlyPay;
-            SaveChanges();
-        }
-
-        public void ChangeWorkTimes(ChangeEmployeesWorkTimeRequest request)
-        {
-            var employees = _dbContext.Users
-                .Include(u => u.EmployeeBilling)
-                .Where(u => request.EmployeeIds.Contains(u.Id))
-                .ToList();
-
-            if (!employees.Any())
-                return;
-
-            if (request.WorkTimeOperation is WorkTimeOperations.Subtract)
+            case WorkTimeOperations.Subtract:
                 employees.ForEach(e => e.EmployeeBilling.TimeWorked -= request.WorkTime);
-
-            if (request.WorkTimeOperation is WorkTimeOperations.Add)
+                break;
+            case WorkTimeOperations.Add:
                 employees.ForEach(e => e.EmployeeBilling.TimeWorked += request.WorkTime);
-
-            SaveChanges();
+                break;
         }
 
-        private IQueryable<Employee> ApplyGetAllFilter(EmployeeQuery query, IQueryable<Employee> queryable)
+        SaveChanges();
+    }
+
+    public List<BalanceLogDto> GetBalanceLog(Guid employeeId)
+    {
+        bool isAuthorized = _authorizationService.EqualsUserHttpId(employeeId) ||
+                            _authorizationService.IsAdmin();
+        if (!isAuthorized)
+            throw new ForbidException();
+
+        var employee = _dbContext.Users
+            .Include(u => u.BalanceLogs)
+            .SingleOrDefault(u => u.Id == employeeId);
+
+        if (employee is null)
+            throw new NotFoundException("Employee");
+
+        return _mapper.Map<List<BalanceLogDto>>(employee.BalanceLogs);
+    }
+
+    public void ConvertWorkTimeToBalance(ConvertTimeRequest request)
+    {
+        var billings = _dbContext.EmployeeBillings
+            .Include(b => b.Employee)
+            .AsQueryable();
+
+        if (request.GroupId != default)
+            billings = billings.Where(b => b.Employee.GroupId == request.GroupId);
+
+        ConvertBillingsToBalance(billings.ToList());
+        SaveChanges();
+    }
+
+    private void ConvertBillingsToBalance(List<EmployeeBilling> employeeBillings)
+    {
+        foreach (var billing in employeeBillings)
         {
-            if (query.WithoutGroup)
-            {
-                queryable = queryable
-                    .Include(u => u.Group)
-                    .Where(u => u.GroupId == null);
-            }
+            var timeWorked = billing.TimeWorked;
+            decimal balanceBefore = billing.Balance;
 
-            if (query.GroupId != default)
-            {
-                bool groupExists = _dbContext.Groups.Any(g => g.Id == query.GroupId);
-                if (!groupExists)
-                    throw new NotFoundException("Group");
+            decimal balanceToAdd = billing.HourlyPay * (decimal)timeWorked.TotalHours;
+            billing.TimeWorked = TimeSpan.Zero;
+            decimal balanceAfter = billing.Balance += balanceToAdd;
 
-                queryable = queryable
-                    .Include(u => u.Group)
-                    .Where(u => u.GroupId == query.GroupId);
-            }
-
-            return queryable;
+            CreateBalanceLog(balanceBefore, balanceAfter, billing.EmployeeId);
         }
+    }
 
-        public List<BalanceLogDto> GetBalanceLog(Guid employeeId)
+    private void CreateBalanceLog(decimal balanceBefore, decimal balanceAfter, Guid employeeId)
+    {
+        var balanceLog = new BalanceLog
         {
-            var employee = _dbContext.Users
-                .Include(u => u.BalanceLogs)
-                .SingleOrDefault(u => u.Id == employeeId);
+            BalanceBefore = balanceBefore,
+            BalanceAfter = balanceAfter,
+            EmployeeId = employeeId
+        };
 
-            if (employee is null)
-                throw new NotFoundException("Employee");
+        _dbContext.BalanceLogs.Add(balanceLog);
+    }
 
-            return _mapper.Map<List<BalanceLogDto>>(employee.BalanceLogs);
-        }
+    private IQueryable<Employee> ApplyGetAllFilter(EmployeeQuery query, IQueryable<Employee> queryable)
+    {
+        if (query.WithoutGroup)
+            queryable = queryable
+                .Include(u => u.Group)
+                .Where(u => u.GroupId == null);
 
-        public void ConvertWorkTimeToBalance()
+        if (query.GroupId != default)
         {
-            var employeeBillings = _dbContext.EmployeeBillings.ToList();
+            bool groupExists = _dbContext.Groups.Any(g => g.Id == query.GroupId);
+            if (!groupExists)
+                throw new NotFoundException("Group");
 
-            foreach (var billing in employeeBillings)
-            {
-                decimal hourlyPay = billing.HourlyPay;
-                TimeSpan timeWorked = billing.TimeWorked;
-                decimal balanceBefore = billing.Balance;
-
-                decimal balanceToAdd = hourlyPay * (decimal)timeWorked.TotalHours;
-                billing.TimeWorked = TimeSpan.Zero;
-                decimal balanceAfter = billing.Balance += balanceToAdd;
-
-                var balanceLog = new BalanceLog()
-                {
-                    BalanceBefore = balanceBefore,
-                    BalanceAfter = balanceAfter,
-                    EmployeeId = billing.EmployeeId
-                };
-
-                _dbContext.BalanceLogs.Add(balanceLog);
-            }
-
-            SaveChanges();
+            queryable = queryable
+                .Include(u => u.Group)
+                .Where(u => u.GroupId == query.GroupId);
         }
+
+        return queryable;
+    }
+
+    private string GetEmployeeRole(Employee employee)
+    {
+        return _userManager.GetRolesAsync(employee).Result.Single();
     }
 }

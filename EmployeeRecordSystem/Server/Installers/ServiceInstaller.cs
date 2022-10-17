@@ -6,7 +6,6 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using static EmployeeRecordSystem.Server.Installers.ServiceAttributes;
-using static Humanizer.In;
 
 namespace EmployeeRecordSystem.Server.Installers
 {

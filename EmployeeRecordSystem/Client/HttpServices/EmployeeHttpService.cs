@@ -61,7 +61,7 @@ namespace EmployeeRecordSystem.Client.HttpServices
             var response = await _httpClient.PatchAsync($"{_basePath}/work-time", content);
         }
 
-        public async Task ConvertWorkTimeToBalanceAsync(ConvertTimeRequest request = null)
+        public async Task ConvertWorkTimeToBalanceAsync(ConvertTimeRequest request)
         {
             var content = HttpHelper.ToHttpContent(request);
             var response = await _httpClient.PatchAsync($"{_basePath}/work-time/convert", content);

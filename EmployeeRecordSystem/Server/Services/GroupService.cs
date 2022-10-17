@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using EmployeeRecordSystem.Data;
 using EmployeeRecordSystem.Data.Entities;
 using EmployeeRecordSystem.Server.Exceptions;
@@ -7,109 +6,101 @@ using EmployeeRecordSystem.Shared.Queries;
 using EmployeeRecordSystem.Shared.Requests;
 using EmployeeRecordSystem.Shared.Responses;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static EmployeeRecordSystem.Server.Installers.ServiceAttributes;
 
-namespace EmployeeRecordSystem.Server.Services
+namespace EmployeeRecordSystem.Server.Services;
+
+public interface IGroupService
 {
-    public interface IGroupService
+    GroupDto Create(CreateGroupRequest request);
+    List<GroupDto> GetAll(GroupQuery query);
+    GroupDto Rename(Guid groupId, RenameGroupRequest request);
+    void Delete(Guid groupId);
+    void AssignEmployeeToGroup(Guid groupId, Guid employeeId);
+    void RemoveEmployeeFromGroup(Guid employeeId);
+}
+
+[ScopedRegistration]
+public class GroupService : BaseService, IGroupService
+{
+    public GroupService(ApplicationDbContext dbContext, IMapper mapper) : base(dbContext, mapper) { }
+
+    public GroupDto Create(CreateGroupRequest request)
     {
-        GroupDto Create(CreateGroupRequest request);
-        List<GroupDto> GetAll(GroupQuery query);
-        GroupDto Rename(Guid groupId, RenameGroupRequest request);
-        void Delete(Guid groupId);
-        void AssignEmployeeToGroup(Guid groupId, Guid employeeId);
-        void RemoveEmployeeFromGroup(Guid employeeId);
+        var group = _mapper.Map<Group>(request);
+        _dbContext.Groups.Add(group);
+        SaveChanges();
+        return _mapper.Map<GroupDto>(group);
     }
 
-    [ScopedRegistration]
-    public class GroupService : BaseService, IGroupService
+    public List<GroupDto> GetAll(GroupQuery query)
     {
-        public GroupService(ApplicationDbContext dbContext, IMapper mapper) : base(dbContext, mapper) { }
+        var queryable = _dbContext.Groups
+            .Include(g => g.Employees)
+            .AsNoTracking();
 
-        public GroupDto Create(CreateGroupRequest request)
-        {
-            var group = _mapper.Map<Group>(request);
-            _dbContext.Groups.Add(group);
-            SaveChanges();
-            return _mapper.Map<GroupDto>(group);
-        }
+        queryable = ApplyGetAllFilter(query, queryable);
 
-        public List<GroupDto> GetAll(GroupQuery query)
-        {
-            var queryable = _dbContext.Groups
-                .Include(g => g.Employees)
-                .AsNoTracking();
+        var groups = queryable.ToList();
+        return _mapper.Map<List<GroupDto>>(groups);
+    }
 
-            queryable = ApplyGetAllFilter(query, queryable);
+    public GroupDto Rename(Guid groupId, RenameGroupRequest request)
+    {
+        var group = _dbContext.Groups.SingleOrDefault(g => g.Id == groupId);
 
-            var groups = queryable.ToList();
-            return _mapper.Map<List<GroupDto>>(groups);
-        }
+        if (group is null)
+            throw new NotFoundException("Group");
 
-        public GroupDto Rename(Guid groupId, RenameGroupRequest request)
-        {
-            var group = _dbContext.Groups.SingleOrDefault(g => g.Id == groupId);
+        group.Name = request.Name;
+        SaveChanges();
+        
+        return _mapper.Map<GroupDto>(group);
+    }
 
-            if (group is null)
-                throw new NotFoundException("Group");
+    public void Delete(Guid groupId)
+    {
+        var group = _dbContext.Groups.SingleOrDefault(g => g.Id == groupId);
 
-            group.Name = request.Name;
-            SaveChanges();
-            return _mapper.Map<GroupDto>(group);
-        }
+        if (group is null)
+            throw new NotFoundException("Group");
 
-        public void Delete(Guid groupId)
-        {
-            var group = _dbContext.Groups.SingleOrDefault(g => g.Id == groupId);
+        _dbContext.Groups.Remove(group);
+        SaveChanges();
+    }
 
-            if (group is null)
-                throw new NotFoundException("Group");
+    public void AssignEmployeeToGroup(Guid groupId, Guid employeeId)
+    {
+        var employee = _dbContext.Users.SingleOrDefault(u => u.Id == employeeId);
 
-            _dbContext.Groups.Remove(group);
-            SaveChanges();
-        }
+        if (employee is null)
+            throw new NotFoundException("Employee");
 
-        public void AssignEmployeeToGroup(Guid groupId, Guid employeeId)
-        {
-            var employee = _dbContext.Users.SingleOrDefault(u => u.Id == employeeId);
+        var group = _dbContext.Groups.SingleOrDefault(u => u.Id == groupId);
 
-            if (employee is null)
-                throw new NotFoundException("Employee");
+        if (group is null)
+            throw new NotFoundException("Group");
 
-            var group = _dbContext.Groups.SingleOrDefault(u => u.Id == groupId);
+        employee.GroupId = group.Id;
+        SaveChanges();
+    }
 
-            if (group is null)
-                throw new NotFoundException("Group");
+    public void RemoveEmployeeFromGroup(Guid employeeId)
+    {
+        var employee = _dbContext.Users.SingleOrDefault(u => u.Id == employeeId);
 
-            employee.GroupId = group.Id;
-            SaveChanges();
-        }
+        if (employee is null)
+            throw new NotFoundException("Employee");
 
-        public void RemoveEmployeeFromGroup(Guid employeeId)
-        {
-            var employee = _dbContext.Users.SingleOrDefault(u => u.Id == employeeId);
+        employee.GroupId = null;
+        SaveChanges();
+    }
 
-            if (employee is null)
-                throw new NotFoundException("Employee");
+    private IQueryable<Group> ApplyGetAllFilter(GroupQuery query, IQueryable<Group> queryable)
+    {
+        if (query.Id != default)
+            queryable = queryable.Where(g => g.Id == query.Id);
 
-            employee.GroupId = null;
-            SaveChanges();
-        }
-
-        private IQueryable<Group> ApplyGetAllFilter(GroupQuery query, IQueryable<Group> queryable)
-        {
-            if (query.Id != default)
-            {
-                queryable = queryable
-                    .Where(g => g.Id == query.Id);
-            }
-
-            return queryable;
-        }
+        return queryable;
     }
 }

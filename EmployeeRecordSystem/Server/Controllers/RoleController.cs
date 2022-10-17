@@ -1,38 +1,45 @@
 ﻿using EmployeeRecordSystem.Server.Services;
-using Microsoft.AspNetCore.Http;
+using EmployeeRecordSystem.Shared.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace EmployeeRecordSystem.Server.Controllers
+namespace EmployeeRecordSystem.Server.Controllers;
+
+[Route("api/roles")]
+[ApiController]
+[Authorize(Roles = Roles.Admin)]
+public class RoleController : ControllerBase
 {
-    [Route("api/roles")]
-    [ApiController]
-    public class RoleController : ControllerBase
+    private readonly IRoleService _roleService;
+
+    public RoleController(IRoleService roleService)
     {
-        private readonly IRoleService _roleService;
+        _roleService = roleService;
+    }
 
-        public RoleController(IRoleService roleService)
-        {
-            _roleService = roleService;
-        }
+    /// <summary>
+    ///     Get all
+    /// </summary>
+    /// <remarks>
+    ///     Authorize: admin
+    /// </remarks>
+    [HttpGet]
+    public IActionResult GetAll()
+    {
+        var response = _roleService.GetAll();
+        return Ok(response);
+    }
 
-        /// <summary>
-        /// Get all
-        /// </summary>
-        [HttpGet]
-        public IActionResult GetAll()
-        {
-            var response = _roleService.GetAll();
-            return Ok(response);
-        }
-
-        /// <summary>
-        /// Change employee's role
-        /// </summary>
-        [HttpPatch("{roleId}/employee/{employeeId}")]
-        public IActionResult ChangeEmployeeRole(Guid employeeId, Guid roleId)
-        {
-            _roleService.ChangeEmployeeRole(employeeId, roleId);
-            return NoContent();
-        }
+    /// <summary>
+    ///     Change employee's role
+    /// </summary>
+    /// <remarks>
+    ///     Authorize: admin
+    /// </remarks>
+    [HttpPatch("{roleId}/employee/{employeeId}")]
+    public IActionResult ChangeEmployeeRole(Guid employeeId, Guid roleId)
+    {
+        _roleService.ChangeEmployeeRole(employeeId, roleId);
+        return NoContent();
     }
 }

@@ -1,51 +1,64 @@
-﻿using EmployeeRecordSystem.Data.Entities;
-using EmployeeRecordSystem.Server.Services;
+﻿using EmployeeRecordSystem.Server.Services;
+using EmployeeRecordSystem.Shared.Constants;
 using EmployeeRecordSystem.Shared.Queries;
 using EmployeeRecordSystem.Shared.Requests;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace EmployeeRecordSystem.Server.Controllers
+namespace EmployeeRecordSystem.Server.Controllers;
+
+[Route("api/withdrawal-requests")]
+[ApiController]
+[Authorize]
+public class WithdrawalRequestController : ControllerBase
 {
-    [Route("api/withdrawal-requests")]
-    [ApiController]
-    public class WithdrawalRequestController : ControllerBase
+    private readonly IWithdrawalRequestService _withdrawalRequestService;
+
+    public WithdrawalRequestController(IWithdrawalRequestService withdrawalRequestService)
     {
-        private readonly IWithdrawalRequestService _withdrawalRequestService;
+        _withdrawalRequestService = withdrawalRequestService;
+    }
 
-        public WithdrawalRequestController(IWithdrawalRequestService withdrawalRequestService)
-        {
-            _withdrawalRequestService = withdrawalRequestService;
-        }
+    /// <summary>
+    ///     Create
+    /// </summary>
+    /// <remarks>
+    ///     Authorize: logged user
+    /// </remarks>
+    [HttpPost("{employeeId}")]
+    public IActionResult Create([FromRoute] Guid employeeId, [FromBody] CreateWithdrawalRequestRequest request)
+    {
+        var response = _withdrawalRequestService.Create(employeeId, request);
+        return CreatedAtAction(nameof(GetAll), new { response.Id }, response);
+    }
 
-        /// <summary>
-        /// Create
-        /// </summary>
-        [HttpPost("{employeeId}")]
-        public IActionResult Create([FromRoute] Guid employeeId, [FromBody] CreateWithdrawalRequestRequest request)
-        {
-            var response = _withdrawalRequestService.Create(employeeId, request);
-            return CreatedAtAction(nameof(GetAll), new { Id = response.Id }, response);
-        }
+    /// <summary>
+    ///     Get all
+    /// </summary>
+    /// <remarks>
+    ///     Authorize: admin
+    /// </remarks>
+    [HttpGet]
+    [Authorize(Roles = Roles.Admin)]
+    public IActionResult GetAll([FromQuery] WithdrawalRequestQuery query)
+    {
+        var response = _withdrawalRequestService.GetAll(query);
+        return Ok(response);
+    }
 
-        /// <summary>
-        /// Get all
-        /// </summary>
-        [HttpGet]
-        public IActionResult GetAll([FromQuery] WithdrawalRequestQuery query)
-        {
-            var response = _withdrawalRequestService.GetAll(query);
-            return Ok(response);
-        }
-
-        /// <summary>
-        /// Accept/Deny withdrawal request status
-        /// </summary>
-        [HttpPatch("{withdrawalRequestId}")]
-        public IActionResult Process([FromRoute] Guid withdrawalRequestId, [FromBody] ProcessWithdrawalRequestRequest request)
-        {
-            _withdrawalRequestService.Process(withdrawalRequestId, request);
-            return NoContent();
-        }
+    /// <summary>
+    ///     Accept/Deny employee's withdrawal request
+    /// </summary>
+    /// <remarks>
+    ///     Authorize: admin
+    /// </remarks>
+    [HttpPatch("{withdrawalRequestId}")]
+    [Authorize(Roles = Roles.Admin)]
+    public IActionResult Process(
+        [FromRoute] Guid withdrawalRequestId,
+        [FromBody] ProcessWithdrawalRequestRequest request)
+    {
+        _withdrawalRequestService.Process(withdrawalRequestId, request);
+        return NoContent();
     }
 }

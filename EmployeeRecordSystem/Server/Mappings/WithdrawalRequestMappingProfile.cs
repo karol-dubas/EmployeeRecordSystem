@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using EmployeeRecordSystem.Data.Entities;
-using EmployeeRecordSystem.Shared.Requests;
 using EmployeeRecordSystem.Shared.Responses;
 using System;
 using System.Collections.Generic;

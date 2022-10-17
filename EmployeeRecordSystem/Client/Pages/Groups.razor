@@ -216,13 +216,13 @@
     {
         employees.ForEach(i =>
         {
-            var result = i.Role switch
+            string result = i.Role switch
             {
                 Roles.Admin => "Administrator",
                 Roles.Supervisor => "Kierownik",
                 Roles.Employee => "Pracownik",
                 _ => throw new InvalidOperationException()
-            };
+                };
 
             i.Role = result;
         });
@@ -259,9 +259,9 @@
     async Task DeleteGroup(Guid groupId)
     {
         bool? result = await _dialogService.ShowMessageBox(
-        "Uwaga",
-        "Czy na pewno chcesz usunąć?",
-        yesText: "Usuń", cancelText: "Anuluj");
+            "Uwaga",
+            "Czy na pewno chcesz usunąć?",
+            "Usuń", cancelText: "Anuluj");
 
         if (result == true)
         {
@@ -274,9 +274,9 @@
     async Task RenameGroup(Guid groupId)
     {
         var request = new RenameGroupRequest
-            {
-                Name = "" // TODO: add rename input
-            };
+        {
+            Name = "" // TODO: add rename input
+        };
 
         //await _groupHttpService.RenameAsync(groupId, request);
         _snackbar.Add("Nazwa zmieniona pomyślnie", Severity.Success);
@@ -321,32 +321,25 @@
 
     async Task ConvertWorkTimeToBalance(Guid? groupId = null)
     {
-        if (groupId is not null)
-        {
-            await _employeeHttpService.ConvertWorkTimeToBalanceAsync(new() { GroupId = (Guid)groupId });
-            _snackbar.Add("Przekonwertowano czas pracy grupy na saldo", Severity.Success);
-        }
-        else
-        {
-            await _employeeHttpService.ConvertWorkTimeToBalanceAsync();
-            _snackbar.Add("Przekonwertowano czas pracy wszystkich pracowników na saldo", Severity.Success);
-        }
+        await _employeeHttpService.ConvertWorkTimeToBalanceAsync(new ConvertTimeRequest { GroupId = groupId is null ? default : (Guid)groupId });
+        _snackbar.Add("Przekonwertowano czas pracy pracowników na saldo", Severity.Success);
 
         await GetItems();
     }
 
     void HideEmptyGroups()
     {
-        // TODO: add implementation
+    // TODO: add implementation
     }
 
     void ToggleExpand()
     {
-        // TODO: add implementation
+    // TODO: add implementation
     }
 
     void NavigateToEmployeeGroup()
     {
-        // TODO: add implementation
+    // TODO: add implementation
     }
+
 }

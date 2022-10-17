@@ -20,8 +20,7 @@ namespace EmployeeRecordSystem.Client.HttpServices
 
         public async Task<List<RoleDto>> GetAllAsync()
         {
-            var response = await _httpClient.GetFromJsonAsync<List<RoleDto>>(_basePath);
-            return response;
+            return await _httpClient.GetFromJsonAsync<List<RoleDto>>(_basePath);
         }
 
         public async Task ChangeEmployeeRoleAsync(Guid employeeId, Guid roleId)
