@@ -1,90 +1,30 @@
-using EmployeeRecordSystem.Data;
-using EmployeeRecordSystem.Data.Entities;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.ResponseCompression;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using EmployeeRecordSystem.Server.Services;
-using System.Reflection;
-using EmployeeRecordSystem.Server.Installers;
 using EmployeeRecordSystem.Data.Helpers;
-using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Any;
-using System.IdentityModel.Tokens.Jwt;
+using EmployeeRecordSystem.Server.Installers;
 using EmployeeRecordSystem.Server.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+// Find and add all services to the container.
+var installers = typeof(Program)
+    .Assembly
+    .ExportedTypes
+    .Where(x => typeof(IInstaller).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract)
+    .Select(Activator.CreateInstance)
+    .Cast<IInstaller>()
+    .ToList();
 
-builder.Services.AddDefaultIdentity<Employee>(options =>
-{
-    options.SignIn.RequireConfirmedEmail = false;
-    options.SignIn.RequireConfirmedAccount = false;
-    options.SignIn.RequireConfirmedPhoneNumber = false;
-    options.User.RequireUniqueEmail = true;
-}) 
-.AddRoles<ApplicationRole>()
-.AddEntityFrameworkStores<ApplicationDbContext>();
-
-builder.Services.AddIdentityServer()
-    .AddApiAuthorization<Employee, ApplicationDbContext>(options =>
-    {
-        // Add the role claim to employee claims collection:
-
-        // For Identity resources
-        options.IdentityResources["openid"].UserClaims.Add("role");
-
-        // And for API resources
-        options.ApiResources.Single().UserClaims.Add("role");
-    });
-JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Remove("role");
-
-builder.Services.AddAuthentication()
-    .AddIdentityServerJwt();
-
-builder.Services.AddControllersWithViews();
-builder.Services.AddRazorPages();
-
-builder.Services.AddAutoMapper(typeof(Program).Assembly);
-
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Version = "v1",
-        Title = "Employee record system",
-    });
-
-    c.MapType<TimeSpan>(() => new OpenApiSchema
-    {
-        Type = "string",
-        Example = new OpenApiString("0.00:00:00")
-    });
-
-    // Set the comments path for the Swagger JSON and UI.
-    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-    c.IncludeXmlComments(xmlPath);
-});
-
-builder.Services.AddScoped<DatabaseSeeder>();
-builder.Services.AddScoped<ErrorHandlingMiddleware>();
-builder.Services.RegisterServices();
+installers.ForEach(i => i.InstallServices(builder.Services, builder.Configuration));
 
 var app = builder.Build();
 
-var serviceProvider = app.Services.CreateScope().ServiceProvider;
-var databaseSeeder = serviceProvider.GetRequiredService<DatabaseSeeder>();
+var databaseSeeder = app.Services
+    .CreateScope()
+    .ServiceProvider
+    .GetRequiredService<DatabaseSeeder>();
 
 await databaseSeeder.EnsureDatabaseCreated()
-                    .ApplyPendingMigrations()
-                    .SeedAsync();
+    .ApplyPendingMigrations()
+    .SeedAsync();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
