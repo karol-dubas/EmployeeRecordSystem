@@ -16,7 +16,7 @@ namespace EmployeeRecordSystem.Server.Services
     public interface IRoleService
     {
         List<RoleDto> GetAll();
-        void ChangeEmployeeRole(Guid employeeId, Guid roleId);
+        void ChangeEmployeeRole(Guid employeeId, Guid newRoleId);
     }
 
 
@@ -42,19 +42,19 @@ namespace EmployeeRecordSystem.Server.Services
             return _mapper.Map<List<RoleDto>>(roles);
         }
 
-        public void ChangeEmployeeRole(Guid employeeId, Guid roleId)
+        public void ChangeEmployeeRole(Guid employeeId, Guid newRoleId)
         {
             var employee = _dbContext.Users.SingleOrDefault(e => e.Id == employeeId);
 
             if (employee is null)
                 throw new NotFoundException("Employee");
 
-            var newRole = _roleManager.FindByIdAsync(roleId.ToString()).Result;
+            var newRole = _roleManager.FindByIdAsync(newRoleId.ToString()).Result;
 
             if (newRole is null)
                 throw new NotFoundException("Role");
 
-            var currentRole = _userManager.GetRolesAsync(employee).Result.Single();
+            string currentRole = _userManager.GetRolesAsync(employee).Result.Single();
             _userManager.RemoveFromRoleAsync(employee, currentRole).Wait();
 
             _userManager.AddToRoleAsync(employee, newRole.Name).Wait();

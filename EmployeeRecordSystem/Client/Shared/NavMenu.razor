@@ -49,7 +49,7 @@
     {
         // TODO: show nav item only if has group
         Guid userId = await _auth.GetUserIdAsync();
-        var employee = await _employeeHttpService.GetDetailsAsync(userId);
+        var employee = (await _employeeHttpService.GetDetailsAsync(userId)).DeserializedContent;
 
         _nav.NavigateToGroup(employee.Group.Id);
     }

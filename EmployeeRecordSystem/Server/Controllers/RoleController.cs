@@ -36,10 +36,10 @@ public class RoleController : ControllerBase
     /// <remarks>
     ///     Authorize: admin
     /// </remarks>
-    [HttpPatch("{roleId}/employee/{employeeId}")]
-    public IActionResult ChangeEmployeeRole(Guid employeeId, Guid roleId)
+    [HttpPatch("{newRoleId}/employee/{employeeId}")]
+    public IActionResult ChangeEmployeeRole(Guid employeeId, Guid newRoleId)
     {
-        _roleService.ChangeEmployeeRole(employeeId, roleId);
+        _roleService.ChangeEmployeeRole(employeeId, newRoleId);
         return NoContent();
     }
 }

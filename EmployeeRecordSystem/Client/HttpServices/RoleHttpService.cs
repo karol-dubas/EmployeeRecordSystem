@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
+using EmployeeRecordSystem.Client.Helpers;
 
 namespace EmployeeRecordSystem.Client.HttpServices
 {
@@ -18,14 +19,16 @@ namespace EmployeeRecordSystem.Client.HttpServices
             _httpClient = httpClient;
         }
 
-        public async Task<List<RoleDto>> GetAllAsync()
+        public async Task<HttpResponse<List<RoleDto>>> GetAllAsync()
         {
-            return await _httpClient.GetFromJsonAsync<List<RoleDto>>(_basePath);
+            return (await _httpClient.GetAsync(_basePath))
+                .DeserializeContent<List<RoleDto>>();
         }
 
-        public async Task ChangeEmployeeRoleAsync(Guid employeeId, Guid roleId)
+        public async Task<HttpResponse> ChangeEmployeeRoleAsync(Guid employeeId, Guid newRoleId)
         {
-            var response = await _httpClient.PatchAsync($"{_basePath}/{roleId}/employee/{employeeId}", null);
+            return (await _httpClient.PatchAsync($"{_basePath}/{newRoleId}/employee/{employeeId}", null))
+                .DeserializeContent();
         }
     }
 }

@@ -1,50 +1,43 @@
-﻿using EmployeeRecordSystem.Shared.Responses;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Json;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Net.Http.Json;
 using EmployeeRecordSystem.Client.Helpers;
-using EmployeeRecordSystem.Shared.Requests;
-using System.Reflection.Metadata;
-using System.Text.Json.Serialization;
-using Newtonsoft.Json;
 using EmployeeRecordSystem.Shared.Queries;
+using EmployeeRecordSystem.Shared.Requests;
+using EmployeeRecordSystem.Shared.Responses;
 
-namespace EmployeeRecordSystem.Client.HttpServices
+namespace EmployeeRecordSystem.Client.HttpServices;
+
+public class WithdrawalRequestHttpService
 {
-    public class WithdrawalRequestHttpService
-    {
-        private readonly HttpClient _httpClient;
-        private const string _basePath = "api/withdrawal-requests";
+	private const string _basePath = "api/withdrawal-requests";
+	private readonly HttpClient _httpClient;
 
-        public WithdrawalRequestHttpService(HttpClient httpClient)
-        {
-            _httpClient = httpClient;
-        }
+	public WithdrawalRequestHttpService(HttpClient httpClient)
+	{
+		_httpClient = httpClient;
+	}
 
-        public async Task<CreatedWithdrawalRequestDto> CreateAsync(Guid employeeId, CreateWithdrawalRequestRequest request)
-        {
-            var response = await _httpClient.PostAsJsonAsync($"{_basePath}/{employeeId}", request);
-            return await response.Content.ReadFromJsonAsync<CreatedWithdrawalRequestDto>();
-        }
+	public async Task<HttpResponse<CreatedWithdrawalRequestDto>> CreateAsync(
+		Guid employeeId,
+		CreateWithdrawalRequestRequest request)
+	{
+		return (await _httpClient.PostAsJsonAsync($"{_basePath}/{employeeId}", request))
+			.DeserializeContent<CreatedWithdrawalRequestDto>();
+	}
 
-        public async Task<List<WithdrawalRequestDto>> GetAllAsync(WithdrawalRequestQuery query = null)
-        {
-            string path = _basePath;
+	public async Task<HttpResponse<List<WithdrawalRequestDto>>> GetAllAsync(WithdrawalRequestQuery query = null)
+	{
+		string path = _basePath;
 
-            if (query is not null)
-                path = HttpHelper.AddQuery(path, query);
+		if (query is not null)
+			path = path.AddHttpQuery(query);
 
-            var response = await _httpClient.GetFromJsonAsync<List<WithdrawalRequestDto>>(path);
-            return response;
-        }
+		return (await _httpClient.GetAsync(path))
+			.DeserializeContent<List<WithdrawalRequestDto>>();
+	}
 
-        public async Task ProcessAsync(Guid withdrawalRequestId, ProcessWithdrawalRequestRequest request)
-        {
-            var content = HttpHelper.ToHttpContent(request);
-            var response = await _httpClient.PatchAsync($"{_basePath}/{withdrawalRequestId}", content);
-        }
-    }
+	public async Task<HttpResponse> ProcessAsync(Guid withdrawalRequestId, ProcessWithdrawalRequestRequest request)
+	{
+		return (await _httpClient.PatchAsync($"{_basePath}/{withdrawalRequestId}", request.ToHttpContent()))
+			.DeserializeContent();
+	}
 }

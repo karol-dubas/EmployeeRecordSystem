@@ -55,7 +55,7 @@
             EmployeeId = EmployeeId
         };
 
-        withdrawalRequests = await _withdrawalRequestHttpService.GetAllAsync(query);
+        withdrawalRequests = (await _withdrawalRequestHttpService.GetAllAsync(query)).DeserializedContent;
 
         withdrawalRequests.ForEach(wr =>
         {
@@ -73,7 +73,7 @@
 
     async Task CreateWithdrawalRequest()
     {
-        var employee = await _employeeHttpService.GetDetailsAsync(EmployeeId);
+        var employee = (await _employeeHttpService.GetDetailsAsync(EmployeeId)).DeserializedContent;
         var parameters = new DialogParameters { ["balance"]= employee.EmployeeBilling.Balance };
         var dialog = _dialogService.Show<AddWithdrawalRequestDialog>("", parameters);
         var result = await dialog.Result;

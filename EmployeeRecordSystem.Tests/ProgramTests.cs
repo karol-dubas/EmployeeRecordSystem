@@ -12,15 +12,16 @@ using EmployeeRecordSystem.Server.Controllers;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using EmployeeRecordSystem.Data;
+using Program = EmployeeRecordSystem.Server.Program;
 
 namespace EmployeeRecordSystem.Tests
 {
-    public class ProgramTests : IClassFixture<WebApplicationFactory<Program>>
+    public class ProgramTests
     {
         private readonly List<Type> _controllerTypes;
         private readonly WebApplicationFactory<Program> _factory;
 
-        public ProgramTests(WebApplicationFactory<Program> factory)
+        public ProgramTests()
         {
             _controllerTypes = typeof(Program)
             .Assembly
@@ -28,22 +29,19 @@ namespace EmployeeRecordSystem.Tests
             .Where(t => t.IsSubclassOf(typeof(ControllerBase)))
             .ToList();
 
-            _factory = factory
+            _factory = new WebApplicationFactory<Program>()
             .WithWebHostBuilder(builder =>
             {
                 builder.ConfigureServices(services =>
                 {
-                    var dbContextOptions = services.Single(service => service.ServiceType == typeof(DbContextOptions<ApplicationDbContext>));
-                    services.Remove(dbContextOptions);
-                    services.AddDbContext<ApplicationDbContext>(options => options.UseInMemoryDatabase("RestaurantDb"));
-
-                    _controllerTypes.ForEach(c => services.AddScoped(c));
+                    foreach (var controller in _controllerTypes)
+                        services.AddScoped(controller);
                 });
             });
         }
 
         [Fact]
-        public void RegisterServices_ForAllControllers_RegistersAllDependencies()
+        public void InstallServices_ForAllControllers_RegistersAllDependencies()
         {
             // Arrange
             var scopeFactory = _factory.Services.GetService<IServiceScopeFactory>();
@@ -54,7 +52,7 @@ namespace EmployeeRecordSystem.Tests
             // Assert
             _controllerTypes.ForEach(c =>
             {
-                var controller = scope.ServiceProvider.GetService(c);
+                object controller = scope.ServiceProvider.GetService(c);
                 controller.Should().NotBeNull();
             });
         }

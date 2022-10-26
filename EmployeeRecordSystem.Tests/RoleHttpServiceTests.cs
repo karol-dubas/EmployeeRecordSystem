@@ -1,54 +1,93 @@
-﻿using EmployeeRecordSystem.Client.HttpServices;
+﻿using System.Net;
+using EmployeeRecordSystem.Client.Helpers;
+using EmployeeRecordSystem.Client.HttpServices;
 using EmployeeRecordSystem.Data;
+using EmployeeRecordSystem.Data.Entities;
+using EmployeeRecordSystem.Data.Helpers;
+using EmployeeRecordSystem.Server;
+using EmployeeRecordSystem.Shared.Constants;
+using EmployeeRecordSystem.Shared.Responses;
+using EmployeeRecordSystem.Tests.Helpers;
 using FluentAssertions;
-using FluentAssertions.Common;
-using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Authorization.Policy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace EmployeeRecordSystem.Tests
+namespace EmployeeRecordSystem.Tests;
+
+public class RoleHttpServiceTests : IntegrationTest
 {
-    public class RoleHttpServiceTests : IClassFixture<WebApplicationFactory<Program>>
-    {
-        private readonly HttpClient _client;
-        private readonly WebApplicationFactory<Program> _factory;
-        private readonly RoleHttpService _httpService;
+	private readonly RoleHttpService _sut;
 
-        public RoleHttpServiceTests(WebApplicationFactory<Program> factory)
-        {
-            _factory = factory
-                .WithWebHostBuilder(builder =>
-                {
-                    builder.ConfigureServices(services =>
-                    {
-                        var dbContextOptions = services.Single(service => service.ServiceType == typeof(DbContextOptions<ApplicationDbContext>));
-                        services.Remove(dbContextOptions);
-                        services.AddDbContext<ApplicationDbContext>(o => o.UseInMemoryDatabase("testDb"));
-                    });
-                });
+	public RoleHttpServiceTests()
+	{
+		var factory = new WebApplicationFactory<Program>()
+			.WithWebHostBuilder(builder =>
+			{
+				builder.ConfigureServices(services =>
+				{
+					var dbContextOptions = services.Single(service =>
+						service.ServiceType == typeof(DbContextOptions<ApplicationDbContext>));
+					services.Remove(dbContextOptions);
+					services.AddDbContext<ApplicationDbContext>(o =>
+					{
+						string uniqueCurrentClassName = GetType().Name;
+						o.UseInMemoryDatabase(uniqueCurrentClassName);
+					});
 
-            _client = _factory.CreateClient();
-            _httpService = new RoleHttpService(_client);
-        }
+					services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
+				});
+			});
 
-        [Fact]
-        public async Task GetAllAsync_WithRoles_ReturnsThreeRoles()
-        {
-            // Arrange
+		var httpClient = factory.CreateClient();
+		_sut = new RoleHttpService(httpClient);
+		
+		DbContext = GetDbContext(factory);
+	}
 
-            // Act
-            var response = await _httpService.GetAllAsync();
+	[Fact]
+	public async Task GetAllAsync_WithRoles_ReturnsOkWithThreeRoles()
+	{
+		// Arrange
 
-            // Assert
-            response.Should().HaveCount(3);
-        }
-    }
+		// Act
+		var response = await _sut.GetAllAsync();
+
+		// Assert
+		response.StatusCode.Should().Be(HttpStatusCode.OK);
+		response.DeserializedContent.Should().HaveCount(3);
+	}
+
+	[Fact]
+	public async Task ChangeEmployeeRoleAsync_ForInvalidIds_ReturnsNotFoundStatusCode()
+	{
+		// Arrange
+		var invalidEmployeeId = Guid.NewGuid();
+		var invalidNewRoleId = Guid.NewGuid();
+
+		// Act
+		var response = await _sut.ChangeEmployeeRoleAsync(invalidEmployeeId, invalidNewRoleId);
+
+		// Assert
+		response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+	}
+	
+	[Fact]
+	public async Task ChangeEmployeeRoleAsync_ForValidIds_ReturnsNoContentStatusCode()
+	{
+		// Arrange
+		var employee = SeedEmployee();
+		
+		var managerRole = GetRole(Roles.Supervisor);
+		var employeeRole = GetRole(Roles.Employee);
+
+		AddEmployeeToRole(employee, employeeRole);
+
+		// Act
+		var response = await _sut.ChangeEmployeeRoleAsync(employee.Id, managerRole.Id);
+		
+		// Assert
+		response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+	}
 }

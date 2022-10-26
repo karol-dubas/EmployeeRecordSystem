@@ -190,8 +190,8 @@
     /// </summary>
     async Task GetItems()
     {
-        this.allGroups = await _groupHttpService.GetAllAsync();
-        var employees = await _employeeHttpService.GetAllAsync();
+        this.allGroups = (await _groupHttpService.GetAllAsync()).DeserializedContent;
+        var employees = (await _employeeHttpService.GetAllAsync()).DeserializedContent;
 
         // Add employees without group to a special container
         employees

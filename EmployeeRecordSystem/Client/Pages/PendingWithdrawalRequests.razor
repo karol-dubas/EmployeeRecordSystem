@@ -54,7 +54,7 @@
                 WithdrawalRequestStatus = WithdrawalRequestStatusTypeCodes.Pending
             };
 
-        pendingWithdrawalRequests = await _withdrawalRequestHttpService.GetAllAsync(query);
+        pendingWithdrawalRequests = (await _withdrawalRequestHttpService.GetAllAsync(query)).DeserializedContent;
     }
 
     void NavigateToEmployee(Guid employeeId)

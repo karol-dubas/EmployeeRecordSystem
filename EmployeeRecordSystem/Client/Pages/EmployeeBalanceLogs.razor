@@ -39,7 +39,7 @@
             .AddEmployeeBalanceLogs()
             .Build();
 
-        balanceLogs = await _employeeHttpService.GetBalanceLogAsync(EmployeeId);
+        balanceLogs = (await _employeeHttpService.GetBalanceLogAsync(EmployeeId)).DeserializedContent;
     }
 
     string GetOperationType(BalanceLogDto dto) => dto switch

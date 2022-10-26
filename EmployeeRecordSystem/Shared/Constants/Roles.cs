@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EmployeeRecordSystem.Shared.Constants
 {
-    public class Roles
+    public static class Roles
     {
         public const string Admin = "Administrator";
         public const string Supervisor = "Supervisor";

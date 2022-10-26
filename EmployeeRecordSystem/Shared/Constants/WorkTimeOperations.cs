@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EmployeeRecordSystem.Shared.Constants
 {
-    public class WorkTimeOperations
+    public static class WorkTimeOperations
     {
         public const string Add = "add";
         public const string Subtract = "subtract";

@@ -75,7 +75,7 @@ else
     [Parameter] public Guid EmployeeId { get; set; }
 
     bool editMode = false;
-    string visibleOnEdit => editMode == true ? "" : "d-none";
+    string visibleOnEdit => editMode ? "" : "d-none";
     EmployeeDeteilsDto employee;
     List<GroupDto> groups;
     List<RoleDto> roles;
@@ -92,8 +92,9 @@ else
             .Build();
 
         await GetEmployee();
-        groups = await _groupHttpService.GetAllAsync();
-        roles = await _roleHttpService.GetAllAsync();
+        
+        // TODO: load if admin
+        groups =  (await _groupHttpService.GetAllAsync()).DeserializedContent;
 
         selectedGroup = employee.Group;
         selectedRole = roles.Single(r => r.Name == employee.Role);
@@ -103,7 +104,7 @@ else
 
     async Task GetEmployee()
     {
-        employee = await _employeeHttpService.GetDetailsAsync(EmployeeId);
+        employee = (await _employeeHttpService.GetDetailsAsync(EmployeeId)).DeserializedContent;
     }
 
     void ChangeDisplayValue()

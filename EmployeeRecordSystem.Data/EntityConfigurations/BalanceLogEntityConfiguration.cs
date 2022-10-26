@@ -24,7 +24,8 @@ namespace EmployeeRecordSystem.Data.EntityConfigurations
             builder.Property(p => p.BalanceAfter)
                 .HasPrecision(18, 2);
 
-            builder.Property(c => c.CreatedAt).IsRequired();
+            builder.Property(c => c.CreatedAt)
+                .IsRequired();
         }
     }
 }
