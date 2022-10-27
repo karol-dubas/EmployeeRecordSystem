@@ -9,18 +9,15 @@ namespace EmployeeRecordSystem.Data.Helpers
 {
     public class Enumeration
     {
-		private readonly string _code;
-		private readonly string _name;
-
-		public string Code => _code;
-		public string Name => _name;
+	    public string Code { get; }
+		public string Name { get; }
 
 		protected Enumeration() { }
 
 		protected Enumeration(string code, string name)
 		{
-			_code = code;
-			_name = name;
+			Code = code;
+			Name = name;
 		}
 
 		public static IEnumerable<T> GetAll<T>() where T : Enumeration
@@ -30,7 +27,7 @@ namespace EmployeeRecordSystem.Data.Helpers
 
 			foreach (var info in fields)
 			{
-				var instance = Activator.CreateInstance(typeof(T), true);
+				object instance = Activator.CreateInstance(typeof(T), true);
 
 				if (info.GetValue(instance) is T locatedValue)
 					yield return locatedValue;

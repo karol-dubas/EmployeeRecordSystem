@@ -1,4 +1,5 @@
 ﻿@page "/employee/details/{employeeId:guid}"
+@inject AuthenticationStateProvider _auth
 @inject EmployeeHttpService _employeeHttpService
 @inject GroupHttpService _groupHttpService
 @inject RoleHttpService _roleHttpService
@@ -22,14 +23,14 @@ else
             <MudTextField @bind-Value="employee.BankAccountNumber" Label="Numer konta bankowego" Disabled="!editMode" Variant="Variant.Text"></MudTextField>
             <MudTextField @bind-Value="employee.Note" Label="Notatka" Disabled="!editMode" Variant="Variant.Text" Lines="2"></MudTextField>
 
-            <MudSelect ToStringFunc="roleToString" T="RoleDto" @bind-Value="selectedRole" Label="Rola" Disabled="!editMode">
+            <MudSelect ToStringFunc="roleToString" T="RoleDto" @bind-Value="selectedRole" Label="Rola" Disabled="!editMode" AdornmentIcon="@editIcon">
                 @foreach (var role in roles)
                 {
                     <MudSelectItem Value="@role" />
                 }
             </MudSelect>
             <MudStack Row="true" AlignItems="AlignItems.End">
-                <MudSelect ToStringFunc="groupToString" T="GroupDto" @bind-Value="selectedGroup" Label="Grupa" Disabled="!editMode">
+                <MudSelect ToStringFunc="groupToString" T="GroupDto" @bind-Value="selectedGroup" Label="Grupa" Disabled="!editMode" AdornmentIcon="@editIcon">
                     @foreach (var group in groups)
                     {
                         <MudSelectItem Value="@group" />
@@ -37,7 +38,7 @@ else
                 </MudSelect>
                 <MudButton Variant="Variant.Filled" Size="Size.Small" @onclick="RemoveFromGroup" Class="@visibleOnEdit">Usuń z grupy</MudButton>
             </MudStack>
-            <MudNumericField @bind-Value="employee.EmployeeBilling.HourlyPay" Label="Stawka godzinowa" Disabled="!editMode" Variant="Variant.Text" Min="0" Max="1000" Step="0.5M"></MudNumericField>
+            <MudNumericField @bind-Value="employee.EmployeeBilling.HourlyPay" Label="Stawka godzinowa" Disabled="!editMode" Variant="Variant.Text" Min="0" Max="1000" Step="0.5M" HideSpinButtons="!editMode"></MudNumericField>
             <MudStack Row="true" AlignItems="AlignItems.End">
                 <MudTextField @bind-Value="employee.EmployeeBilling.TimeWorked" Label="Czas przepracowany" Disabled="true" Variant="Variant.Text"></MudTextField>
                 <MudButton Variant="Variant.Filled" Size="Size.Small" @onclick="EditWorkTime" Class="@visibleOnEdit">Edytuj czas pracy</MudButton>
@@ -52,9 +53,11 @@ else
             <div class="mt-5">
                 @if (!editMode)
                 {
-                    <MudStack Row="true">
-                        <MudButton Variant="Variant.Filled" Size="Size.Small" @onclick="() => editMode = true">Edytuj</MudButton>
-                    </MudStack>
+                    <AuthorizeView Roles="@Roles.Admin">
+                        <MudStack Row="true">
+                            <MudButton Variant="Variant.Filled" Size="Size.Small" @onclick="() => editMode = true">Edytuj</MudButton>
+                        </MudStack>
+                    </AuthorizeView>
                 }
                 else
                 {
@@ -70,15 +73,15 @@ else
     </div>
 }
 
-
 @code {
     [Parameter] public Guid EmployeeId { get; set; }
 
     bool editMode = false;
     string visibleOnEdit => editMode ? "" : "d-none";
+    string editIcon => editMode ? Icons.Material.Filled.ArrowDropDown : "null";
     EmployeeDeteilsDto employee;
-    List<GroupDto> groups;
-    List<RoleDto> roles;
+    List<GroupDto> groups = new();
+    List<RoleDto> roles = new();
     GroupDto selectedGroup;
     RoleDto selectedRole;
     Func<GroupDto, string> groupToString = g => g == null ? "Brak grupy" : g.Name;
@@ -86,39 +89,51 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        CreateBreadcrumbs();
+        
+        employee = await GetEmployee();
+        InitSelectLists(employee);
+
+        if (await _auth.IsUserInRole(Roles.Admin))
+            await GetEditData();
+
+        ChangeRolesDisplayValue();
+    }
+
+    void InitSelectLists(EmployeeDeteilsDto employee)
+    {
+        selectedGroup = employee.Group;
+        selectedRole = new RoleDto() { Name = employee.Role.TranslateRole() };
+    }
+
+    async Task GetEditData()
+    {
+        groups = (await _groupHttpService.GetAllAsync()).DeserializedContent;
+        roles = (await _roleHttpService.GetAllAsync()).DeserializedContent;
+    }
+
+    void CreateBreadcrumbs()
+    {
         _breadcrumbs.Items = new BreadcrumbBuilder()
             .AddHome()
             .AddEmployeeDetails()
             .Build();
+    }
 
-        await GetEmployee();
+    async Task<EmployeeDeteilsDto> GetEmployee()
+    {
+        return (await _employeeHttpService.GetDetailsAsync(EmployeeId)).DeserializedContent;
+    }
+
+    void ChangeRolesDisplayValue()
+    {
+        if (roles is null)
+            return;
+
+        foreach (var role in roles)
+            role.Name = role.Name.TranslateRole();
         
-        // TODO: load if admin
-        groups =  (await _groupHttpService.GetAllAsync()).DeserializedContent;
-
-        selectedGroup = employee.Group;
-        selectedRole = roles.Single(r => r.Name == employee.Role);
-
-        ChangeDisplayValue();
-    }
-
-    async Task GetEmployee()
-    {
-        employee = (await _employeeHttpService.GetDetailsAsync(EmployeeId)).DeserializedContent;
-    }
-
-    void ChangeDisplayValue()
-    {
-        var result = employee.Role switch
-        {
-            Roles.Admin => "Administrator",
-            Roles.Supervisor => "Kierownik",
-            Roles.Employee => "Pracownik",
-            _ => throw new InvalidOperationException()
-        };
-
-        employee.Role = result;
-        // TODO: update input
+        StateHasChanged();
     }
 
     async Task Save()
@@ -150,9 +165,9 @@ else
     async Task ChangeHourlyPay()
     {
         var request = new ChangeEmployeeHourlyPayRequest()
-            {
-                HourlyPay = employee.EmployeeBilling.HourlyPay
-            };
+        {
+            HourlyPay = employee.EmployeeBilling.HourlyPay
+        };
 
         await _employeeHttpService.ChangeHourlyPayAsync(EmployeeId, request);
     }
@@ -189,12 +204,15 @@ else
         bool? result = await _dialogService.ShowMessageBox(
             "Uwaga",
             "Czy na pewno chcesz usunąć?",
-            yesText: "Usuń", cancelText: "Anuluj");
+            yesText: "Usuń",
+            cancelText: "Anuluj");
 
         StateHasChanged();
 
+        if (result == false)
+            return;
+        
         // TODO: delete account (Identity redirect?)
-        //if (result)
     }
 
     async Task RemoveFromGroup()

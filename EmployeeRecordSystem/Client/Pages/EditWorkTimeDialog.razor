@@ -52,7 +52,8 @@
 
     protected override void OnInitialized()
     {
-        Employees.ForEach(e => selectedEmployees.Add(e));
+        foreach (var e in Employees)
+            selectedEmployees.Add(e);
     }
 
     void Cancel() => MudDialog.Cancel();

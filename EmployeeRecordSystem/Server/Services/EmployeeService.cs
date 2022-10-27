@@ -50,7 +50,9 @@ public class EmployeeService : BaseService, IEmployeeService
 		queryable = ApplyGetAllFilter(query, queryable);
 
 		var employees = queryable.ToList();
-		employees.ForEach(u => u.Role = GetEmployeeRole(u));
+		
+		foreach (var u in employees)
+			u.Role = GetEmployeeRole(u);
 
 		return _mapper.Map<List<EmployeeInGroupDto>>(employees);
 	}
