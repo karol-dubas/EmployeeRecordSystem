@@ -16,12 +16,12 @@ public class WithdrawalRequestHttpService
 		_httpClient = httpClient;
 	}
 
-	public async Task<HttpResponse<CreatedWithdrawalRequestDto>> CreateAsync(
+	public async Task<HttpResponse<WithdrawalRequestDto>> CreateAsync(
 		Guid employeeId,
 		CreateWithdrawalRequestRequest request)
 	{
 		return (await _httpClient.PostAsJsonAsync($"{_basePath}/{employeeId}", request))
-			.DeserializeContent<CreatedWithdrawalRequestDto>();
+			.DeserializeContent<WithdrawalRequestDto>();
 	}
 
 	public async Task<HttpResponse<List<WithdrawalRequestDto>>> GetAllAsync(WithdrawalRequestQuery query = null)

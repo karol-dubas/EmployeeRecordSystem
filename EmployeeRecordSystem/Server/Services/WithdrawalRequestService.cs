@@ -14,16 +14,24 @@ namespace EmployeeRecordSystem.Server.Services;
 public interface IWithdrawalRequestService
 {
 	List<WithdrawalRequestDto> GetAll(WithdrawalRequestQuery query);
-	CreatedWithdrawalRequestDto Create(Guid employeeId, CreateWithdrawalRequestRequest request);
+	WithdrawalRequestDto Create(Guid employeeId, CreateWithdrawalRequestRequest request);
 	void Process(Guid withdrawalRequestId, ProcessWithdrawalRequestRequest request);
 }
 
 [ScopedRegistration]
 public class WithdrawalRequestService : BaseService, IWithdrawalRequestService
 {
-	public WithdrawalRequestService(ApplicationDbContext dbContext, IMapper mapper) : base(dbContext, mapper) { }
+	private readonly IAuthorizationService _authorizationService;
 
-	public CreatedWithdrawalRequestDto Create(Guid employeeId, CreateWithdrawalRequestRequest request)
+	public WithdrawalRequestService(
+		ApplicationDbContext dbContext,
+		IMapper mapper,
+		IAuthorizationService authorizationService) : base(dbContext, mapper)
+	{
+		_authorizationService = authorizationService;
+	}
+
+	public WithdrawalRequestDto Create(Guid employeeId, CreateWithdrawalRequestRequest request)
 	{
 		var employee = _dbContext.Users.Find(employeeId);
 
@@ -40,11 +48,16 @@ public class WithdrawalRequestService : BaseService, IWithdrawalRequestService
 		_dbContext.WithdrawalRequests.Add(withdrawalRequest);
 		SaveChanges();
 
-		return _mapper.Map<CreatedWithdrawalRequestDto>(withdrawalRequest);
+		return _mapper.Map<WithdrawalRequestDto>(withdrawalRequest);
 	}
 
 	public List<WithdrawalRequestDto> GetAll(WithdrawalRequestQuery query)
 	{
+		bool isAuthorized = _authorizationService.IsUserOwnResource(query.EmployeeId) ||
+		                    _authorizationService.IsAdmin();
+		if (!isAuthorized)
+			throw new ForbidException();
+
 		var queryable = _dbContext.WithdrawalRequests
 			.Include(wr => wr.Employee)
 			.AsNoTracking();

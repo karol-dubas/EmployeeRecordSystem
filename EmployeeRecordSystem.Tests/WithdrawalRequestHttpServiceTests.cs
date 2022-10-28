@@ -35,6 +35,8 @@ public class WithdrawalRequestHttpServiceTests : IntegrationTest
 					});
 
 					services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
+					
+					services.AddMvc(b => b.Filters.Add(new FakeAdminClaimsFilter()));
 				});
 			});
 
@@ -88,6 +90,20 @@ public class WithdrawalRequestHttpServiceTests : IntegrationTest
 	    // Assert
 	    response.StatusCode.Should().Be(HttpStatusCode.OK);
 	    response.DeserializedContent.Should().HaveCount(1);
+	}
+	
+	[Fact]
+	public async Task GetAllAsync_ForInvalidInput_ReturnsNotFound()
+	{
+		// Arrange
+		var invalidEmployeeId = Guid.NewGuid();
+		var query = new WithdrawalRequestQuery { EmployeeId = invalidEmployeeId  };
+		    
+		// Act
+		var response = await _sut.GetAllAsync(query);
+	
+		// Assert
+		response.StatusCode.Should().Be(HttpStatusCode.NotFound);
 	}
 	
 	[Fact]

@@ -36,10 +36,9 @@ public class WithdrawalRequestController : ControllerBase
     ///     Get all
     /// </summary>
     /// <remarks>
-    ///     Authorize: admin
+    ///     Authorize: admin or employee's own requests
     /// </remarks>
     [HttpGet]
-    [Authorize(Roles = Roles.Admin)]
     public IActionResult GetAll([FromQuery] WithdrawalRequestQuery query)
     {
         var response = _withdrawalRequestService.GetAll(query);

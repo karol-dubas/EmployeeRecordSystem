@@ -34,21 +34,25 @@
 @code {
     [Parameter] public Guid EmployeeId { get; set; }
 
-    List<WithdrawalRequestDto> withdrawalRequests = new();
+    List<WithdrawalRequestDto> withdrawalRequests;
     string searchString; // TODO: table search
 
     protected override async Task OnInitializedAsync()
+    {
+        CreateBreadcrumbs();
+        withdrawalRequests = await GetEmployeeWithdrawalRequests();
+    }
+
+    void CreateBreadcrumbs()
     {
         _breadcrumbs.Items = new BreadcrumbBuilder()
             .AddHome()
             .AddEmployeeDetails()
             .AddEmployeeWithdrawalRequests()
             .Build();
-
-        await GetEmployeeWithdrawalRequests();
     }
 
-    async Task GetEmployeeWithdrawalRequests()
+    async Task<List<WithdrawalRequestDto>> GetEmployeeWithdrawalRequests()
     {
         var query = new WithdrawalRequestQuery()
         {
@@ -57,18 +61,10 @@
 
         withdrawalRequests = (await _withdrawalRequestHttpService.GetAllAsync(query)).DeserializedContent;
 
-        withdrawalRequests.ForEach(wr =>
-        {
-            var result = wr.WithdrawalRequestStatus switch
-            {
-                WithdrawalRequestStatusTypeCodes.Accepted => "akceptowany",
-                WithdrawalRequestStatusTypeCodes.Denied => "odrzucony",
-                WithdrawalRequestStatusTypeCodes.Pending => "oczekujący",
-                _ => throw new InvalidOperationException()
-            };
-
-            wr.WithdrawalRequestStatus = result;
-        });
+        foreach (var wr in withdrawalRequests)
+            wr.WithdrawalRequestStatus = wr.WithdrawalRequestStatus.TranslateWithdrawalRequest();
+        
+        return withdrawalRequests;
     }
 
     async Task CreateWithdrawalRequest()
@@ -78,11 +74,17 @@
         var dialog = _dialogService.Show<AddWithdrawalRequestDialog>("", parameters);
         var result = await dialog.Result;
 
-        if (!result.Cancelled)
+        if (result.Cancelled)
+            return;
+        
+        var request = result.Data as CreateWithdrawalRequestRequest;
+        var response = await _withdrawalRequestHttpService.CreateAsync(EmployeeId, request);
+        
+        if (response.IsSuccessStatusCode)
         {
-            var request = result.Data as CreateWithdrawalRequestRequest;
-            var newWithdrawalRequest = await _withdrawalRequestHttpService.CreateAsync(EmployeeId, request);
-            await GetEmployeeWithdrawalRequests();
+            var wr = response.DeserializedContent;
+            wr.WithdrawalRequestStatus = wr.WithdrawalRequestStatus.TranslateWithdrawalRequest();
+            withdrawalRequests.Add(wr);
         }
     }
 }

@@ -13,12 +13,8 @@ namespace EmployeeRecordSystem.Server.Mappings
     {
         public WithdrawalRequestMappingProfile()
         {
-            CreateMap<WithdrawalRequest, CreatedWithdrawalRequestDto>()
-                .ForMember(m => m.WithdrawalRequestStatus, c => c.MapFrom(s => s.WithdrawalRequestStatusTypeCode));
-
             CreateMap<WithdrawalRequest, WithdrawalRequestDto>()
                 .ForMember(m => m.WithdrawalRequestStatus, c => c.MapFrom(s => s.WithdrawalRequestStatusTypeCode));
-
         }
     }
 }
