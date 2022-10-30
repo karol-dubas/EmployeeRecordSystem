@@ -9,11 +9,13 @@ using static EmployeeRecordSystem.Server.Installers.ServiceAttributes;
 
 namespace EmployeeRecordSystem.Server.Services
 {
-    public interface IAuthorizationService
-    {
-        bool IsAdmin();
-        bool IsUserOwnResource(Guid employeeId);
-    }
+     public interface IAuthorizationService
+     {
+         bool IsAdmin();
+         bool IsUserOwnResource(Guid employeeId);
+         bool IsSupervisor(); 
+         Guid? UserId { get; }
+     }
 
     [ScopedRegistration]
     public class AuthorizationService : IAuthorizationService
@@ -27,8 +29,9 @@ namespace EmployeeRecordSystem.Server.Services
 
         private ClaimsPrincipal User => _httpContextAccessor.HttpContext?.User;
 
-        private Guid? UserId =>
-            User is null ? null : Guid.Parse(User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value);
+        public Guid? UserId => User is null ? 
+            null : 
+            Guid.Parse(User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value);
 
         public bool IsAdmin()
         {
@@ -38,6 +41,11 @@ namespace EmployeeRecordSystem.Server.Services
         public bool IsUserOwnResource(Guid employeeId)
         {
             return UserId == employeeId;
+        }
+
+        public bool IsSupervisor()
+        {
+            return User.IsInRole(Roles.Supervisor);
         }
     }
 }

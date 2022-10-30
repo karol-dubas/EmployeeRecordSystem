@@ -27,27 +27,27 @@ public class GroupService : BaseService, IGroupService
 
     public GroupDto Create(CreateGroupRequest request)
     {
-        var group = _mapper.Map<Group>(request);
-        _dbContext.Groups.Add(group);
+        var group = Mapper.Map<Group>(request);
+        DbContext.Groups.Add(group);
         SaveChanges();
-        return _mapper.Map<GroupDto>(group);
+        return Mapper.Map<GroupDto>(group);
     }
 
     public List<GroupDto> GetAll(GroupQuery query)
     {
-        var queryable = _dbContext.Groups
+        var queryable = DbContext.Groups
             .Include(g => g.Employees)
             .AsNoTracking();
 
         queryable = ApplyGetAllFilter(query, queryable);
-
+        
         var groups = queryable.ToList();
-        return _mapper.Map<List<GroupDto>>(groups);
+        return Mapper.Map<List<GroupDto>>(groups);
     }
 
     public GroupDto Rename(Guid groupId, RenameGroupRequest request)
     {
-        var group = _dbContext.Groups.SingleOrDefault(g => g.Id == groupId);
+        var group = DbContext.Groups.SingleOrDefault(g => g.Id == groupId);
 
         if (group is null)
             throw new NotFoundException("Group");
@@ -55,28 +55,28 @@ public class GroupService : BaseService, IGroupService
         group.Name = request.Name;
         SaveChanges();
         
-        return _mapper.Map<GroupDto>(group);
+        return Mapper.Map<GroupDto>(group);
     }
 
     public void Delete(Guid groupId)
     {
-        var group = _dbContext.Groups.SingleOrDefault(g => g.Id == groupId);
+        var group = DbContext.Groups.SingleOrDefault(g => g.Id == groupId);
 
         if (group is null)
             throw new NotFoundException("Group");
 
-        _dbContext.Groups.Remove(group);
+        DbContext.Groups.Remove(group);
         SaveChanges();
     }
 
     public void AssignEmployeeToGroup(Guid groupId, Guid employeeId)
     {
-        var employee = _dbContext.Users.SingleOrDefault(u => u.Id == employeeId);
+        var employee = DbContext.Users.SingleOrDefault(u => u.Id == employeeId);
 
         if (employee is null)
             throw new NotFoundException("Employee");
 
-        var group = _dbContext.Groups.SingleOrDefault(u => u.Id == groupId);
+        var group = DbContext.Groups.SingleOrDefault(u => u.Id == groupId);
 
         if (group is null)
             throw new NotFoundException("Group");
@@ -87,7 +87,7 @@ public class GroupService : BaseService, IGroupService
 
     public void RemoveEmployeeFromGroup(Guid employeeId)
     {
-        var employee = _dbContext.Users.SingleOrDefault(u => u.Id == employeeId);
+        var employee = DbContext.Users.SingleOrDefault(u => u.Id == employeeId);
 
         if (employee is null)
             throw new NotFoundException("Employee");

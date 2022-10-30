@@ -13,8 +13,7 @@ namespace EmployeeRecordSystem.Client.Helpers
     {
         public static async Task<Guid> GetUserIdAsync(this AuthenticationStateProvider authenticationStateProvider)
         {
-            var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
-            var user = authState.User;
+            var user = (await authenticationStateProvider.GetAuthenticationStateAsync()).User;
 
             if (!user.Identity.IsAuthenticated)
                 return default;
@@ -31,7 +30,6 @@ namespace EmployeeRecordSystem.Client.Helpers
                 return false;
             
             string claimsRole = user.FindFirst(c => c.Type == "role")?.Value;
-
             return claimsRole == role;
         }
     }

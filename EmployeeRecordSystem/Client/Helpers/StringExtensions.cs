@@ -2,7 +2,7 @@
 
 namespace EmployeeRecordSystem.Client.Helpers;
 
-public static class DisplayTranslator
+public static class StringTranslateExtensions
 {
 	public static string TranslateRole(this string role) => role switch
 	{

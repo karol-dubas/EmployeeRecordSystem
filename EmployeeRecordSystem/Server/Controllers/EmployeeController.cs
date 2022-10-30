@@ -89,10 +89,10 @@ public class EmployeeController : ControllerBase
     ///     Change the work time of employees
     /// </summary>
     /// <remarks>
-    ///     Authorize: admin
+    ///     Authorize: admin or group supervisor
     /// </remarks>
     [HttpPatch("work-time")]
-    [Authorize(Roles = Roles.Admin)]
+    [Authorize(Roles = $"{Roles.Admin},{Roles.Supervisor}")]
     public IActionResult ChangeWorkTime([FromBody] ChangeEmployeesWorkTimeRequest request)
     {
         _employeeService.ChangeWorkTimes(request);

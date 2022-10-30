@@ -10,23 +10,23 @@ namespace EmployeeRecordSystem.Server.Services
 {
     public abstract class BaseService
     {
-        protected ApplicationDbContext _dbContext;
-        protected IMapper _mapper;
+        protected readonly ApplicationDbContext DbContext;
+        protected readonly IMapper Mapper;
 
         protected BaseService(ApplicationDbContext dbContext, IMapper mapper)
         {
-            _dbContext = dbContext;
-            _mapper = mapper;
+            DbContext = dbContext;
+            Mapper = mapper;
         }
 
         protected void SaveChanges()
         {
-            _dbContext.SaveChanges();
+            DbContext.SaveChanges();
         }
 
         protected async Task SaveChangesAsync()
         {
-            await _dbContext.SaveChangesAsync();
+            await DbContext.SaveChangesAsync();
         }
     }
 }

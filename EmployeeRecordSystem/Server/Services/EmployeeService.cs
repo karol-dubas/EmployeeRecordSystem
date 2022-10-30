@@ -42,19 +42,23 @@ public class EmployeeService : BaseService, IEmployeeService
 
 	public List<EmployeeInGroupDto> GetAll(EmployeeQuery query)
 	{
-		var queryable = _dbContext.Users
+		var queryable = DbContext.Users
 			.Include(e => e.Group)
 			.Include(e => e.EmployeeBilling)
 			.AsNoTracking();
 
 		queryable = ApplyGetAllFilter(query, queryable);
 
+		if (!_authorizationService.IsAdmin())
+			queryable = LimitData(queryable);
+
 		var employees = queryable.ToList();
-		
+
 		foreach (var u in employees)
 			u.Role = GetEmployeeRole(u);
 
-		return _mapper.Map<List<EmployeeInGroupDto>>(employees);
+        var map = Mapper.Map<List<EmployeeInGroupDto>>(employees);
+		return map;
 	}
 
 	public EmployeeDeteilsDto GetDetails(Guid employeeId)
@@ -64,7 +68,7 @@ public class EmployeeService : BaseService, IEmployeeService
 		if (!isAuthorized)
 			throw new ForbidException();
 
-		var employee = _dbContext.Users
+		var employee = DbContext.Users
 			.AsNoTracking()
 			.Include(u => u.Group)
 			.Include(u => u.EmployeeBilling)
@@ -75,7 +79,7 @@ public class EmployeeService : BaseService, IEmployeeService
 
 		employee.Role = GetEmployeeRole(employee);
 
-		return _mapper.Map<EmployeeDeteilsDto>(employee);
+		return Mapper.Map<EmployeeDeteilsDto>(employee);
 	}
 
 	public void Edit(Guid employeeId, EditEmployeeRequest request)
@@ -85,18 +89,18 @@ public class EmployeeService : BaseService, IEmployeeService
 		if (!isAuthorized)
 			throw new ForbidException();
 
-		var employee = _dbContext.Users.SingleOrDefault(u => u.Id == employeeId);
+		var employee = DbContext.Users.SingleOrDefault(u => u.Id == employeeId);
 
 		if (employee is null)
 			throw new NotFoundException("Employee");
 
-		_mapper.Map(request, employee);
+		Mapper.Map(request, employee);
 		SaveChanges();
 	}
 
 	public void ChangeHourlyPay(Guid employeeId, ChangeEmployeeHourlyPayRequest request)
 	{
-		var employee = _dbContext.Users
+		var employee = DbContext.Users
 			.Include(u => u.EmployeeBilling)
 			.SingleOrDefault(u => u.Id == employeeId);
 
@@ -109,10 +113,15 @@ public class EmployeeService : BaseService, IEmployeeService
 
 	public void ChangeWorkTimes(ChangeEmployeesWorkTimeRequest request)
 	{
-		var employees = _dbContext.Users
+		var queryable = DbContext.Users
 			.Include(u => u.EmployeeBilling)
-			.Where(u => request.EmployeeIds.Contains(u.Id))
-			.ToList();
+			.Include(u => u.Group)
+			.Where(u => request.EmployeeIds.Contains(u.Id));
+
+		if (_authorizationService.IsSupervisor())
+			AuthorizeSupervisor(queryable);
+
+		var employees = queryable.ToList();
 
 		if (!employees.Any())
 			return;
@@ -137,19 +146,19 @@ public class EmployeeService : BaseService, IEmployeeService
 		if (!isAuthorized)
 			throw new ForbidException();
 
-		var employee = _dbContext.Users
+		var employee = DbContext.Users
 			.Include(u => u.BalanceLogs)
 			.SingleOrDefault(u => u.Id == employeeId);
 
 		if (employee is null)
 			throw new NotFoundException("Employee");
 
-		return _mapper.Map<List<BalanceLogDto>>(employee.BalanceLogs);
+		return Mapper.Map<List<BalanceLogDto>>(employee.BalanceLogs);
 	}
 
 	public void ConvertWorkTimeToBalance(ConvertTimeRequest request)
 	{
-		var billings = _dbContext.EmployeeBillings
+		var billings = DbContext.EmployeeBillings
 			.Include(b => b.Employee)
 			.AsQueryable();
 
@@ -158,6 +167,33 @@ public class EmployeeService : BaseService, IEmployeeService
 
 		ConvertBillingsToBalance(billings.ToList());
 		SaveChanges();
+	}
+
+	private static IQueryable<Employee> LimitData(IQueryable<Employee> queryable)
+	{
+		return queryable.Select(e => new Employee
+		{
+			Id = e.Id,
+			FirstName = e.FirstName,
+			LastName = e.LastName,
+			Group = e.Group
+		});
+	}
+
+	private void AuthorizeSupervisor(IQueryable<Employee> queryable)
+	{
+		var supervisor = DbContext.Users.Find(_authorizationService.UserId);
+		if (supervisor is null)
+			throw new NotFoundException("Supervisor");
+
+		var userGroups = queryable
+			.Select(e => e.GroupId)
+			.Distinct()
+			.ToList();
+
+		bool isAuthorized = userGroups.Any(ug => ug != supervisor.GroupId);
+		if (isAuthorized)
+			throw new ForbidException("Supervisor can edit work time of employees only in their own group");
 	}
 
 	private void ConvertBillingsToBalance(List<EmployeeBilling> employeeBillings)
@@ -184,7 +220,7 @@ public class EmployeeService : BaseService, IEmployeeService
 			EmployeeId = employeeId
 		};
 
-		_dbContext.BalanceLogs.Add(balanceLog);
+		DbContext.BalanceLogs.Add(balanceLog);
 	}
 
 	private IQueryable<Employee> ApplyGetAllFilter(EmployeeQuery query, IQueryable<Employee> queryable)
@@ -198,7 +234,7 @@ public class EmployeeService : BaseService, IEmployeeService
 
 		if (query.GroupId != default)
 		{
-			bool groupExists = _dbContext.Groups.Any(g => g.Id == query.GroupId);
+			bool groupExists = DbContext.Groups.Any(g => g.Id == query.GroupId);
 			if (!groupExists)
 				throw new NotFoundException("Group");
 

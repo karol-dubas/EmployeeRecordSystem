@@ -33,7 +33,7 @@ public class WithdrawalRequestService : BaseService, IWithdrawalRequestService
 
 	public WithdrawalRequestDto Create(Guid employeeId, CreateWithdrawalRequestRequest request)
 	{
-		var employee = _dbContext.Users.Find(employeeId);
+		var employee = DbContext.Users.Find(employeeId);
 
 		if (employee is null)
 			throw new NotFoundException("Employee");
@@ -45,10 +45,10 @@ public class WithdrawalRequestService : BaseService, IWithdrawalRequestService
 			WithdrawalRequestStatusTypeCode = WithdrawalRequestStatusType.Pending.Code
 		};
 
-		_dbContext.WithdrawalRequests.Add(withdrawalRequest);
+		DbContext.WithdrawalRequests.Add(withdrawalRequest);
 		SaveChanges();
 
-		return _mapper.Map<WithdrawalRequestDto>(withdrawalRequest);
+		return Mapper.Map<WithdrawalRequestDto>(withdrawalRequest);
 	}
 
 	public List<WithdrawalRequestDto> GetAll(WithdrawalRequestQuery query)
@@ -58,19 +58,19 @@ public class WithdrawalRequestService : BaseService, IWithdrawalRequestService
 		if (!isAuthorized)
 			throw new ForbidException();
 
-		var queryable = _dbContext.WithdrawalRequests
+		var queryable = DbContext.WithdrawalRequests
 			.Include(wr => wr.Employee)
 			.AsNoTracking();
 
 		queryable = ApplyGetAllFilter(query, queryable);
 
 		var withdrawalRequests = queryable.ToList();
-		return _mapper.Map<List<WithdrawalRequestDto>>(withdrawalRequests);
+		return Mapper.Map<List<WithdrawalRequestDto>>(withdrawalRequests);
 	}
 
 	public void Process(Guid withdrawalRequestId, ProcessWithdrawalRequestRequest request)
 	{
-		var withdrawalRequest = _dbContext.WithdrawalRequests
+		var withdrawalRequest = DbContext.WithdrawalRequests
 			.Include(wr => wr.Employee)
 			.ThenInclude(u => u.EmployeeBilling)
 			.SingleOrDefault(wr => wr.Id == withdrawalRequestId);
@@ -115,7 +115,7 @@ public class WithdrawalRequestService : BaseService, IWithdrawalRequestService
 		(decimal balanceBefore, decimal balanceAfter) = SubtractUsersBalance(withdrawalRequest);
 
 		var balanceLog = CreateBalanceLog(withdrawalRequest, balanceBefore, balanceAfter);
-		_dbContext.BalanceLogs.Add(balanceLog);
+		DbContext.BalanceLogs.Add(balanceLog);
 
 		withdrawalRequest.WithdrawalRequestStatusTypeCode = WithdrawalRequestStatusTypeCodes.Accepted;
 	}
@@ -152,7 +152,7 @@ public class WithdrawalRequestService : BaseService, IWithdrawalRequestService
 	{
 		if (query.EmployeeId != default)
 		{
-			bool employeeExists = _dbContext.Users.Any(e => e.Id == query.EmployeeId);
+			bool employeeExists = DbContext.Users.Any(e => e.Id == query.EmployeeId);
 			if (!employeeExists)
 				throw new NotFoundException("Employee");
 

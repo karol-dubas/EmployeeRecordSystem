@@ -39,12 +39,12 @@ namespace EmployeeRecordSystem.Server.Services
         public List<RoleDto> GetAll()
         {
             var roles = _roleManager.Roles.ToList();
-            return _mapper.Map<List<RoleDto>>(roles);
+            return Mapper.Map<List<RoleDto>>(roles);
         }
 
         public void ChangeEmployeeRole(Guid employeeId, Guid newRoleId)
         {
-            var employee = _dbContext.Users.SingleOrDefault(e => e.Id == employeeId);
+            var employee = DbContext.Users.SingleOrDefault(e => e.Id == employeeId);
 
             if (employee is null)
                 throw new NotFoundException("Employee");
