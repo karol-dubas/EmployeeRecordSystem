@@ -90,7 +90,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         CreateBreadcrumbs();
-        
+
         employee = await GetEmployee();
         InitSelectLists(employee);
 
@@ -132,7 +132,7 @@ else
 
         foreach (var role in roles)
             role.Name = role.Name.TranslateRole();
-        
+
         StateHasChanged();
     }
 
@@ -140,11 +140,11 @@ else
     {
         bool groupChanged = employee.Group?.Id != selectedGroup?.Id;
         if (groupChanged)
-            await _groupHttpService.AssignEmployeeToGroupAsync(selectedGroup.Id, EmployeeId);
+            await ChangeGroup();
 
         bool roleChanged = employee.Role != selectedRole.Name;
         if (roleChanged)
-            await _roleHttpService.ChangeEmployeeRoleAsync(EmployeeId, selectedRole.Id);
+            await ChangeRole();
 
         await ChangeHourlyPay();
 
@@ -156,7 +156,9 @@ else
             Note = employee.Note
         };
 
-        await _employeeHttpService.EditAsync(EmployeeId, request);
+        var response = await _employeeHttpService.EditAsync(EmployeeId, request);
+        if (!response.IsSuccessStatusCode)
+            return;
 
         editMode = false;
         _snackbar.Add("Użytkownik edytowany pomyślnie", Severity.Success);
@@ -164,12 +166,33 @@ else
 
     async Task ChangeHourlyPay()
     {
-        var request = new ChangeEmployeeHourlyPayRequest()
-        {
-            HourlyPay = employee.EmployeeBilling.HourlyPay
-        };
+        var request = new ChangeEmployeeHourlyPayRequest() { HourlyPay = employee.EmployeeBilling.HourlyPay };
+        var response = await _employeeHttpService.ChangeHourlyPayAsync(EmployeeId, request);
 
-        await _employeeHttpService.ChangeHourlyPayAsync(EmployeeId, request);
+        if (!response.IsSuccessStatusCode)
+            return;
+
+        _snackbar.Add("Stawka została zmieniona", Severity.Success);
+    }
+
+    async Task ChangeGroup()
+    {
+        var response = await _groupHttpService.AssignEmployeeToGroupAsync(selectedGroup.Id, EmployeeId);
+
+        if (!response.IsSuccessStatusCode)
+            return;
+
+        _snackbar.Add("Grupa została zmieniona", Severity.Success);
+    }
+
+    async Task ChangeRole()
+    {
+        var response = await _roleHttpService.ChangeEmployeeRoleAsync(EmployeeId, selectedRole.Id);
+
+        if (!response.IsSuccessStatusCode)
+            return;
+
+        _snackbar.Add("Rola została zmieniona", Severity.Success);
     }
 
     async Task EditWorkTime()
@@ -193,9 +216,12 @@ else
             return;
 
         var request = result.Data as ChangeEmployeesWorkTimeRequest;
-        await _employeeHttpService.ChangeWorkTimeAsync(request);
+        var response = await _employeeHttpService.ChangeWorkTimeAsync(request);
 
-        _snackbar.Add("Zmieniono czas pracy pracownika", Severity.Success);
+        if (!response.IsSuccessStatusCode)
+            return;
+
+        _snackbar.Add("Zmieniono czas pracy", Severity.Success);
         await GetEmployee();
     }
 
@@ -211,12 +237,17 @@ else
 
         if (result == false)
             return;
-        
+
         // TODO: delete account (Identity redirect?)
     }
 
     async Task RemoveFromGroup()
     {
-        await _groupHttpService.RemoveEmployeeFromGroupAsync(EmployeeId);
+        var response = await _groupHttpService.RemoveEmployeeFromGroupAsync(EmployeeId);
+
+        if (!response.IsSuccessStatusCode)
+            return;
+
+        _snackbar.Add("Usunięto z grupy", Severity.Success);
     }
 }

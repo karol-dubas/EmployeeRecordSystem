@@ -13,9 +13,11 @@
         <MudNavLink @onclick="() => _nav.NavigateToGroups()" Icon="@MyIcons.Groups">@PageNames.Groups</MudNavLink>
         <MudNavLink @onclick="NavigateToEmployeeGroup" Icon="@MyIcons.MyGroup">@PageNames.MyGroup</MudNavLink>
     </MudNavGroup>
-    <MudNavGroup Title="Wnioski" Expanded="true">
-        <MudNavLink @onclick="_nav.NavigateToPendingWithdrawalRequests" Icon="@MyIcons.PendingWithdrawalRequests">@PageNames.PendingWithdrawalRequests</MudNavLink>
-    </MudNavGroup>
+    <AuthorizeView Roles="@Roles.Admin">
+        <MudNavGroup Title="Wnioski" Expanded="true">
+            <MudNavLink @onclick="_nav.NavigateToPendingWithdrawalRequests" Icon="@MyIcons.PendingWithdrawalRequests">@PageNames.PendingWithdrawalRequests</MudNavLink>
+        </MudNavGroup>
+    </AuthorizeView>
 </MudNavMenu>
 
 @code {

@@ -259,42 +259,43 @@
 
         var request = new CreateGroupRequest() { Name = result.Data as string };
         var response = await _groupHttpService.CreateAsync(request);
-        
-        if (response.IsSuccessStatusCode)
+
+        if (!response.IsSuccessStatusCode)
+            return;
+
+        var groupDto = new EmployeeInGroupDto
         {
-            var groupDto = new EmployeeInGroupDto
+            Group = new GroupDto()
             {
-                Group = new GroupDto()
-                {
-                    Name = response.DeserializedContent.Name,
-                    Id = response.DeserializedContent.Id
-                }
-            };
-            
-            emptyGroups.Add(groupDto);
-            _snackbar.Add("Grupa została utworzona", Severity.Success);
-        }
+                Name = response.DeserializedContent.Name,
+                Id = response.DeserializedContent.Id
+            }
+        };
+
+        emptyGroups.Add(groupDto);
+        _snackbar.Add("Grupa została utworzona", Severity.Success);
     }
 
     async Task RemoveFormGroup(Guid employeeId)
     {
         var response = await _groupHttpService.RemoveEmployeeFromGroupAsync(employeeId);
-        if (response.IsSuccessStatusCode)
-        {
-            _snackbar.Add("Pracownik został usunięty z grupy", Severity.Success);
-            await GetItems();
-        }
+
+        if (!response.IsSuccessStatusCode)
+            return;
+
+        _snackbar.Add("Pracownik został usunięty z grupy", Severity.Success);
+        await GetItems();
     }
 
     async Task ChangeGroup(Guid employeeId, Guid groupId)
     {
         var response = await _groupHttpService.AssignEmployeeToGroupAsync(groupId, employeeId);
-        if (response.IsSuccessStatusCode)
-        {
-            _snackbar.Add("Grupa zmieniona pomyślnie", Severity.Success);
-            await GetItems();
-        }
-    }
+        if (!response.IsSuccessStatusCode)
+            return;
+
+        _snackbar.Add("Grupa zmieniona pomyślnie", Severity.Success);
+        await GetItems();
+}
 
     async Task DeleteGroup(Guid groupId)
     {
@@ -306,13 +307,13 @@
 
         if (result != true)
             return;
-        
+
         var response = await _groupHttpService.DeleteAsync(groupId);
-        if (response.IsSuccessStatusCode)
-        {
-            _snackbar.Add("Grupa została usunięta", Severity.Success);
-            await GetItems();
-        }
+        if (!response.IsSuccessStatusCode)
+            return;
+
+        _snackbar.Add("Grupa została usunięta", Severity.Success);
+        await GetItems();
     }
 
     async Task RenameGroup(Guid groupId)
@@ -325,11 +326,11 @@
         var request = new RenameGroupRequest { Name = result.Data as string };
         var response = await _groupHttpService.RenameAsync(groupId, request);
 
-        if (response.IsSuccessStatusCode)
-        {
-            _snackbar.Add("Nazwa zmieniona pomyślnie", Severity.Success);
-            await GetItems();
-        }
+        if (!response.IsSuccessStatusCode)
+            return;
+
+        _snackbar.Add("Nazwa zmieniona pomyślnie", Severity.Success);
+        await GetItems();
     }
 
     async Task EditGroupWorkTime(IEnumerable<EmployeeInGroupDto> employees)
@@ -373,11 +374,12 @@
     {
         var request = new ConvertTimeRequest { GroupId = groupId ?? default };
         var response = await _employeeHttpService.ConvertWorkTimeToBalanceAsync(request);
-        if (response.IsSuccessStatusCode)
-        {
-            _snackbar.Add("Przekonwertowano czas pracy pracowników na saldo", Severity.Success);
-            await GetItems();
-        }
+
+        if (!response.IsSuccessStatusCode)
+            return;
+
+        _snackbar.Add("Przekonwertowano czas pracy pracowników na saldo", Severity.Success);
+        await GetItems();
     }
 
     void HideEmptyGroups()

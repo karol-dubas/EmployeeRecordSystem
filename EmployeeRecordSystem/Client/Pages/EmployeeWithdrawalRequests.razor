@@ -63,7 +63,7 @@
 
         foreach (var wr in withdrawalRequests)
             wr.WithdrawalRequestStatus = wr.WithdrawalRequestStatus.TranslateWithdrawalRequest();
-        
+
         return withdrawalRequests;
     }
 
@@ -76,15 +76,15 @@
 
         if (result.Cancelled)
             return;
-        
+
         var request = result.Data as CreateWithdrawalRequestRequest;
         var response = await _withdrawalRequestHttpService.CreateAsync(EmployeeId, request);
-        
-        if (response.IsSuccessStatusCode)
-        {
-            var wr = response.DeserializedContent;
-            wr.WithdrawalRequestStatus = wr.WithdrawalRequestStatus.TranslateWithdrawalRequest();
-            withdrawalRequests.Add(wr);
-        }
+
+        if (!response.IsSuccessStatusCode)
+            return;
+
+        var wr = response.DeserializedContent;
+        wr.WithdrawalRequestStatus = wr.WithdrawalRequestStatus.TranslateWithdrawalRequest();
+        withdrawalRequests.Add(wr);
     }
 }

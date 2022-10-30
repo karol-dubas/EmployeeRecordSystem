@@ -4,6 +4,11 @@
 @code {
     protected override void OnInitialized()
     {
+        CreateBreadcrumbs();
+    }
+
+    void CreateBreadcrumbs()
+    {
         _breadcrumbs.Items = new BreadcrumbBuilder()
             .AddHome()
             .Build();

@@ -10,12 +10,14 @@
     </ToolBarContent>
     <HeaderContent>
         <MudTh>Typ operacji</MudTh>
+        <MudTh>Kwota</MudTh>
         <MudTh>Saldo przed</MudTh>
         <MudTh>Saldo po</MudTh>
         <MudTh>Utworzono</MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Typ operacji">@GetOperationType(context)</MudTd>
+        <MudTd DataLabel="Kwota">@context.Amount</MudTd>
         <MudTd DataLabel="Saldo przed">@context.BalanceBefore</MudTd>
         <MudTd DataLabel="Saldo po">@context.BalanceAfter</MudTd>
         <MudTd DataLabel="Utworzono">@context.CreatedAt</MudTd>
@@ -33,13 +35,17 @@
 
     protected override async Task OnInitializedAsync()
     {
+        CreateBreadcrumbs();
+        balanceLogs = (await _employeeHttpService.GetBalanceLogAsync(EmployeeId)).DeserializedContent;
+    }
+
+    void CreateBreadcrumbs()
+    {
         _breadcrumbs.Items = new BreadcrumbBuilder()
             .AddHome()
             .AddEmployeeDetails()
             .AddEmployeeBalanceLogs()
             .Build();
-
-        balanceLogs = (await _employeeHttpService.GetBalanceLogAsync(EmployeeId)).DeserializedContent;
     }
 
     string GetOperationType(BalanceLogDto dto) => dto switch
