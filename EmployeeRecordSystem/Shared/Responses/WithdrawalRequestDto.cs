@@ -12,8 +12,8 @@ namespace EmployeeRecordSystem.Shared.Responses
         public DateTimeOffset CreatedAt { get; set; }
         public decimal Amount { get; set; }
         public string WithdrawalRequestStatus { get; set; }
-        public string UserFullName { get; set; }
-        public Guid UserId { get; set; }
-        public string UserBankAccountNumber { get; set; }
+        public string EmployeeFullName { get; set; }
+        public Guid EmployeeId { get; set; }
+        public string EmployeeBankAccountNumber { get; set; }
     }
 }
