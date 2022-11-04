@@ -152,10 +152,6 @@ public class WithdrawalRequestService : BaseService, IWithdrawalRequestService
 	{
 		if (query.EmployeeId != default)
 		{
-			bool employeeExists = DbContext.Users.Any(e => e.Id == query.EmployeeId);
-			if (!employeeExists)
-				throw new NotFoundException("Employee");
-
 			queryable = queryable
 				.Include(wr => wr.Employee)
 				.Where(wr => wr.EmployeeId == query.EmployeeId);

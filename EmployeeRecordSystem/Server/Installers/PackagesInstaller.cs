@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using FluentValidation.AspNetCore;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 
@@ -29,5 +30,7 @@ public class PackagesInstaller : IInstaller
             string xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
             c.IncludeXmlComments(xmlPath);
         });
+
+        services.AddFluentValidation(config => config.RegisterValidatorsFromAssemblyContaining<Program>());
     }
 }

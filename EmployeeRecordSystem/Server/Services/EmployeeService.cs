@@ -234,10 +234,6 @@ public class EmployeeService : BaseService, IEmployeeService
 
 		if (query.GroupId != default)
 		{
-			bool groupExists = DbContext.Groups.Any(g => g.Id == query.GroupId);
-			if (!groupExists)
-				throw new NotFoundException("Group");
-
 			queryable = queryable
 				.Include(u => u.Group)
 				.Where(u => u.GroupId == query.GroupId);
