@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="12.0.0" />
     <PackageReference Include="FluentAssertions" Version="6.7.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.6" />
@@ -25,7 +26,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EmployeeRecordSystem\Server\EmployeeRecordSystem.Server.csproj" />
+    <ProjectReference Include="..\..\EmployeeRecordSystem.Data\EmployeeRecordSystem.Data.csproj" />
+    <ProjectReference Include="..\..\EmployeeRecordSystem\Client\EmployeeRecordSystem.Client.csproj" />
+    <ProjectReference Include="..\..\EmployeeRecordSystem\Server\EmployeeRecordSystem.Server.csproj" />
+    <ProjectReference Include="..\..\EmployeeRecordSystem\Shared\EmployeeRecordSystem.Shared.csproj" />
   </ItemGroup>
 
 </Project>

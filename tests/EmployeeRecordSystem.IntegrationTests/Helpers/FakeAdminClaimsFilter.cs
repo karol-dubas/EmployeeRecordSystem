@@ -2,7 +2,7 @@
 using EmployeeRecordSystem.Shared.Constants;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace EmployeeRecordSystem.Tests.Helpers;
+namespace EmployeeRecordSystem.IntegrationTests.Helpers;
 
 public class FakeAdminClaimsFilter : IAsyncActionFilter
 {

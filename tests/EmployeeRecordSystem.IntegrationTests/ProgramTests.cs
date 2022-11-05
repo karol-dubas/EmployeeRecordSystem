@@ -6,15 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
-using Microsoft.VisualStudio.Web.CodeGeneration.Design;
-using Microsoft.AspNetCore.Hosting;
-using EmployeeRecordSystem.Server.Controllers;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using EmployeeRecordSystem.Data;
 using Program = EmployeeRecordSystem.Server.Program;
 
-namespace EmployeeRecordSystem.Tests
+namespace EmployeeRecordSystem.IntegrationTests
 {
     public class ProgramTests
     {

@@ -2,17 +2,17 @@
 using EmployeeRecordSystem.Client.HttpServices;
 using EmployeeRecordSystem.Data;
 using EmployeeRecordSystem.Data.Entities;
-using EmployeeRecordSystem.Server;
+using EmployeeRecordSystem.IntegrationTests.Helpers;
 using EmployeeRecordSystem.Shared.Constants;
 using EmployeeRecordSystem.Shared.Queries;
 using EmployeeRecordSystem.Shared.Requests;
-using EmployeeRecordSystem.Tests.Helpers;
 using FluentAssertions;
 using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
+using Program = EmployeeRecordSystem.Server.Program;
 
-namespace EmployeeRecordSystem.Tests;
+namespace EmployeeRecordSystem.IntegrationTests;
 
 public class EmployeeHttpServiceTests : IntegrationTest
 {
@@ -191,10 +191,10 @@ public class EmployeeHttpServiceTests : IntegrationTest
 	{
 		// Arrange
 		var invalidEmployeeId = Guid.NewGuid();
+		var request = new ChangeEmployeeHourlyPayRequest() { HourlyPay = 1 };
 
 		// Act
-		var response = await _sut.ChangeHourlyPayAsync(
-			invalidEmployeeId, new ChangeEmployeeHourlyPayRequest());
+		var response = await _sut.ChangeHourlyPayAsync(invalidEmployeeId, request);
 
 		// Assert
 		response.StatusCode.Should().Be(HttpStatusCode.NotFound);

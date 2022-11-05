@@ -4,17 +4,18 @@ using EmployeeRecordSystem.Client.HttpServices;
 using EmployeeRecordSystem.Data;
 using EmployeeRecordSystem.Data.Entities;
 using EmployeeRecordSystem.Data.Helpers;
+using EmployeeRecordSystem.IntegrationTests.Helpers;
 using EmployeeRecordSystem.Server;
 using EmployeeRecordSystem.Shared.Constants;
 using EmployeeRecordSystem.Shared.Responses;
-using EmployeeRecordSystem.Tests.Helpers;
 using FluentAssertions;
 using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
+using Program = EmployeeRecordSystem.Server.Program;
 
-namespace EmployeeRecordSystem.Tests;
+namespace EmployeeRecordSystem.IntegrationTests;
 
 public class RoleHttpServiceTests : IntegrationTest
 {

@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using EmployeeRecordSystem.Client.HttpServices;
 using EmployeeRecordSystem.Data;
-using EmployeeRecordSystem.Tests.Helpers;
+using EmployeeRecordSystem.IntegrationTests.Helpers;
 using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
@@ -11,8 +11,9 @@ using EmployeeRecordSystem.Shared.Queries;
 using EmployeeRecordSystem.Shared.Requests;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
+using Program = EmployeeRecordSystem.Server.Program;
 
-namespace EmployeeRecordSystem.Tests;
+namespace EmployeeRecordSystem.IntegrationTests;
 
 public class WithdrawalRequestHttpServiceTests : IntegrationTest
 {
@@ -68,9 +69,10 @@ public class WithdrawalRequestHttpServiceTests : IntegrationTest
 	{
 		// Arrange
 		var invalidEmployeeId = Guid.NewGuid();
+		var request = new CreateWithdrawalRequestRequest() { Amount = 1 };
 		    
 		// Act
-		var response = await _sut.CreateAsync(invalidEmployeeId, new CreateWithdrawalRequestRequest());
+		var response = await _sut.CreateAsync(invalidEmployeeId, request);
 	
 		// Assert
 		response.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -97,7 +99,7 @@ public class WithdrawalRequestHttpServiceTests : IntegrationTest
 	{
 		// Arrange
 		var invalidEmployeeId = Guid.NewGuid();
-		var query = new WithdrawalRequestQuery { EmployeeId = invalidEmployeeId  };
+		var query = new WithdrawalRequestQuery { EmployeeId = invalidEmployeeId };
 		    
 		// Act
 		var response = await _sut.GetAllAsync(query);

@@ -1,16 +1,17 @@
 ﻿using System.Net;
 using EmployeeRecordSystem.Client.HttpServices;
 using EmployeeRecordSystem.Data;
+using EmployeeRecordSystem.IntegrationTests.Helpers;
 using EmployeeRecordSystem.Server;
 using EmployeeRecordSystem.Shared.Queries;
 using EmployeeRecordSystem.Shared.Requests;
-using EmployeeRecordSystem.Tests.Helpers;
 using FluentAssertions;
 using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
+using Program = EmployeeRecordSystem.Server.Program;
 
-namespace EmployeeRecordSystem.Tests;
+namespace EmployeeRecordSystem.IntegrationTests;
 
 public class GroupHttpServiceTests : IntegrationTest
 {
@@ -18,8 +19,6 @@ public class GroupHttpServiceTests : IntegrationTest
 
 	public GroupHttpServiceTests()
 	{
-		
-		
 		var factory = new WebApplicationFactory<Program>()
 			.WithWebHostBuilder(builder =>
 			{
@@ -93,8 +92,7 @@ public class GroupHttpServiceTests : IntegrationTest
 	{
 		// Arrange
 		var invalidGroupId = Guid.NewGuid();
-		const string newGroupName = "renamed";
-		var request = new RenameGroupRequest { Name = newGroupName };
+		var request = new RenameGroupRequest { Name = "renamed" };
 
 		// Act
 		var response = await _sut.RenameAsync(invalidGroupId, request);

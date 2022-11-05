@@ -4,7 +4,7 @@ using EmployeeRecordSystem.Server;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
 
-namespace EmployeeRecordSystem.Tests.Helpers;
+namespace EmployeeRecordSystem.IntegrationTests.Helpers;
 
 public class IntegrationTest
 {

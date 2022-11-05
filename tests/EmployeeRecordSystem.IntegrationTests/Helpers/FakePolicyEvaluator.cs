@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Policy;
 
-namespace EmployeeRecordSystem.Tests.Helpers;
+namespace EmployeeRecordSystem.IntegrationTests.Helpers;
 
 public class FakePolicyEvaluator : IPolicyEvaluator
 {
