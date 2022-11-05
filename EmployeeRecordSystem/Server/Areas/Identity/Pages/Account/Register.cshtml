@@ -1,51 +1,80 @@
 ﻿@page
+
+@using EmployeeRecordSystem.Server.Services
+@using EmployeeRecordSystem.Shared
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+
+@attribute [Authorize(Roles = Roles.Admin)]
+@inject IRoleService RoleService
+@inject IGroupService GroupService
+
 @model RegisterModel
+
 @{
-    ViewData["Title"] = "Register";
+    ViewData["Title"] = "Zarejestruj";
+    
+    var roles = RoleService.GetAll();
+    var rolesSelectItems = roles
+        .Select(r => new SelectListItem(r.Name.TranslateRole(), r.Name))
+        .Reverse();
+    var rolesSelectList = new SelectList(rolesSelectItems, nameof(SelectListItem.Value), nameof(SelectListItem.Text));
+
+    var groups = GroupService.GetAll(new());
+    var groupsSelectItems = groups.Select(g => new SelectListItem(g.Name, g.Id.ToString()));
+    groupsSelectItems = groupsSelectItems.Prepend(new SelectListItem("Brak", null));
+    var groupsSelectList = new SelectList(groupsSelectItems, nameof(SelectListItem.Value), nameof(SelectListItem.Text));
 }
 
-<h1>@ViewData["Title"]</h1>
-
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-4 mx-auto">
         <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-            <h2>Create a new account.</h2>
+            <h2>Stwórz nowe konto</h2>
             <hr />
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-floating">
                 <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" />
-                <label asp-for="Input.Email"></label>
+                <label asp-for="Input.Email">Email</label>
                 <span asp-validation-for="Input.Email" class="text-danger"></span>
             </div>
             <div class="form-floating">
                 <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" />
-                <label asp-for="Input.Password"></label>
+                <label asp-for="Input.Password">Hasło</label>
                 <span asp-validation-for="Input.Password" class="text-danger"></span>
             </div>
             <div class="form-floating">
                 <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" />
-                <label asp-for="Input.ConfirmPassword"></label>
+                <label asp-for="Input.ConfirmPassword">Powtórz hasło</label>
                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
             </div>
             <div class="form-floating">
                 <input asp-for="Input.FirstName" class="form-control" autocomplete="first-name" aria-required="true" />
-                <label asp-for="Input.FirstName"></label>
+                <label asp-for="Input.FirstName">Imię</label>
                 <span asp-validation-for="Input.FirstName" class="text-danger"></span>
             </div>
             <div class="form-floating">
                 <input asp-for="Input.LastName" class="form-control" autocomplete="last-name" aria-required="true" />
-                <label asp-for="Input.LastName"></label>
+                <label asp-for="Input.LastName">Nazwisko</label>
                 <span asp-validation-for="Input.LastName" class="text-danger"></span>
             </div>
             <div class="form-floating">
                 <input asp-for="Input.HourlyPay" class="form-control" autocomplete="hourly-pay" aria-required="true" />
-                <label asp-for="Input.HourlyPay"></label>
+                <label asp-for="Input.HourlyPay">Stawka godzinowa</label>
                 <span asp-validation-for="Input.HourlyPay" class="text-danger"></span>
+            </div> 
+            <div class="form-floating">
+                @Html.DropDownListFor(m => m.Input.Role, rolesSelectList, null, new { @class = "form-control" })
+                <label asp-for="Input.Role">Rola</label>
+                <span asp-validation-for="Input.Role" class="text-danger"></span>
             </div>
-            <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
+            <div class="form-floating">
+                 @Html.DropDownListFor(m => m.Input.GroupId, groupsSelectList, null, new { @class = "form-control" })
+                 <label asp-for="Input.GroupId">Grupa</label>
+                 <span asp-validation-for="Input.GroupId" class="text-danger"></span>
+             </div>
+             <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary mt-2">Zarejestruj</button>
         </form>
     </div>
-    <div class="col-md-6 col-md-offset-2">
+    @* <div class="col-md-6 col-md-offset-2">
         <section>
             <h3>Use another service to register.</h3>
             <hr />
@@ -74,7 +103,7 @@
                 }
             }
         </section>
-    </div>
+    </div> *@
 </div>
 
 @section Scripts {

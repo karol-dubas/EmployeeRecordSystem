@@ -1,6 +1,6 @@
 ﻿using EmployeeRecordSystem.Shared.Constants;
 
-namespace EmployeeRecordSystem.Client.Helpers;
+namespace EmployeeRecordSystem.Shared;
 
 public static class StringTranslateExtensions
 {
