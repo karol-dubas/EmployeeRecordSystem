@@ -1,4 +1,5 @@
 ﻿using EmployeeRecordSystem.Data;
+using EmployeeRecordSystem.Server.Installers.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace EmployeeRecordSystem.Server.Installers;

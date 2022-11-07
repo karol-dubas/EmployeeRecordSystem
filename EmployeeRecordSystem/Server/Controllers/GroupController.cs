@@ -12,12 +12,12 @@ namespace EmployeeRecordSystem.Server.Controllers;
 [Authorize]
 public class GroupController : ControllerBase
 {
-    private readonly IGroupService _groupService;
+	private readonly IGroupService _groupService;
 
-    public GroupController(IGroupService groupService)
-    {
-        _groupService = groupService;
-    }
+	public GroupController(IGroupService groupService)
+	{
+		_groupService = groupService;
+	}
 
     /// <summary>
     ///     Create
@@ -26,12 +26,12 @@ public class GroupController : ControllerBase
     ///     Authorize: admin
     /// </remarks>
     [HttpPost]
-    [Authorize (Roles = Roles.Admin)]
-    public IActionResult Create([FromBody] CreateGroupRequest request)
-    {
-        var response = _groupService.Create(request);
-        return CreatedAtAction(nameof(GetAll), new { response.Id }, response);
-    }
+	[Authorize(Roles = Roles.Admin)]
+	public IActionResult Create([FromBody] CreateGroupRequest request)
+	{
+		var response = _groupService.Create(request);
+		return CreatedAtAction(nameof(GetAll), new { response.Id }, response);
+	}
 
     /// <summary>
     ///     Get all groups with employees
@@ -40,11 +40,11 @@ public class GroupController : ControllerBase
     ///     Authorize: logged user
     /// </remarks>
     [HttpGet]
-    public IActionResult GetAll([FromQuery] GroupQuery query)
-    {
-        var response = _groupService.GetAll(query);
-        return Ok(response);
-    }
+	public IActionResult GetAll([FromQuery] GroupQuery query)
+	{
+		var response = _groupService.GetAll(query);
+		return Ok(response);
+	}
 
     /// <summary>
     ///     Rename
@@ -53,12 +53,12 @@ public class GroupController : ControllerBase
     ///     Authorize: admin
     /// </remarks>
     [HttpPatch("{groupId}")]
-    [Authorize (Roles = Roles.Admin)]
-    public IActionResult Rename([FromRoute] Guid groupId, [FromBody] RenameGroupRequest request)
-    {
-        var response = _groupService.Rename(groupId, request);
-        return Ok(response);
-    }
+	[Authorize(Roles = Roles.Admin)]
+	public IActionResult Rename([FromRoute] Guid groupId, [FromBody] RenameGroupRequest request)
+	{
+		var response = _groupService.Rename(groupId, request);
+		return Ok(response);
+	}
 
     /// <summary>
     ///     Assign employee to a group
@@ -67,12 +67,12 @@ public class GroupController : ControllerBase
     ///     Authorize: admin
     /// </remarks>
     [HttpPatch("{groupId}/employee/{employeeId}")]
-    [Authorize (Roles = Roles.Admin)]
-    public IActionResult AssignEmployeeToGroup([FromRoute] Guid groupId, [FromRoute] Guid employeeId)
-    {
-        _groupService.AssignEmployeeToGroup(groupId, employeeId);
-        return NoContent();
-    }
+	[Authorize(Roles = Roles.Admin)]
+	public IActionResult AssignEmployeeToGroup([FromRoute] Guid groupId, [FromRoute] Guid employeeId)
+	{
+		_groupService.AssignEmployeeToGroup(groupId, employeeId);
+		return NoContent();
+	}
 
     /// <summary>
     ///     Remove employee from the group
@@ -81,12 +81,12 @@ public class GroupController : ControllerBase
     ///     Authorize: admin
     /// </remarks>
     [HttpDelete("employee/{employeeId}")]
-    [Authorize (Roles = Roles.Admin)]
-    public IActionResult RemoveEmployeeFromGroup([FromRoute] Guid employeeId)
-    {
-        _groupService.RemoveEmployeeFromGroup(employeeId);
-        return NoContent();
-    }
+	[Authorize(Roles = Roles.Admin)]
+	public IActionResult RemoveEmployeeFromGroup([FromRoute] Guid employeeId)
+	{
+		_groupService.RemoveEmployeeFromGroup(employeeId);
+		return NoContent();
+	}
 
     /// <summary>
     ///     Delete
@@ -95,10 +95,10 @@ public class GroupController : ControllerBase
     ///     Authorize: admin
     /// </remarks>
     [HttpDelete("{groupId}")]
-    [Authorize (Roles = Roles.Admin)]
-    public IActionResult Delete([FromRoute] Guid groupId)
-    {
-        _groupService.Delete(groupId);
-        return NoContent();
-    }
+	[Authorize(Roles = Roles.Admin)]
+	public IActionResult Delete([FromRoute] Guid groupId)
+	{
+		_groupService.Delete(groupId);
+		return NoContent();
+	}
 }

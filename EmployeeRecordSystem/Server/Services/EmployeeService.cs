@@ -8,7 +8,7 @@ using EmployeeRecordSystem.Shared.Requests;
 using EmployeeRecordSystem.Shared.Responses;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using static EmployeeRecordSystem.Server.Installers.ServiceAttributes;
+using static EmployeeRecordSystem.Server.Installers.Helpers.ServiceAttributes;
 
 namespace EmployeeRecordSystem.Server.Services;
 
@@ -75,7 +75,7 @@ public class EmployeeService : BaseService, IEmployeeService
 			.SingleOrDefault(u => u.Id == employeeId);
 
 		if (employee is null)
-			throw new NotFoundException("Employee");
+			throw new NotFoundException(nameof(employeeId), "Employee");
 
 		employee.Role = GetEmployeeRole(employee);
 
@@ -92,7 +92,7 @@ public class EmployeeService : BaseService, IEmployeeService
 		var employee = DbContext.Users.SingleOrDefault(u => u.Id == employeeId);
 
 		if (employee is null)
-			throw new NotFoundException("Employee");
+			throw new NotFoundException(nameof(employeeId), "Employee");
 
 		Mapper.Map(request, employee);
 		SaveChanges();
@@ -105,7 +105,7 @@ public class EmployeeService : BaseService, IEmployeeService
 			.SingleOrDefault(u => u.Id == employeeId);
 
 		if (employee is null)
-			throw new NotFoundException("Employee");
+			throw new NotFoundException(nameof(employeeId), "Employee");
 
 		employee.EmployeeBilling.HourlyPay = request.HourlyPay;
 		SaveChanges();
@@ -151,7 +151,7 @@ public class EmployeeService : BaseService, IEmployeeService
 			.SingleOrDefault(u => u.Id == employeeId);
 
 		if (employee is null)
-			throw new NotFoundException("Employee");
+			throw new NotFoundException(nameof(employeeId), "Employee");
 
 		return Mapper.Map<List<BalanceLogDto>>(employee.BalanceLogs);
 	}
@@ -184,7 +184,7 @@ public class EmployeeService : BaseService, IEmployeeService
 	{
 		var supervisor = DbContext.Users.Find(_authorizationService.UserId);
 		if (supervisor is null)
-			throw new NotFoundException("Supervisor");
+			throw new NotFoundException("HTTP User id", "Supervisor");
 
 		var userGroups = queryable
 			.Select(e => e.GroupId)

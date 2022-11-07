@@ -5,7 +5,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using EmployeeRecordSystem.Shared.Constants;
-using static EmployeeRecordSystem.Server.Installers.ServiceAttributes;
+using static EmployeeRecordSystem.Server.Installers.Helpers.ServiceAttributes;
 
 namespace EmployeeRecordSystem.Server.Services
 {

@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static EmployeeRecordSystem.Server.Installers.ServiceAttributes;
+using static EmployeeRecordSystem.Server.Installers.Helpers.ServiceAttributes;
 
 namespace EmployeeRecordSystem.Server.Services
 {
@@ -47,12 +47,12 @@ namespace EmployeeRecordSystem.Server.Services
             var employee = DbContext.Users.SingleOrDefault(e => e.Id == employeeId);
 
             if (employee is null)
-                throw new NotFoundException("Employee");
+                throw new NotFoundException(nameof(employeeId), "Employee");
 
             var newRole = _roleManager.FindByIdAsync(newRoleId.ToString()).Result;
 
             if (newRole is null)
-                throw new NotFoundException("Role");
+                throw new NotFoundException(nameof(newRoleId), "Role");
 
             string currentRole = _userManager.GetRolesAsync(employee).Result.Single();
             _userManager.RemoveFromRoleAsync(employee, currentRole).Wait();

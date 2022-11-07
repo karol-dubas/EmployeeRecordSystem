@@ -72,6 +72,7 @@ public class RoleHttpServiceTests : IntegrationTest
 
 		// Assert
 		response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+		response.Errors.Should().HaveCount(1);
 	}
 	
 	[Fact]

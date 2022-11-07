@@ -1,6 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using EmployeeRecordSystem.Data;
 using EmployeeRecordSystem.Data.Entities;
+using EmployeeRecordSystem.Server.Installers.Helpers;
 using Microsoft.AspNetCore.Authentication;
 
 namespace EmployeeRecordSystem.Server.Installers;

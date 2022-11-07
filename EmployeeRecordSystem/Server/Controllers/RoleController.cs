@@ -10,12 +10,12 @@ namespace EmployeeRecordSystem.Server.Controllers;
 [Authorize(Roles = Roles.Admin)]
 public class RoleController : ControllerBase
 {
-    private readonly IRoleService _roleService;
+	private readonly IRoleService _roleService;
 
-    public RoleController(IRoleService roleService)
-    {
-        _roleService = roleService;
-    }
+	public RoleController(IRoleService roleService)
+	{
+		_roleService = roleService;
+	}
 
     /// <summary>
     ///     Get all
@@ -24,11 +24,11 @@ public class RoleController : ControllerBase
     ///     Authorize: admin
     /// </remarks>
     [HttpGet]
-    public IActionResult GetAll()
-    {
-        var response = _roleService.GetAll();
-        return Ok(response);
-    }
+	public IActionResult GetAll()
+	{
+		var response = _roleService.GetAll();
+		return Ok(response);
+	}
 
     /// <summary>
     ///     Change employee's role
@@ -37,9 +37,9 @@ public class RoleController : ControllerBase
     ///     Authorize: admin
     /// </remarks>
     [HttpPatch("{newRoleId}/employee/{employeeId}")]
-    public IActionResult ChangeEmployeeRole(Guid employeeId, Guid newRoleId)
-    {
-        _roleService.ChangeEmployeeRole(employeeId, newRoleId);
-        return NoContent();
-    }
+	public IActionResult ChangeEmployeeRole(Guid employeeId, Guid newRoleId)
+	{
+		_roleService.ChangeEmployeeRole(employeeId, newRoleId);
+		return NoContent();
+	}
 }

@@ -12,12 +12,12 @@ namespace EmployeeRecordSystem.Server.Controllers;
 [Authorize]
 public class WithdrawalRequestController : ControllerBase
 {
-    private readonly IWithdrawalRequestService _withdrawalRequestService;
+	private readonly IWithdrawalRequestService _withdrawalRequestService;
 
-    public WithdrawalRequestController(IWithdrawalRequestService withdrawalRequestService)
-    {
-        _withdrawalRequestService = withdrawalRequestService;
-    }
+	public WithdrawalRequestController(IWithdrawalRequestService withdrawalRequestService)
+	{
+		_withdrawalRequestService = withdrawalRequestService;
+	}
 
     /// <summary>
     ///     Create
@@ -26,24 +26,24 @@ public class WithdrawalRequestController : ControllerBase
     ///     Authorize: logged user
     /// </remarks>
     [HttpPost("{employeeId}")]
-    public IActionResult Create([FromRoute] Guid employeeId, [FromBody] CreateWithdrawalRequestRequest request)
-    {
-        var response = _withdrawalRequestService.Create(employeeId, request);
-        return CreatedAtAction(nameof(GetAll), new { response.Id }, response);
-    }
+	public IActionResult Create([FromRoute] Guid employeeId, [FromBody] CreateWithdrawalRequestRequest request)
+	{
+		var response = _withdrawalRequestService.Create(employeeId, request);
+		return CreatedAtAction(nameof(GetAll), new { response.Id }, response);
+	}
 
     /// <summary>
-    ///     Get all
+    ///		Get all
     /// </summary>
     /// <remarks>
     ///     Authorize: admin or employee's own requests
     /// </remarks>
     [HttpGet]
-    public IActionResult GetAll([FromQuery] WithdrawalRequestQuery query)
-    {
-        var response = _withdrawalRequestService.GetAll(query);
-        return Ok(response);
-    }
+	public IActionResult GetAll([FromQuery] WithdrawalRequestQuery query)
+	{
+		var response = _withdrawalRequestService.GetAll(query);
+		return Ok(response);
+	}
 
     /// <summary>
     ///     Accept/Deny employee's withdrawal request
@@ -52,12 +52,12 @@ public class WithdrawalRequestController : ControllerBase
     ///     Authorize: admin
     /// </remarks>
     [HttpPatch("{withdrawalRequestId}")]
-    [Authorize(Roles = Roles.Admin)]
-    public IActionResult Process(
-        [FromRoute] Guid withdrawalRequestId,
-        [FromBody] ProcessWithdrawalRequestRequest request)
-    {
-        _withdrawalRequestService.Process(withdrawalRequestId, request);
-        return NoContent();
-    }
+	[Authorize(Roles = Roles.Admin)]
+	public IActionResult Process(
+		[FromRoute] Guid withdrawalRequestId,
+		[FromBody] ProcessWithdrawalRequestRequest request)
+	{
+		_withdrawalRequestService.Process(withdrawalRequestId, request);
+		return NoContent();
+	}
 }

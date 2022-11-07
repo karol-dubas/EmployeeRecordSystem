@@ -7,7 +7,7 @@ using EmployeeRecordSystem.Shared.Queries;
 using EmployeeRecordSystem.Shared.Requests;
 using EmployeeRecordSystem.Shared.Responses;
 using Microsoft.EntityFrameworkCore;
-using static EmployeeRecordSystem.Server.Installers.ServiceAttributes;
+using static EmployeeRecordSystem.Server.Installers.Helpers.ServiceAttributes;
 
 namespace EmployeeRecordSystem.Server.Services;
 
@@ -36,7 +36,7 @@ public class WithdrawalRequestService : BaseService, IWithdrawalRequestService
 		var employee = DbContext.Users.Find(employeeId);
 
 		if (employee is null)
-			throw new NotFoundException("Employee");
+			throw new NotFoundException(nameof(employeeId), "Employee");
 
 		var withdrawalRequest = new WithdrawalRequest
 		{
@@ -76,13 +76,13 @@ public class WithdrawalRequestService : BaseService, IWithdrawalRequestService
 			.SingleOrDefault(wr => wr.Id == withdrawalRequestId);
 
 		if (withdrawalRequest is null)
-			throw new NotFoundException("Withdrawal request");
+			throw new NotFoundException(nameof(withdrawalRequestId), "Withdrawal request");
 
 		if (withdrawalRequest.Employee is null)
-			throw new NotFoundException("Employee");
+			throw new NotFoundException("Withdrawal request employee", "Employee");
 
 		if (withdrawalRequest.IsAlreadyProcessed())
-			throw new InvalidOperationException("Withdrawal request already processed");
+			throw new BadRequestException(nameof(withdrawalRequestId), "Withdrawal request already processed");
 
 		if (WithdrawalRequestAccepted(request))
 			AcceptWithdrawalRequest(withdrawalRequest);
@@ -140,7 +140,7 @@ public class WithdrawalRequestService : BaseService, IWithdrawalRequestService
 		decimal balanceAfter = withdrawalRequest.Employee.EmployeeBilling.Balance -= withdrawalRequest.Amount;
 
 		if (balanceAfter < 0)
-			throw new ArgumentOutOfRangeException(
+			throw new BadRequestException("User balance",
 				"The withdrawal amount must be equal to or greater than the balance");
 
 		return (balanceBefore, balanceAfter);

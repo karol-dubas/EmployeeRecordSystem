@@ -12,12 +12,12 @@ namespace EmployeeRecordSystem.Server.Controllers;
 [Authorize]
 public class EmployeeController : ControllerBase
 {
-    private readonly IEmployeeService _employeeService;
+	private readonly IEmployeeService _employeeService;
 
-    public EmployeeController(IEmployeeService employeeService)
-    {
-        _employeeService = employeeService;
-    }
+	public EmployeeController(IEmployeeService employeeService)
+	{
+		_employeeService = employeeService;
+	}
 
     /// <summary>
     ///     Get details with employee billing etc.
@@ -26,11 +26,11 @@ public class EmployeeController : ControllerBase
     ///     Authorize: admin or employee's own profile
     /// </remarks>
     [HttpGet("{employeeId}")]
-    public IActionResult GetDetails([FromRoute] Guid employeeId)
-    {
-        var response = _employeeService.GetDetails(employeeId);
-        return Ok(response);
-    }
+	public IActionResult GetDetails([FromRoute] Guid employeeId)
+	{
+		var response = _employeeService.GetDetails(employeeId);
+		return Ok(response);
+	}
 
     /// <summary>
     ///     Get all
@@ -39,11 +39,11 @@ public class EmployeeController : ControllerBase
     ///     Authorize: logged user
     /// </remarks>
     [HttpGet]
-    public IActionResult GetAll([FromQuery] EmployeeQuery query)
-    {
-        var response = _employeeService.GetAll(query);
-        return Ok(response);
-    }
+	public IActionResult GetAll([FromQuery] EmployeeQuery query)
+	{
+		var response = _employeeService.GetAll(query);
+		return Ok(response);
+	}
 
     /// <summary>
     ///     Get employee's balance log
@@ -52,11 +52,11 @@ public class EmployeeController : ControllerBase
     ///     Authorize: admin or employee's own balance logs
     /// </remarks>
     [HttpGet("{employeeId}/balance-log")]
-    public IActionResult GetBalanceLog([FromRoute] Guid employeeId)
-    {
-        var response = _employeeService.GetBalanceLog(employeeId);
-        return Ok(response);
-    }
+	public IActionResult GetBalanceLog([FromRoute] Guid employeeId)
+	{
+		var response = _employeeService.GetBalanceLog(employeeId);
+		return Ok(response);
+	}
 
     /// <summary>
     ///     Edit employee's: First Name, Last Name, Bank account number
@@ -65,11 +65,11 @@ public class EmployeeController : ControllerBase
     ///     Authorize: admin or employee's own profile
     /// </remarks>
     [HttpPut("{employeeId}")]
-    public IActionResult Edit([FromRoute] Guid employeeId, [FromBody] EditEmployeeRequest request)
-    {
-        _employeeService.Edit(employeeId, request);
-        return NoContent();
-    }
+	public IActionResult Edit([FromRoute] Guid employeeId, [FromBody] EditEmployeeRequest request)
+	{
+		_employeeService.Edit(employeeId, request);
+		return NoContent();
+	}
 
     /// <summary>
     ///     Change employee's hourly pay
@@ -78,12 +78,12 @@ public class EmployeeController : ControllerBase
     ///     Authorize: admin
     /// </remarks>
     [HttpPatch("{employeeId}/hourly-pay")]
-    [Authorize(Roles = Roles.Admin)]
-    public IActionResult ChangeHourlyPay([FromRoute] Guid employeeId, [FromBody] ChangeEmployeeHourlyPayRequest request)
-    {
-        _employeeService.ChangeHourlyPay(employeeId, request);
-        return NoContent();
-    }
+	[Authorize(Roles = Roles.Admin)]
+	public IActionResult ChangeHourlyPay([FromRoute] Guid employeeId, [FromBody] ChangeEmployeeHourlyPayRequest request)
+	{
+		_employeeService.ChangeHourlyPay(employeeId, request);
+		return NoContent();
+	}
 
     /// <summary>
     ///     Change the work time of employees
@@ -92,12 +92,12 @@ public class EmployeeController : ControllerBase
     ///     Authorize: admin or group supervisor
     /// </remarks>
     [HttpPatch("work-time")]
-    [Authorize(Roles = $"{Roles.Admin},{Roles.Supervisor}")]
-    public IActionResult ChangeWorkTime([FromBody] ChangeEmployeesWorkTimeRequest request)
-    {
-        _employeeService.ChangeWorkTimes(request);
-        return NoContent();
-    }
+	[Authorize(Roles = $"{Roles.Admin},{Roles.Supervisor}")]
+	public IActionResult ChangeWorkTime([FromBody] ChangeEmployeesWorkTimeRequest request)
+	{
+		_employeeService.ChangeWorkTimes(request);
+		return NoContent();
+	}
 
     /// <summary>
     ///     Convert time worked of all employees to the balance
@@ -106,10 +106,10 @@ public class EmployeeController : ControllerBase
     ///     Authorize: admin
     /// </remarks>
     [HttpPatch("work-time/convert")]
-    [Authorize(Roles = Roles.Admin)]
-    public IActionResult ConvertWorkTimeToBalance([FromBody] ConvertTimeRequest request)
-    {
-        _employeeService.ConvertWorkTimeToBalance(request);
-        return NoContent();
-    }
+	[Authorize(Roles = Roles.Admin)]
+	public IActionResult ConvertWorkTimeToBalance([FromBody] ConvertTimeRequest request)
+	{
+		_employeeService.ConvertWorkTimeToBalance(request);
+		return NoContent();
+	}
 }

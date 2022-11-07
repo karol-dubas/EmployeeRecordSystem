@@ -10,6 +10,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
+using Moq;
 using Program = EmployeeRecordSystem.Server.Program;
 
 namespace EmployeeRecordSystem.IntegrationTests;
@@ -47,7 +48,7 @@ public class EmployeeHttpServiceTests : IntegrationTest
 	}
 	
 	[Fact]
-	public async Task GetDetailsAsync_ForValidInput_ReturnsOkWithEmployeeDetails()
+	public async Task GetDetailsAsync_ForValidId_ReturnsOkWithEmployeeDetails()
 	{
 	    // Arrange
 	    var employee = SeedEmployee();
@@ -63,7 +64,7 @@ public class EmployeeHttpServiceTests : IntegrationTest
 	}
 	
 	[Fact]
-	public async Task GetDetailsAsync_ForInvalidInput_ReturnsNotFound()
+	public async Task GetDetailsAsync_ForInvalidId_ReturnsNotFound()
 	{
 	    // Arrange
 	    var invalidEmployeeId = Guid.NewGuid();
@@ -73,10 +74,11 @@ public class EmployeeHttpServiceTests : IntegrationTest
 
 	    // Assert
 	    response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+	    response.Errors.Should().HaveCount(1);
 	}
 	
 	[Fact]
-	public async Task GetAllAsync_ForValidInput_ReturnsOkWithEmployees()
+	public async Task GetAllAsync_ForValidQuery_ReturnsOkWithEmployees()
 	{
 	    // Arrange
 	    var employee = SeedEmployee();
@@ -95,7 +97,7 @@ public class EmployeeHttpServiceTests : IntegrationTest
 	}
 	
 	[Fact]
-	public async Task GetAllAsync_ForInvalidInput_ReturnsNotFound()
+	public async Task GetAllAsync_ForInvalidQuery_ReturnsBadRequest()
 	{
 		// Arrange
 		var invalidGroupId = Guid.NewGuid();
@@ -105,7 +107,8 @@ public class EmployeeHttpServiceTests : IntegrationTest
 		var response = await _sut.GetAllAsync(query);
 
 		// Assert
-		response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+		response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+		response.Errors.Should().HaveCount(1);
 	}
 	
 	[Fact]
@@ -124,7 +127,7 @@ public class EmployeeHttpServiceTests : IntegrationTest
 	}
 
 	[Fact]
-	public async Task GetBalanceLogAsync_ForInvalid_ReturnsNotFound()
+	public async Task GetBalanceLogAsync_ForInvalidId_ReturnsNotFound()
 	{
 		// Arrange
 		var invalidEmployeeId = Guid.NewGuid();
@@ -134,6 +137,7 @@ public class EmployeeHttpServiceTests : IntegrationTest
 
 		// Assert
 		response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+		response.Errors.Should().HaveCount(1);
 	}
 	
 	[Fact]
@@ -142,34 +146,55 @@ public class EmployeeHttpServiceTests : IntegrationTest
 	    // Arrange
 	    var employee = SeedEmployee();
 	    var request = new EditEmployeeRequest
-	    {
+	    {	
 		    FirstName = "renamed",
 		    LastName = "renamed"
 	    };
 	    
 	    // Act
 	    var response = await _sut.EditAsync(employee.Id, request);
-
+	    
 	    // Assert
 	    response.StatusCode.Should().Be(HttpStatusCode.NoContent);
 	}
 	
 	[Fact]
-	public async Task EditAsync_ForInvalidInput_ReturnsNotFound()
+	public async Task EditAsync_ForInvalidId_ReturnsNotFound()
 	{
 		// Arrange
 		var invalidEmployeeId = Guid.NewGuid();
-		var request = new EditEmployeeRequest
+		var validRequest = new EditEmployeeRequest
 		{
 			FirstName = "renamed",
 			LastName = "renamed"
 		};
 	    
 		// Act
-		var response = await _sut.EditAsync(invalidEmployeeId, request);
+		var response = await _sut.EditAsync(invalidEmployeeId, validRequest);
 
 		// Assert
 		response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+		response.Errors.Should().HaveCount(1);
+	}
+
+	[Fact]
+	public async Task EditAsync_ForInvalidRequest_ReturnsBadRequest()
+	{
+		// Arrange
+		var invalidRequest = new EditEmployeeRequest
+		{
+			FirstName = "",
+			LastName = "",
+			BankAccountNumber = RandomString.Generate(35),
+			Note = RandomString.Generate(301)
+		};
+
+		// Act
+		var response = await _sut.EditAsync(It.IsAny<Guid>(), invalidRequest);
+
+		// Assert
+		response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+		response.Errors.Should().HaveCount(4);
 	}
 
 	[Fact]
@@ -187,7 +212,7 @@ public class EmployeeHttpServiceTests : IntegrationTest
 	}
 
 	[Fact]
-	public async Task ChangeHourlyPayAsync_ForInvalidInput_ReturnsNotFound()
+	public async Task ChangeHourlyPayAsync_ForInvalidId_ReturnsNotFound()
 	{
 		// Arrange
 		var invalidEmployeeId = Guid.NewGuid();
@@ -198,10 +223,25 @@ public class EmployeeHttpServiceTests : IntegrationTest
 
 		// Assert
 		response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+		response.Errors.Should().HaveCount(1);
 	}
 
 	[Fact]
-	public async Task ChangeWorkTimeAsync_ForValidInput_ReturnsNoContent()
+	public async Task ChangeHourlyPayAsync_ForInvalidRequest_ReturnsBadRequest()
+	{
+		// Arrange
+		var invalidRequest = new ChangeEmployeeHourlyPayRequest() { HourlyPay = -1 };
+
+		// Act
+		var response = await _sut.ChangeHourlyPayAsync(It.IsAny<Guid>(), invalidRequest);
+
+		// Assert
+		response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+		response.Errors.Should().HaveCount(1);
+	}
+
+	[Fact]
+	public async Task ChangeWorkTimeAsync_ForValidRequest_ReturnsNoContent()
 	{
 		// Arrange
 		var employee = SeedEmployee();
@@ -220,18 +260,34 @@ public class EmployeeHttpServiceTests : IntegrationTest
 	}
 
 	[Fact]
-	public async Task ConvertWorkTimeToBalanceAsync_ForValidInput_ReturnsNoContent()
+	public async Task ConvertWorkTimeToBalanceAsync_ForValidRequest_ReturnsNoContent()
 	{
 		// Arrange
 		var employee = SeedEmployee();
 		SeedEmployeeBilling(employee);
 		var group = SeedGroup();
 		AddEmployeeToGroup(employee, group);
+		var validRequest = new ConvertTimeRequest { GroupId = group.Id };
 
 		// Act
-		var response = await _sut.ConvertWorkTimeToBalanceAsync(new ConvertTimeRequest { GroupId = group.Id });
+		var response = await _sut.ConvertWorkTimeToBalanceAsync(validRequest);
 
 		// Assert
 		response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+	}
+
+	[Fact]
+	public async Task ConvertWorkTimeToBalanceAsync_ForInvalidRequest_ReturnsBadRequest()
+	{
+		// Arrange
+		var invalidGroupId = Guid.NewGuid();
+		var validRequest = new ConvertTimeRequest { GroupId = invalidGroupId };
+
+		// Act
+		var response = await _sut.ConvertWorkTimeToBalanceAsync(validRequest);
+
+		// Assert
+		response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+		response.Errors.Should().HaveCount(1);
 	}
 }

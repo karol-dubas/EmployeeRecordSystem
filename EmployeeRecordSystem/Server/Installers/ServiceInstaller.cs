@@ -1,5 +1,6 @@
-﻿using EmployeeRecordSystem.Server.Services;
-using static EmployeeRecordSystem.Server.Installers.ServiceAttributes;
+﻿using EmployeeRecordSystem.Server.Installers.Helpers;
+using EmployeeRecordSystem.Server.Services;
+using static EmployeeRecordSystem.Server.Installers.Helpers.ServiceAttributes;
 
 namespace EmployeeRecordSystem.Server.Installers;
 

@@ -65,7 +65,7 @@ public class WithdrawalRequestHttpServiceTests : IntegrationTest
 	}
 	
 	[Fact]
-	public async Task CreateAsync_ForInvalidInput_ReturnsNotFound()
+	public async Task CreateAsync_ForInvalidId_ReturnsNotFound()
 	{
 		// Arrange
 		var invalidEmployeeId = Guid.NewGuid();
@@ -76,10 +76,26 @@ public class WithdrawalRequestHttpServiceTests : IntegrationTest
 	
 		// Assert
 		response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+		response.Errors.Should().HaveCount(1);
+	}
+
+	[Fact]
+	public async Task CreateAsync_ForInvalidRequest_ReturnsBadRequest()
+	{
+		// Arrange
+		var employee = SeedEmployee();
+		var invalidRequest = new CreateWithdrawalRequestRequest() { Amount = -1 };
+
+		// Act
+		var response = await _sut.CreateAsync(employee.Id, invalidRequest);
+
+		// Assert
+		response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+		response.Errors.Should().HaveCount(1);
 	}
 	
 	[Fact]
-	public async Task GetAllAsync_ForValidInput_ReturnsOkWithWithdrawalRequests()
+	public async Task GetAllAsync_ForValidQuery_ReturnsOkWithWithdrawalRequests()
 	{
 	    // Arrange
 	    var employee = SeedEmployee();
@@ -95,17 +111,23 @@ public class WithdrawalRequestHttpServiceTests : IntegrationTest
 	}
 	
 	[Fact]
-	public async Task GetAllAsync_ForInvalidInput_ReturnsNotFound()
+	public async Task GetAllAsync_ForInvalidQuery_ReturnsBadRequest()
 	{
 		// Arrange
-		var invalidEmployeeId = Guid.NewGuid();
-		var query = new WithdrawalRequestQuery { EmployeeId = invalidEmployeeId };
+		var invalidId = Guid.NewGuid();
+		var query = new WithdrawalRequestQuery
+		{
+			EmployeeId = invalidId,
+			Id = invalidId,
+			WithdrawalRequestStatus = "invalid"
+		};
 		    
 		// Act
 		var response = await _sut.GetAllAsync(query);
 	
 		// Assert
-		response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+		response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+		response.Errors.Should().HaveCount(3);
 	}
 	
 	[Fact]
@@ -124,7 +146,7 @@ public class WithdrawalRequestHttpServiceTests : IntegrationTest
 	}
 
 	[Fact]
-	public async Task ProcessAsync_ForInvalidInput_ReturnsNotFound()
+	public async Task ProcessAsync_ForInvalidId_ReturnsNotFound()
 	{
 		// Arrange
 		var invalidWithdrawalRequestId = Guid.NewGuid();
@@ -135,5 +157,21 @@ public class WithdrawalRequestHttpServiceTests : IntegrationTest
 
 		// Assert
 		response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+		response.Errors.Should().HaveCount(1);
+	}
+
+	[Fact]
+	public async Task ProcessAsync_ForInvalidRequest_ReturnsBadRequest()
+	{
+		// Arrange
+		var invalidWithdrawalRequestId = Guid.NewGuid();
+		var invalidRequest = new ProcessWithdrawalRequestRequest { ChangeStatusTo = "invalid" };
+
+		// Act
+		var response = await _sut.ProcessAsync(invalidWithdrawalRequestId, invalidRequest);
+
+		// Assert
+		response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+		response.Errors.Should().HaveCount(1);
 	}
 }

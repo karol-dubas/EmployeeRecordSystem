@@ -6,12 +6,14 @@ using System.Threading.Tasks;
 
 namespace EmployeeRecordSystem.Server.Exceptions;
 
-public class NotFoundException : Exception
+public sealed class NotFoundException : Exception, IHttpException
 {
+    public string FieldName { get; }
     public override string Message { get; }
 
-    public NotFoundException(string entity)
+    public NotFoundException(string fieldName, string entity)
     {
+        FieldName = fieldName;
         Message = $"{entity} not found";
     }
 }

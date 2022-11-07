@@ -6,7 +6,7 @@ using EmployeeRecordSystem.Shared.Queries;
 using EmployeeRecordSystem.Shared.Requests;
 using EmployeeRecordSystem.Shared.Responses;
 using Microsoft.EntityFrameworkCore;
-using static EmployeeRecordSystem.Server.Installers.ServiceAttributes;
+using static EmployeeRecordSystem.Server.Installers.Helpers.ServiceAttributes;
 
 namespace EmployeeRecordSystem.Server.Services;
 
@@ -50,7 +50,7 @@ public class GroupService : BaseService, IGroupService
         var group = DbContext.Groups.SingleOrDefault(g => g.Id == groupId);
 
         if (group is null)
-            throw new NotFoundException("Group");
+            throw new NotFoundException(nameof(groupId), "Group");
 
         group.Name = request.Name;
         SaveChanges();
@@ -63,7 +63,7 @@ public class GroupService : BaseService, IGroupService
         var group = DbContext.Groups.SingleOrDefault(g => g.Id == groupId);
 
         if (group is null)
-            throw new NotFoundException("Group");
+            throw new NotFoundException(nameof(groupId), "Group");
 
         DbContext.Groups.Remove(group);
         SaveChanges();
@@ -74,12 +74,12 @@ public class GroupService : BaseService, IGroupService
         var employee = DbContext.Users.SingleOrDefault(u => u.Id == employeeId);
 
         if (employee is null)
-            throw new NotFoundException("Employee");
+            throw new NotFoundException(nameof(employeeId), "Employee");
 
         var group = DbContext.Groups.SingleOrDefault(u => u.Id == groupId);
 
         if (group is null)
-            throw new NotFoundException("Group");
+            throw new NotFoundException(nameof(groupId), "Group");
 
         employee.GroupId = group.Id;
         SaveChanges();
@@ -90,7 +90,7 @@ public class GroupService : BaseService, IGroupService
         var employee = DbContext.Users.SingleOrDefault(u => u.Id == employeeId);
 
         if (employee is null)
-            throw new NotFoundException("Employee");
+            throw new NotFoundException(nameof(employeeId), "Employee");
 
         employee.GroupId = null;
         SaveChanges();

@@ -6,13 +6,17 @@ using System.Threading.Tasks;
 
 namespace EmployeeRecordSystem.Server.Exceptions
 {
-    public class ForbidException : Exception
+    public sealed class ForbidException : Exception, IHttpException
     {
+        public string FieldName { get; }
         public override string Message { get; } = "User not authorized.";
 
-        public ForbidException() { }
-
-        public ForbidException(string details)
+        public ForbidException()
+        {
+            FieldName = "User";
+        }
+        
+        public ForbidException(string details) : this()
         {
             Message += $" {details}";
         }

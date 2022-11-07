@@ -7,6 +7,7 @@ using System.Net;
 using System.Security.Authentication;
 using System.Text;
 using System.Threading.Tasks;
+using EmployeeRecordSystem.Shared.Responses;
 
 namespace EmployeeRecordSystem.Server.Middlewares
 {
@@ -21,23 +22,36 @@ namespace EmployeeRecordSystem.Server.Middlewares
             catch (NotFoundException e)
             {
                 context.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                await context.Response.WriteAsync(e.Message);
+                await context.Response.WriteAsJsonAsync(CreateErrorMessage(e));
             }
-            catch (InvalidOperationException e)
-            {
-                context.Response.StatusCode = (int)HttpStatusCode.Conflict;
-                await context.Response.WriteAsync(e.Message);
-            }
-            catch (ArgumentOutOfRangeException e)
+            catch (BadRequestException e)
             {
                 context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                await context.Response.WriteAsync(e.Message);
+                await context.Response.WriteAsJsonAsync(CreateErrorMessage(e));
             }
             catch (ForbidException e)
             {
                 context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
-                await context.Response.WriteAsync(e.Message);
+                await context.Response.WriteAsJsonAsync(CreateErrorMessage(e));
             }
+            catch (Exception)
+            {
+                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            }
+        }
+
+        private static List<ErrorModel> CreateErrorMessage(IHttpException e)
+        {
+            var errors = new List<ErrorModel>
+            {
+                new()
+                {
+                    FieldName = e.FieldName,
+                    Message = e.Message
+                }
+            };
+            
+            return errors;
         }
     }
 }

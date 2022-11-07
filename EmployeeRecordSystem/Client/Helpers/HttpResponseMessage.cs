@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Json;
+using EmployeeRecordSystem.Shared.Responses;
 
 namespace EmployeeRecordSystem.Client.Helpers;
 
@@ -7,10 +8,10 @@ public class HttpResponse : HttpResponseMessage
 	public HttpResponse(HttpResponseMessage message) : base(message.StatusCode)
 	{
 		if (!IsSuccessStatusCode)
-			ErrorMessage = message.Content.ReadAsStringAsync().Result;
+			Errors = message.Content.ReadFromJsonAsync<List<ErrorModel>>().Result;
 	}
 
-	public string ErrorMessage { get; }
+	public List<ErrorModel> Errors { get; }
 }
 
 public class HttpResponse<TContent> : HttpResponse

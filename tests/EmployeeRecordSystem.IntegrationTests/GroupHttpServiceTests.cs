@@ -8,7 +8,9 @@ using EmployeeRecordSystem.Shared.Requests;
 using FluentAssertions;
 using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Build.Graph;
 using Microsoft.EntityFrameworkCore;
+using Moq;
 using Program = EmployeeRecordSystem.Server.Program;
 
 namespace EmployeeRecordSystem.IntegrationTests;
@@ -44,12 +46,13 @@ public class GroupHttpServiceTests : IntegrationTest
 	}
 
 	[Fact]
-	public async Task CreateAsync_ForValidInput_ReturnsCreatedWithCreatedGroup()
+	public async Task CreateAsync_ForValidRequest_ReturnsCreatedWithCreatedGroup()
 	{
 		// Arrange
+		var request = new CreateGroupRequest { Name = "new group" };
 
 		// Act
-		var response = await _sut.CreateAsync(new CreateGroupRequest { Name = "new group" });
+		var response = await _sut.CreateAsync(request);
 
 		// Assert
 		response.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -57,18 +60,47 @@ public class GroupHttpServiceTests : IntegrationTest
 	}
 
 	[Fact]
-	public async Task GetAllAsync_WithGroups_ReturnsOkWithGroups()
+	public async Task CreateAsync_ForValidInvalidRequest_ReturnsBadRequest()
+	{
+		// Arrange
+		var request = new CreateGroupRequest { Name = "" };
+
+		// Act
+		var response = await _sut.CreateAsync(request);
+
+		// Assert
+		response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+		response.Errors.Should().HaveCount(1);
+	}
+
+	[Fact]
+	public async Task GetAllAsync_ForValidQuery_ReturnsOkWithGroups()
 	{
 		// Arrange
 		var group = SeedGroup();
-		SeedGroup();
+		var query = new GroupQuery { Id = group.Id };
 
 		// Act
-		var response = await _sut.GetAllAsync(new GroupQuery { Id = group.Id });
+		var response = await _sut.GetAllAsync(query);
 
 		// Assert
 		response.StatusCode.Should().Be(HttpStatusCode.OK);
 		response.DeserializedContent.Should().HaveCount(1);
+	}
+
+	[Fact]
+	public async Task GetAllAsync_ForInvalidQuery_ReturnsBadRequest()
+	{
+		// Arrange
+		var invalidGroupId = Guid.NewGuid();
+		var invalidQuery = new GroupQuery { Id = invalidGroupId };
+
+		// Act
+		var response = await _sut.GetAllAsync(invalidQuery);
+
+		// Assert
+		response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+		response.Errors.Should().HaveCount(1);
 	}
 
 	[Fact]
@@ -88,7 +120,7 @@ public class GroupHttpServiceTests : IntegrationTest
 	}
 
 	[Fact]
-	public async Task RenameAsync_ForInvalidInput_ReturnsNotFound()
+	public async Task RenameAsync_ForInvalidId_ReturnsNotFound()
 	{
 		// Arrange
 		var invalidGroupId = Guid.NewGuid();
@@ -99,11 +131,25 @@ public class GroupHttpServiceTests : IntegrationTest
 
 		// Assert
 		response.StatusCode.Should().Be(HttpStatusCode.NotFound);
-		response.DeserializedContent.Should().BeNull();
+		response.Errors.Should().HaveCount(1);
 	}
 
 	[Fact]
-	public async Task AssignEmployeeToGroupAsync_ForValidInput_ReturnsNoContent()
+	public async Task RenameAsync_ForInvalidRequest_ReturnsBadRequest()
+	{
+		// Arrange
+		var invalidRequest = new RenameGroupRequest { Name = "" };
+
+		// Act
+		var response = await _sut.RenameAsync(It.IsAny<Guid>(), invalidRequest);
+
+		// Assert
+		response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+		response.Errors.Should().HaveCount(1);
+	}
+
+	[Fact]
+	public async Task AssignEmployeeToGroupAsync_ForValidIds_ReturnsNoContent()
 	{
 		// Arrange
 		var employee = SeedEmployee();
@@ -117,7 +163,7 @@ public class GroupHttpServiceTests : IntegrationTest
 	}
 
 	[Fact]
-	public async Task AssignEmployeeToGroupAsync_ForInvalidInput_ReturnsNotFound()
+	public async Task AssignEmployeeToGroupAsync_ForInvalidIds_ReturnsNotFound()
 	{
 		// Arrange
 		var invalidEmployee = Guid.NewGuid();
@@ -128,10 +174,11 @@ public class GroupHttpServiceTests : IntegrationTest
 
 		// Assert
 		response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+		response.Errors.Should().HaveCount(1);
 	}
 
 	[Fact]
-	public async Task RemoveEmployeeFromGroupAsync_ForValidInput_ReturnsNoContent()
+	public async Task RemoveEmployeeFromGroupAsync_ForValidId_ReturnsNoContent()
 	{
 		// Arrange
 		var employee = SeedEmployee();
@@ -156,10 +203,11 @@ public class GroupHttpServiceTests : IntegrationTest
 
 		// Assert
 		response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+		response.Errors.Should().HaveCount(1);
 	}
 
 	[Fact]
-	public async Task DeleteAsync_ForExistingGroup_ReturnsNoContent()
+	public async Task DeleteAsync_ForValidId_ReturnsNoContent()
 	{
 		// Arrange
 		var group = SeedGroup();
@@ -172,15 +220,16 @@ public class GroupHttpServiceTests : IntegrationTest
 	}
 
 	[Fact]
-	public async Task DeleteAsync_ForNonExistingGroup_ReturnsNotFound()
+	public async Task DeleteAsync_ForInvalidId_ReturnsNotFound()
 	{
 		// Arrange
-		var randomId = Guid.NewGuid();
+		var invalidGroupId = Guid.NewGuid();
 
 		// Act
-		var response = await _sut.DeleteAsync(randomId);
+		var response = await _sut.DeleteAsync(invalidGroupId);
 
 		// Assert
 		response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+		response.Errors.Should().HaveCount(1);
 	}
 }

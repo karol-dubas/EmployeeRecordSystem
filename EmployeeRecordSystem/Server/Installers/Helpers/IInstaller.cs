@@ -1,4 +1,4 @@
-﻿namespace EmployeeRecordSystem.Server.Installers;
+﻿namespace EmployeeRecordSystem.Server.Installers.Helpers;
 
 public interface IInstaller
 {
