@@ -3,6 +3,7 @@
 @inject EmployeeHttpService _employeeHttpService
 @inject IDialogService _dialogService
 @inject BreadcrumbStateContainer _breadcrumbs
+@inject ISnackbar _snackbar
 
 <div class="d-flex justify-end">
     <MudButton @onclick="CreateWithdrawalRequest" Variant="Variant.Filled">
@@ -10,37 +11,41 @@
     </MudButton>
 </div>
 
-<MudTable Items="@withdrawalRequests" Dense="true" Hover="true" Bordered="true" Striped="true" Filter="null" Class="mt-5">
+<MudTable @ref="table"
+          ServerData="@(new Func<TableState, Task<TableData<WithdrawalRequestDto>>>(GetEmployeeWithdrawalRequests))"
+          Dense="true" Hover="true" Bordered="true" Striped="true" Filter="null" Class="mt-5">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Żądania wypłaty</MudText>
-        <MudSpacer />
-        <MudTextField @bind-Value="searchString" Placeholder="Wyszukaj" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
     </ToolBarContent>
     <HeaderContent>
-        <MudTh>Stworzono</MudTh>
+        <MudTh><MudTableSortLabel SortLabel="CreatedAt" T="WithdrawalRequestDto">Stworzono</MudTableSortLabel></MudTh>
         <MudTh>Kwota</MudTh>
-        <MudTh>Status</MudTh>
+        <MudTh><MudTableSortLabel SortLabel="WithdrawalRequestStatusTypeCode" T="WithdrawalRequestDto">Status</MudTableSortLabel></MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Stworzono">@context.CreatedAt</MudTd>
         <MudTd DataLabel="Kwota">@context.Amount</MudTd>
         <MudTd DataLabel="Status">@context.WithdrawalRequestStatus</MudTd>
     </RowTemplate>
+    <NoRecordsContent>
+        <MudText>Brak wyników</MudText>
+    </NoRecordsContent>
+    <LoadingContent>
+        <MudText>Ładowanie...</MudText>
+    </LoadingContent>
     <PagerContent>
-        <MudTablePager />
+        <MudTablePager RowsPerPageString="Ilość elementów"/>
     </PagerContent>
 </MudTable>
 
 @code {
     [Parameter] public Guid EmployeeId { get; set; }
 
-    List<WithdrawalRequestDto> withdrawalRequests;
-    string searchString; // TODO: table search
+    MudTable<WithdrawalRequestDto> table;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         CreateBreadcrumbs();
-        withdrawalRequests = await GetEmployeeWithdrawalRequests();
     }
 
     void CreateBreadcrumbs()
@@ -52,19 +57,27 @@
             .Build();
     }
 
-    async Task<List<WithdrawalRequestDto>> GetEmployeeWithdrawalRequests()
+    async Task<TableData<WithdrawalRequestDto>> GetEmployeeWithdrawalRequests(TableState state)
     {
         var query = new WithdrawalRequestQuery()
         {
-            EmployeeId = EmployeeId
+            EmployeeId = EmployeeId,
+            SortBy = state.SortLabel,
+            SortDirection = state.SortDirection.ToDescriptionString(),
+            PageSize = state.PageSize,
+            PageNumber = state.Page + 1,
         };
 
-        withdrawalRequests = (await _withdrawalRequestHttpService.GetAllAsync(query)).DeserializedContent;
+        var result = (await _withdrawalRequestHttpService.GetAllAsync(query)).DeserializedContent;
 
-        foreach (var wr in withdrawalRequests)
+        foreach (var wr in result.Items)
             wr.WithdrawalRequestStatus = wr.WithdrawalRequestStatus.TranslateWithdrawalRequest();
 
-        return withdrawalRequests;
+        return new TableData<WithdrawalRequestDto>()
+        {
+            TotalItems = result.TotalItemsCount,
+            Items = result.Items
+        };
     }
 
     async Task CreateWithdrawalRequest()
@@ -83,8 +96,7 @@
         if (!response.IsSuccessStatusCode)
             return;
 
-        var wr = response.DeserializedContent;
-        wr.WithdrawalRequestStatus = wr.WithdrawalRequestStatus.TranslateWithdrawalRequest();
-        withdrawalRequests.Add(wr);
+        await table.ReloadServerData();
+        _snackbar.Add("Utworzono żądanie wypłaty", Severity.Success);
     }
 }

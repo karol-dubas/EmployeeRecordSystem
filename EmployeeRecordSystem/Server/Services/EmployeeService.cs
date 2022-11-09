@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Linq.Expressions;
+using AutoMapper;
 using EmployeeRecordSystem.Data;
 using EmployeeRecordSystem.Data.Entities;
 using EmployeeRecordSystem.Server.Exceptions;
@@ -8,6 +9,8 @@ using EmployeeRecordSystem.Shared.Requests;
 using EmployeeRecordSystem.Shared.Responses;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using MudBlazor;
+using MudBlazor.Extensions;
 using static EmployeeRecordSystem.Server.Installers.Helpers.ServiceAttributes;
 
 namespace EmployeeRecordSystem.Server.Services;
@@ -19,7 +22,7 @@ public interface IEmployeeService
 	void Edit(Guid employeeId, EditEmployeeRequest request);
 	void ChangeHourlyPay(Guid employeeId, ChangeEmployeeHourlyPayRequest request);
 	void ChangeWorkTimes(ChangeEmployeesWorkTimeRequest request);
-	List<BalanceLogDto> GetBalanceLog(Guid employeeId);
+	PagedContent<BalanceLogDto> GetBalanceLogs(Guid employeeId, BalanceLogQuery query);
 	void ConvertWorkTimeToBalance(ConvertTimeRequest request);
 }
 
@@ -57,7 +60,7 @@ public class EmployeeService : BaseService, IEmployeeService
 		foreach (var u in employees)
 			u.Role = GetEmployeeRole(u);
 
-        var map = Mapper.Map<List<EmployeeInGroupDto>>(employees);
+		var map = Mapper.Map<List<EmployeeInGroupDto>>(employees);
 		return map;
 	}
 
@@ -139,21 +142,27 @@ public class EmployeeService : BaseService, IEmployeeService
 		SaveChanges();
 	}
 
-	public List<BalanceLogDto> GetBalanceLog(Guid employeeId)
+	public PagedContent<BalanceLogDto> GetBalanceLogs(Guid employeeId, BalanceLogQuery query)
 	{
 		bool isAuthorized = _authorizationService.IsUserOwnResource(employeeId) ||
 		                    _authorizationService.IsAdmin();
 		if (!isAuthorized)
 			throw new ForbidException();
 
-		var employee = DbContext.Users
-			.Include(u => u.BalanceLogs)
-			.SingleOrDefault(u => u.Id == employeeId);
-
-		if (employee is null)
+		bool employeeExists = DbContext.Users.Any(e => e.Id == employeeId);
+		if (!employeeExists)
 			throw new NotFoundException(nameof(employeeId), "Employee");
 
-		return Mapper.Map<List<BalanceLogDto>>(employee.BalanceLogs);
+		var queryable = DbContext.BalanceLogs
+			.Include(u => u.Employee)
+			.Where(bl => bl.EmployeeId == employeeId);
+
+		(queryable, int totalItemsCount) = ApplyBalanceLogsQuery(query, queryable);
+
+		var balanceLogs = queryable.ToList();
+
+		var dtos = Mapper.Map<List<BalanceLogDto>>(balanceLogs);
+		return new PagedContent<BalanceLogDto>(dtos, totalItemsCount);
 	}
 
 	public void ConvertWorkTimeToBalance(ConvertTimeRequest request)
@@ -167,6 +176,35 @@ public class EmployeeService : BaseService, IEmployeeService
 
 		ConvertBillingsToBalance(billings.ToList());
 		SaveChanges();
+	}
+
+	private (IQueryable<BalanceLog>, int totalItemsCount) ApplyBalanceLogsQuery(
+		BalanceLogQuery query,
+		IQueryable<BalanceLog> queryable)
+	{
+		if (!string.IsNullOrEmpty(query.SortBy))
+		{
+			var columnsSelector = new Dictionary<string, Expression<Func<BalanceLog, object>>>
+			{
+				{ nameof(BalanceLog.CreatedAt), bl => bl.CreatedAt },
+				{ nameof(BalanceLog.BalanceAfter), bl => bl.BalanceAfter > bl.BalanceBefore }
+			};
+
+			var selectedColumn = columnsSelector[query.SortBy];
+
+			if (query.SortDirection == SortDirection.Ascending.ToDescriptionString())
+				queryable = queryable.OrderBy(selectedColumn);
+			else if (query.SortDirection == SortDirection.Descending.ToDescriptionString())
+				queryable = queryable.OrderByDescending(selectedColumn);
+		}
+
+		int totalItemsCount = queryable.Count();
+
+		queryable = queryable
+			.Skip(query.PageSize * (query.PageNumber - 1))
+			.Take(query.PageSize);
+
+		return (queryable, totalItemsCount);
 	}
 
 	private static IQueryable<Employee> LimitData(IQueryable<Employee> queryable)

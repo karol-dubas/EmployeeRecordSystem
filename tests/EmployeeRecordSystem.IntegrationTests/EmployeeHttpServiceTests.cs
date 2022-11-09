@@ -117,13 +117,18 @@ public class EmployeeHttpServiceTests : IntegrationTest
 	    // Arrange
 	    var employee = SeedEmployee();
 	    SeedBalanceLog(employee);
+	    var query = new BalanceLogQuery()
+	    {
+		    PageNumber = 1,
+		    PageSize = 1,
+	    };
 	    
 	    // Act
-	    var response = await _sut.GetBalanceLogAsync(employee.Id);
+	    var response = await _sut.GetBalanceLogsAsync(employee.Id, query);
 
 	    // Assert
 	    response.StatusCode.Should().Be(HttpStatusCode.OK);
-	    response.DeserializedContent.Should().HaveCount(1);
+	    response.DeserializedContent.Items.Should().HaveCount(1);
 	}
 
 	[Fact]
@@ -131,13 +136,39 @@ public class EmployeeHttpServiceTests : IntegrationTest
 	{
 		// Arrange
 		var invalidEmployeeId = Guid.NewGuid();
+		var query = new BalanceLogQuery()
+		{
+			PageNumber = 1,
+			PageSize = 1,
+		};
 		
 		// Act
-		var response = await _sut.GetBalanceLogAsync(invalidEmployeeId);
+		var response = await _sut.GetBalanceLogsAsync(invalidEmployeeId, query);
 
 		// Assert
 		response.StatusCode.Should().Be(HttpStatusCode.NotFound);
 		response.Errors.Should().HaveCount(1);
+	}
+
+	[Fact]
+	public async Task GetBalanceLogAsync_ForInvalidQuery_ReturnsBadRequest()
+	{
+		// Arrange
+		var employee = SeedEmployee();
+		var invalidQuery = new BalanceLogQuery()
+		{
+			SortBy = "invalid",
+			SortDirection = "invalid",
+			PageSize = -1,
+			PageNumber = -1,
+		};
+		
+		// Act
+		var response = await _sut.GetBalanceLogsAsync(employee.Id, invalidQuery);
+
+		// Assert
+		response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+		response.Errors.Should().HaveCount(4);
 	}
 	
 	[Fact]

@@ -1,7 +1,7 @@
 using EmployeeRecordSystem.Data.Helpers;
+using EmployeeRecordSystem.Server.ErrorHandlers;
 using EmployeeRecordSystem.Server.Installers;
 using EmployeeRecordSystem.Server.Installers.Helpers;
-using EmployeeRecordSystem.Server.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 

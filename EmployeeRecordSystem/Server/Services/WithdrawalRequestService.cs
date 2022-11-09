@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Linq.Expressions;
+using AutoMapper;
 using EmployeeRecordSystem.Data;
 using EmployeeRecordSystem.Data.Entities;
 using EmployeeRecordSystem.Server.Exceptions;
@@ -7,13 +8,15 @@ using EmployeeRecordSystem.Shared.Queries;
 using EmployeeRecordSystem.Shared.Requests;
 using EmployeeRecordSystem.Shared.Responses;
 using Microsoft.EntityFrameworkCore;
+using MudBlazor;
+using MudBlazor.Extensions;
 using static EmployeeRecordSystem.Server.Installers.Helpers.ServiceAttributes;
 
 namespace EmployeeRecordSystem.Server.Services;
 
 public interface IWithdrawalRequestService
 {
-	List<WithdrawalRequestDto> GetAll(WithdrawalRequestQuery query);
+	PagedContent<WithdrawalRequestDto> GetAll(WithdrawalRequestQuery query);
 	WithdrawalRequestDto Create(Guid employeeId, CreateWithdrawalRequestRequest request);
 	void Process(Guid withdrawalRequestId, ProcessWithdrawalRequestRequest request);
 }
@@ -51,7 +54,7 @@ public class WithdrawalRequestService : BaseService, IWithdrawalRequestService
 		return Mapper.Map<WithdrawalRequestDto>(withdrawalRequest);
 	}
 
-	public List<WithdrawalRequestDto> GetAll(WithdrawalRequestQuery query)
+	public PagedContent<WithdrawalRequestDto> GetAll(WithdrawalRequestQuery query)
 	{
 		bool isAuthorized = _authorizationService.IsUserOwnResource(query.EmployeeId) ||
 		                    _authorizationService.IsAdmin();
@@ -62,10 +65,11 @@ public class WithdrawalRequestService : BaseService, IWithdrawalRequestService
 			.Include(wr => wr.Employee)
 			.AsNoTracking();
 
-		queryable = ApplyGetAllFilter(query, queryable);
+		(queryable, int totalItemsCount) = ApplyGetAllQuery(query, queryable);
 
 		var withdrawalRequests = queryable.ToList();
-		return Mapper.Map<List<WithdrawalRequestDto>>(withdrawalRequests);
+		var dtos = Mapper.Map<List<WithdrawalRequestDto>>(withdrawalRequests);
+		return new PagedContent<WithdrawalRequestDto>(dtos, totalItemsCount);
 	}
 
 	public void Process(Guid withdrawalRequestId, ProcessWithdrawalRequestRequest request)
@@ -146,16 +150,12 @@ public class WithdrawalRequestService : BaseService, IWithdrawalRequestService
 		return (balanceBefore, balanceAfter);
 	}
 
-	private IQueryable<WithdrawalRequest> ApplyGetAllFilter(
+	private static (IQueryable<WithdrawalRequest> queryable, int totalItemsCount) ApplyGetAllQuery(
 		WithdrawalRequestQuery query,
 		IQueryable<WithdrawalRequest> queryable)
 	{
 		if (query.EmployeeId != default)
-		{
-			queryable = queryable
-				.Include(wr => wr.Employee)
-				.Where(wr => wr.EmployeeId == query.EmployeeId);
-		}
+			queryable = queryable.Where(wr => wr.EmployeeId == query.EmployeeId);
 
 		if (query.WithdrawalRequestStatus != default)
 			queryable = queryable.Where(wr => wr.WithdrawalRequestStatusTypeCode == query.WithdrawalRequestStatus);
@@ -163,6 +163,32 @@ public class WithdrawalRequestService : BaseService, IWithdrawalRequestService
 		if (query.Id != default)
 			queryable = queryable.Where(wr => wr.Id == query.Id);
 
-		return queryable;
+		if (query.NameSearch != default)
+			queryable = queryable.Where(wr => wr.Employee.FirstName.ToLower().Contains(query.NameSearch.ToLower()) 
+			                               || wr.Employee.LastName.ToLower().Contains(query.NameSearch.ToLower()));
+
+		if (!string.IsNullOrEmpty(query.SortBy))
+		{
+			var columnsSelector = new Dictionary<string, Expression<Func<WithdrawalRequest, object>>>()
+			{
+				{ nameof(WithdrawalRequest.CreatedAt), wr => wr.CreatedAt },
+				{ nameof(WithdrawalRequest.WithdrawalRequestStatusTypeCode), wr => wr.WithdrawalRequestStatusTypeCode }
+			};
+
+			var selectedColumn = columnsSelector[query.SortBy];
+
+			if (query.SortDirection == SortDirection.Ascending.ToDescriptionString())
+				queryable = queryable.OrderBy(selectedColumn);
+			else if (query.SortDirection == SortDirection.Descending.ToDescriptionString())
+				queryable = queryable.OrderByDescending(selectedColumn);
+		}
+
+		int totalItemsCount = queryable.Count();
+		
+		queryable = queryable
+			.Skip(query.PageSize * (query.PageNumber - 1))
+			.Take(query.PageSize);
+
+		return (queryable, totalItemsCount);
 	}
 }

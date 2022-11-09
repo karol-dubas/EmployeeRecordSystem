@@ -3,6 +3,8 @@ using EmployeeRecordSystem.Shared.Constants;
 using EmployeeRecordSystem.Shared.Queries;
 using EmployeeRecordSystem.UnitTests.Helpers;
 using FluentValidation.TestHelper;
+using MudBlazor;
+using MudBlazor.Extensions;
 
 namespace EmployeeRecordSystem.UnitTests.Validators.WithdrawalRequest;
 
@@ -49,25 +51,41 @@ public class WithdrawalRequestQueryValidatorTests : MockDatabase
 			{
 				Id = WithdrawalRequestMock.Id,
 				EmployeeId = EmployeeMock.Id,
-				WithdrawalRequestStatus = WithdrawalRequestStatusTypeCodes.Accepted
+				WithdrawalRequestStatus = WithdrawalRequestStatusTypeCodes.Accepted,
+				SortBy = nameof(Data.Entities.WithdrawalRequest.CreatedAt),
+				SortDirection = SortDirection.Ascending.ToDescriptionString(),
+				PageSize = 1,
+				PageNumber = 1
 			},
 			new()
 			{
 				Id = Guid.Empty,
 				EmployeeId = Guid.Empty,
-				WithdrawalRequestStatus = WithdrawalRequestStatusTypeCodes.Denied
+				WithdrawalRequestStatus = WithdrawalRequestStatusTypeCodes.Denied,
+				SortBy = nameof(Data.Entities.WithdrawalRequest.WithdrawalRequestStatusTypeCode),
+				SortDirection = SortDirection.Descending.ToDescriptionString(),
+				PageSize = 20,
+				PageNumber = 20
 			},
 			new()
 			{
 				Id = Guid.Empty,
 				EmployeeId = Guid.Empty,
-				WithdrawalRequestStatus = WithdrawalRequestStatusTypeCodes.Pending
+				WithdrawalRequestStatus = WithdrawalRequestStatusTypeCodes.Pending,
+				SortBy = null,
+				SortDirection = SortDirection.None.ToDescriptionString(),
+				PageSize = 45,
+				PageNumber = 45,
 			},
 			new()
 			{
 				Id = Guid.Empty,
 				EmployeeId = Guid.Empty,
-				WithdrawalRequestStatus = null
+				WithdrawalRequestStatus = null,
+				SortBy = null, 
+				SortDirection = null,
+				PageSize = 1000,
+				PageNumber = 1000,
 			},
 		};
 
@@ -78,13 +96,6 @@ public class WithdrawalRequestQueryValidatorTests : MockDatabase
 	{
 		List<(string invalidProperty, WithdrawalRequestQuery request)> requestsWithInvalidProperty = new()
 		{
-			(
-				nameof(WithdrawalRequestQuery.WithdrawalRequestStatus),
-				new WithdrawalRequestQuery()
-				{
-					WithdrawalRequestStatus = ""
-				}
-			),
 			(
 				nameof(WithdrawalRequestQuery.Id),
 				new WithdrawalRequestQuery()
@@ -97,6 +108,41 @@ public class WithdrawalRequestQueryValidatorTests : MockDatabase
 				new WithdrawalRequestQuery()
 				{
 					EmployeeId = Guid.NewGuid(),
+				}
+			),
+			(
+				nameof(WithdrawalRequestQuery.WithdrawalRequestStatus),
+				new WithdrawalRequestQuery()
+				{
+					WithdrawalRequestStatus = "invalid"
+				}
+			),
+			(
+				nameof(WithdrawalRequestQuery.SortBy),
+				new WithdrawalRequestQuery()
+				{
+					SortBy = "invalid"
+				}
+			),
+			(
+				nameof(WithdrawalRequestQuery.SortDirection),
+				new WithdrawalRequestQuery()
+				{
+					SortDirection = "invalid"
+				}
+			),
+			(
+				nameof(WithdrawalRequestQuery.PageSize),
+				new WithdrawalRequestQuery()
+				{
+					PageSize = 0
+				}
+			),
+			(
+				nameof(WithdrawalRequestQuery.PageSize),
+				new WithdrawalRequestQuery()
+				{
+					PageNumber = 0
 				}
 			),
 		};

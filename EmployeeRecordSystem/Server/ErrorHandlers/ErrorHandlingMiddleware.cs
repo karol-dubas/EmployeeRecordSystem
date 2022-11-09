@@ -1,15 +1,8 @@
-﻿using EmployeeRecordSystem.Server.Exceptions;
-using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Security.Authentication;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Net;
+using EmployeeRecordSystem.Server.Exceptions;
 using EmployeeRecordSystem.Shared.Responses;
 
-namespace EmployeeRecordSystem.Server.Middlewares
+namespace EmployeeRecordSystem.Server.ErrorHandlers
 {
     public class ErrorHandlingMiddleware : IMiddleware
     {

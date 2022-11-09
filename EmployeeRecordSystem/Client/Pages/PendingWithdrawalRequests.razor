@@ -2,16 +2,19 @@
 @inject WithdrawalRequestHttpService _withdrawalRequestHttpService
 @inject NavigationManager _nav
 @inject BreadcrumbStateContainer _breadcrumbs
+@inject ISnackbar _snackbar
 @attribute [Authorize(Roles = Roles.Admin)]
 
-<MudTable Items="@pendingWithdrawalRequests" Dense="true" Hover="true" Bordered="true" Striped="false" Filter="null">
+<MudTable @ref="table"
+          ServerData="@(new Func<TableState, Task<TableData<WithdrawalRequestDto>>>(GetPendingWithdrawalRequestsAsync))"
+          Dense="true" Hover="true" Bordered="true" Striped="false" Filter="null">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Oczekujące żądania wypłaty</MudText>
         <MudSpacer />
-        <MudTextField @bind-Value="searchString" Placeholder="Wyszukaj" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        <MudTextField T="string" ValueChanged="@(OnSearch)" Placeholder="Wyszukaj pracownika" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
     </ToolBarContent>
     <HeaderContent>
-        <MudTh>Stworzono</MudTh>
+        <MudTh><MudTableSortLabel SortLabel="CreatedAt" T="WithdrawalRequestDto">Stworzono</MudTableSortLabel></MudTh>
         <MudTh>Kwota</MudTh>
         <MudTh>Pracownik</MudTh>
         <MudTh>Nr konta bankowego</MudTh>
@@ -29,19 +32,24 @@
             </MudChipSet>
         </MudTd>
     </RowTemplate>
+    <NoRecordsContent>
+        <MudText>Brak wyników</MudText>
+    </NoRecordsContent>
+    <LoadingContent>
+        <MudText>Ładowanie...</MudText>
+    </LoadingContent>
     <PagerContent>
-        <MudTablePager />
+        <MudTablePager RowsPerPageString="Ilość elementów"/>
     </PagerContent>
 </MudTable>
 
 @code {
-    List<WithdrawalRequestDto> pendingWithdrawalRequests = new();
-    string searchString; // TODO: table search
+    MudTable<WithdrawalRequestDto> table;
+    string nameSearch;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         CreateBreadcrumbs();
-        await GetPendingWithdrawalRequestsAsync();
     }
 
     private void CreateBreadcrumbs()
@@ -52,14 +60,31 @@
             .Build();
     }
 
-    async Task GetPendingWithdrawalRequestsAsync()
+    async Task<TableData<WithdrawalRequestDto>> GetPendingWithdrawalRequestsAsync(TableState state)
     {
         var query = new WithdrawalRequestQuery()
         {
-            WithdrawalRequestStatus = WithdrawalRequestStatusTypeCodes.Pending
+            WithdrawalRequestStatus = WithdrawalRequestStatusTypeCodes.Pending,
+            NameSearch = nameSearch,
+            SortBy = state.SortLabel,
+            SortDirection = state.SortDirection.ToDescriptionString(),
+            PageSize = state.PageSize,
+            PageNumber = state.Page + 1
         };
+        
+        var result = (await _withdrawalRequestHttpService.GetAllAsync(query)).DeserializedContent;
+        
+        return new TableData<WithdrawalRequestDto>()
+        {
+            TotalItems = result.TotalItemsCount,
+            Items = result.Items
+        };
+    }
 
-        pendingWithdrawalRequests = (await _withdrawalRequestHttpService.GetAllAsync(query)).DeserializedContent;
+    async Task OnSearch(string text)
+    {
+        nameSearch = text;
+        await table.ReloadServerData();
     }
 
     void NavigateToEmployee(Guid employeeId)
@@ -76,8 +101,11 @@
 
         var response = await _withdrawalRequestHttpService.ProcessAsync(withdrawalRequestId, request);
 
-        if (response.IsSuccessStatusCode)
-            await GetPendingWithdrawalRequestsAsync();
+        if (!response.IsSuccessStatusCode)
+            return;
+
+        await table.ReloadServerData();
+        _snackbar.Add("Zaakceptowano wniosek", Severity.Success);
     }
 
     async Task DenyWithdrawalRequest(Guid withdrawalRequestId)
@@ -89,7 +117,10 @@
 
         var response = await _withdrawalRequestHttpService.ProcessAsync(withdrawalRequestId, request);
         
-        if (response.IsSuccessStatusCode)
-            await GetPendingWithdrawalRequestsAsync();
+        if (!response.IsSuccessStatusCode)
+            return;
+            
+        await table.ReloadServerData();
+        _snackbar.Add("Odrzucono wniosek", Severity.Success);
     }
 }

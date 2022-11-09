@@ -1,5 +1,5 @@
-﻿using EmployeeRecordSystem.Server.Installers.Helpers;
-using EmployeeRecordSystem.Server.Middlewares;
+﻿using EmployeeRecordSystem.Server.ErrorHandlers;
+using EmployeeRecordSystem.Server.Installers.Helpers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeRecordSystem.Server.Installers;

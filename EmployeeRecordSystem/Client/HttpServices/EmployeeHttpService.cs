@@ -33,10 +33,15 @@ public class EmployeeHttpService
 			.DeserializeContent<List<EmployeeInGroupDto>>();
 	}
 
-	public async Task<HttpResponse<List<BalanceLogDto>>> GetBalanceLogAsync(Guid employeeId)
+	public async Task<HttpResponse<PagedContent<BalanceLogDto>>> GetBalanceLogsAsync(Guid employeeId, BalanceLogQuery query = null)
 	{
-		return (await _httpClient.GetAsync($"{_basePath}/{employeeId}/balance-log"))
-			.DeserializeContent<List<BalanceLogDto>>();
+		string path = $"{_basePath}/{employeeId}/balance-log";
+
+		if (query is not null)
+			path = path.AddHttpQuery(query);
+		
+		return (await _httpClient.GetAsync(path))
+			.DeserializeContent<PagedContent<BalanceLogDto>>();
 	}
 
 	public async Task<HttpResponse> EditAsync(Guid employeeId, EditEmployeeRequest request)

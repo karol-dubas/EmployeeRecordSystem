@@ -2,18 +2,18 @@
 @inject EmployeeHttpService _employeeHttpService
 @inject BreadcrumbStateContainer _breadcrumbs
 
-<MudTable Items="@balanceLogs" Dense="true" Hover="true" Bordered="true" Striped="true" Filter="null" Breakpoint="Breakpoint.Sm">
+<MudTable @ref="table"
+          ServerData="@(new Func<TableState, Task<TableData<BalanceLogDto>>>(GetBalanceLogs))"
+          Dense="true" Hover="true" Bordered="true" Striped="true" Filter="null" Breakpoint="Breakpoint.Sm">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Historia salda</MudText>
-        <MudSpacer />
-        <MudTextField @bind-Value="searchString" Placeholder="Wyszukaj" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
     </ToolBarContent>
     <HeaderContent>
-        <MudTh>Typ operacji</MudTh>
+        <MudTh><MudTableSortLabel SortLabel="BalanceAfter" T="BalanceLogDto">Typ operacji</MudTableSortLabel></MudTh>
         <MudTh>Kwota</MudTh>
         <MudTh>Saldo przed</MudTh>
         <MudTh>Saldo po</MudTh>
-        <MudTh>Utworzono</MudTh>
+        <MudTh><MudTableSortLabel SortLabel="CreatedAt" T="BalanceLogDto">Utworzono</MudTableSortLabel></MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Typ operacji">@GetOperationType(context)</MudTd>
@@ -22,21 +22,44 @@
         <MudTd DataLabel="Saldo po">@context.BalanceAfter</MudTd>
         <MudTd DataLabel="Utworzono">@context.CreatedAt</MudTd>
     </RowTemplate>
+   <NoRecordsContent>
+        <MudText>Brak wyników</MudText>
+    </NoRecordsContent>
+    <LoadingContent>
+        <MudText>Ładowanie...</MudText>
+    </LoadingContent>
     <PagerContent>
-        <MudTablePager />
+        <MudTablePager RowsPerPageString="Ilość elementów"/>
     </PagerContent>
 </MudTable>
 
 @code {
     [Parameter] public Guid EmployeeId { get; set; }
 
-    string searchString; // TODO: search
-    List<BalanceLogDto> balanceLogs = new();
+    MudTable<BalanceLogDto> table;
 
     protected override async Task OnInitializedAsync()
     {
         CreateBreadcrumbs();
-        balanceLogs = (await _employeeHttpService.GetBalanceLogAsync(EmployeeId)).DeserializedContent;
+    }
+
+    async Task<TableData<BalanceLogDto>> GetBalanceLogs(TableState state)
+    {
+        var query = new BalanceLogQuery()
+        {
+            SortBy = state.SortLabel,
+            SortDirection = state.SortDirection.ToDescriptionString(),
+            PageSize = state.PageSize,
+            PageNumber = state.Page + 1,
+        };
+        
+        var result = (await _employeeHttpService.GetBalanceLogsAsync(EmployeeId, query)).DeserializedContent;
+
+        return new TableData<BalanceLogDto>()
+        {
+            TotalItems = result.TotalItemsCount,
+            Items = result.Items
+        };
     }
 
     void CreateBreadcrumbs()
@@ -52,6 +75,6 @@
     {
         _ when (dto.BalanceBefore > dto.BalanceAfter) => "wypłata",
         _ when (dto.BalanceAfter > dto.BalanceBefore) => "należność",
-        _ => ""
+        _ => "-"
     };
 }

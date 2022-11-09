@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using EmployeeRecordSystem.Client.HttpServices;
 using EmployeeRecordSystem.Data;
+using EmployeeRecordSystem.Data.Entities;
 using EmployeeRecordSystem.IntegrationTests.Helpers;
 using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -11,6 +12,8 @@ using EmployeeRecordSystem.Shared.Queries;
 using EmployeeRecordSystem.Shared.Requests;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
+using MudBlazor;
+using MudBlazor.Extensions;
 using Program = EmployeeRecordSystem.Server.Program;
 
 namespace EmployeeRecordSystem.IntegrationTests;
@@ -100,14 +103,21 @@ public class WithdrawalRequestHttpServiceTests : IntegrationTest
 	    // Arrange
 	    var employee = SeedEmployee();
 	    SeedWithdrawalRequest(employee.Id);
-	    var query = new WithdrawalRequestQuery { EmployeeId = employee.Id  };
+	    var query = new WithdrawalRequestQuery
+	    {
+		    EmployeeId = employee.Id,
+		    SortBy = nameof(WithdrawalRequest.CreatedAt),
+		    SortDirection = SortDirection.Ascending.ToDescriptionString(),
+		    PageSize = 10,
+		    PageNumber = 1
+	    };
 		    
 	    // Act
 	    var response = await _sut.GetAllAsync(query);
 
 	    // Assert
 	    response.StatusCode.Should().Be(HttpStatusCode.OK);
-	    response.DeserializedContent.Should().HaveCount(1);
+	    response.DeserializedContent.Items.Should().HaveCount(1);
 	}
 	
 	[Fact]
@@ -117,9 +127,13 @@ public class WithdrawalRequestHttpServiceTests : IntegrationTest
 		var invalidId = Guid.NewGuid();
 		var query = new WithdrawalRequestQuery
 		{
-			EmployeeId = invalidId,
 			Id = invalidId,
-			WithdrawalRequestStatus = "invalid"
+			EmployeeId = invalidId,
+			WithdrawalRequestStatus = "invalid",
+			SortBy = "invalid",
+			SortDirection = "invalid",
+			PageSize = -1,
+			PageNumber = -1,
 		};
 		    
 		// Act
@@ -127,7 +141,7 @@ public class WithdrawalRequestHttpServiceTests : IntegrationTest
 	
 		// Assert
 		response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-		response.Errors.Should().HaveCount(3);
+		response.Errors.Should().HaveCount(7);
 	}
 	
 	[Fact]

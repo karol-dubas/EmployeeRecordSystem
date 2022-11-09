@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace EmployeeRecordSystem.Server.Middlewares;
+namespace EmployeeRecordSystem.Server.ErrorHandlers;
 
 public class ValidationFilter : IAsyncActionFilter
 {
