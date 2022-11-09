@@ -11,7 +11,7 @@ namespace EmployeeRecordSystem.Data.Entities
     {
         public Guid Id { get; set; }
         public DateTimeOffset? ProcessedAt { get; set; }
-        public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+        public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.Now;
         public decimal Amount { get; set; }
 
         public string WithdrawalRequestStatusTypeCode { get; set; }

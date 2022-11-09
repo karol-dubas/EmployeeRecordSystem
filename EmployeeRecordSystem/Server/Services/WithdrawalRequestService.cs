@@ -95,7 +95,7 @@ public class WithdrawalRequestService : BaseService, IWithdrawalRequestService
 		else
 			return;
 
-		withdrawalRequest.ProcessedAt = DateTimeOffset.UtcNow;
+		withdrawalRequest.ProcessedAt = DateTimeOffset.Now;
 		SaveChanges();
 	}
 
@@ -133,7 +133,7 @@ public class WithdrawalRequestService : BaseService, IWithdrawalRequestService
 		{
 			BalanceBefore = balanceBefore,
 			BalanceAfter = balanceAfter,
-			CreatedAt = DateTimeOffset.UtcNow,
+			CreatedAt = DateTimeOffset.Now,
 			Employee = withdrawalRequest.Employee
 		};
 	}
