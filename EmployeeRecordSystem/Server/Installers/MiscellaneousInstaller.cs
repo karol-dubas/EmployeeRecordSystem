@@ -8,6 +8,11 @@ public class MiscellaneousInstaller : IInstaller
 {
     public void InstallServices(IServiceCollection services, IConfiguration configuration)
     {
+        services.AddOptions<InitAdminConfiguration>()
+            .Bind(configuration.GetSection(InitAdminConfiguration.SectionName))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+        
         services.AddScoped<DatabaseSeeder>();
         services.AddScoped<ErrorHandlingMiddleware>();
     }

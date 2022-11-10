@@ -1,4 +1,5 @@
 using EmployeeRecordSystem.Data.Helpers;
+using EmployeeRecordSystem.Server;
 using EmployeeRecordSystem.Server.ErrorHandlers;
 using EmployeeRecordSystem.Server.Installers;
 using EmployeeRecordSystem.Server.Installers.Helpers;

@@ -1,25 +1,29 @@
-﻿using EmployeeRecordSystem.Data.Entities;
+﻿using EmployeeRecordSystem.Data;
+using EmployeeRecordSystem.Data.Entities;
 using EmployeeRecordSystem.Shared.Constants;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
-namespace EmployeeRecordSystem.Data.Helpers;
+namespace EmployeeRecordSystem.Server;
 
 public class DatabaseSeeder
 {
-	private const string _adminEmail = "admin@admin.com";
 	private readonly ApplicationDbContext _dbContext;
 	private readonly RoleManager<ApplicationRole> _roleManager;
 	private readonly UserManager<Employee> _userManager;
-
+	private readonly InitAdminConfiguration _config;
+	
 	public DatabaseSeeder(
 		ApplicationDbContext applicationDbContext,
 		UserManager<Employee> userManager,
-		RoleManager<ApplicationRole> roleManager)
+		RoleManager<ApplicationRole> roleManager,
+		IOptions<InitAdminConfiguration> config)
 	{
 		_dbContext = applicationDbContext;
 		_userManager = userManager;
 		_roleManager = roleManager;
+		_config = config.Value;
 	}
 
 	/// <summary>
@@ -57,7 +61,7 @@ public class DatabaseSeeder
 		if (!await RoleExistsAsync(Roles.Employee))
 			await _roleManager.CreateAsync(new ApplicationRole(Roles.Employee));
 
-		bool adminExist = await _userManager.FindByNameAsync(_adminEmail) is not null;
+		bool adminExist = await _userManager.FindByNameAsync(_config.Email) is not null;
 		if (!adminExist)
 			await SeedAdminAsync();
 	}
@@ -66,16 +70,14 @@ public class DatabaseSeeder
 	{
 		var admin = new Employee
 		{
-			FirstName = "Admin",
-			LastName = "Admin",
-			Email = _adminEmail,
+			FirstName = _config.FirstName,
+			LastName = _config.LastName,
+			Email = _config.Email,
 			EmailConfirmed = true,
-			UserName = _adminEmail
+			UserName = _config.Email
 		};
 
-		const string password = "Admin1234!";
-
-		await _userManager.CreateAsync(admin, password);
+		await _userManager.CreateAsync(admin, _config.Password);
 		await _userManager.AddToRoleAsync(admin, Roles.Admin);
 	}
 
