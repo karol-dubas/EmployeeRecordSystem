@@ -84,7 +84,7 @@
     {
         var employee = (await _employeeHttpService.GetDetailsAsync(EmployeeId)).DeserializedContent;
         var parameters = new DialogParameters { ["balance"]= employee.EmployeeBilling.Balance };
-        var dialog = _dialogService.Show<AddWithdrawalRequestDialog>("", parameters);
+        var dialog = _dialogService.Show<AddWithdrawalRequest_Dialog>("", parameters);
         var result = await dialog.Result;
 
         if (result.Cancelled)

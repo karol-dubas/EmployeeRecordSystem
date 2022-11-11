@@ -210,7 +210,7 @@ else
         var parameters = new DialogParameters { ["employees"] = new List<EmployeeInGroupDto> { employeeInGroupDto }};
 
         var options = new DialogOptions() { MaxWidth = MaxWidth.Small, FullWidth = true };
-        var result = await _dialogService.Show<EditWorkTimeDialog>("", parameters, options).Result;
+        var result = await _dialogService.Show<EditWorkTime_Dialog>("", parameters, options).Result;
 
         if (result.Cancelled)
             return;

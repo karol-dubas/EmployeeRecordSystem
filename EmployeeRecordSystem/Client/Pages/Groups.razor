@@ -252,7 +252,7 @@
 
     async Task CreateGroup()
     {
-        var result = await _dialogService.Show<NewNameDialog>("Nowa grupa").Result;
+        var result = await _dialogService.Show<NewName_Dialog>("Nowa grupa").Result;
 
         if (result.Cancelled)
             return;
@@ -318,7 +318,7 @@
 
     async Task RenameGroup(Guid groupId)
     {
-        var result = await _dialogService.Show<NewNameDialog>("Zmień nazwę grupy").Result;
+        var result = await _dialogService.Show<NewName_Dialog>("Zmień nazwę grupy").Result;
 
         if (result.Cancelled)
             return;
@@ -360,7 +360,7 @@
     async Task<bool> EditWorkTimeDialog(DialogParameters parameters)
     {
         var options = new DialogOptions() { MaxWidth = MaxWidth.Small, FullWidth = true };
-        var result = await _dialogService.Show<EditWorkTimeDialog>("", parameters, options).Result;
+        var result = await _dialogService.Show<EditWorkTime_Dialog>("", parameters, options).Result;
 
         if (result.Cancelled)
             return false;
