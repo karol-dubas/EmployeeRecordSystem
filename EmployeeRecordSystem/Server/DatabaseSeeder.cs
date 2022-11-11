@@ -26,17 +26,6 @@ public class DatabaseSeeder
 		_config = config.Value;
 	}
 
-	/// <summary>
-	///     Create the database and migrate if it doesn't exist
-	/// </summary>
-	public DatabaseSeeder EnsureDatabaseCreated()
-	{
-		if (!_dbContext.Database.CanConnect())
-			_dbContext.Database.Migrate();
-
-		return this;
-	}
-
 	public DatabaseSeeder ApplyPendingMigrations()
 	{
 		bool isDatabaseForTests = !_dbContext.Database.IsRelational();

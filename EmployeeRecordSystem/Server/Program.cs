@@ -24,7 +24,7 @@ var databaseSeeder = app.Services
 	.ServiceProvider
 	.GetRequiredService<DatabaseSeeder>();
 
-await databaseSeeder.EnsureDatabaseCreated()
+await databaseSeeder
 	.ApplyPendingMigrations()
 	.SeedAsync();
 
