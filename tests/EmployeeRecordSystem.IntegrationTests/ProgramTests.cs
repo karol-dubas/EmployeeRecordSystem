@@ -31,6 +31,15 @@ namespace EmployeeRecordSystem.IntegrationTests
             {
                 builder.ConfigureServices(services =>
                 {
+                    var dbContextOptions = services.Single(service =>
+                        service.ServiceType == typeof(DbContextOptions<ApplicationDbContext>));
+                    services.Remove(dbContextOptions);
+                    services.AddDbContext<ApplicationDbContext>(o =>
+                    {
+                        string uniqueCurrentClassName = GetType().Name;
+                        o.UseInMemoryDatabase(uniqueCurrentClassName);
+                    });
+                    
                     foreach (var controller in _controllerTypes)
                         services.AddScoped(controller);
                 });

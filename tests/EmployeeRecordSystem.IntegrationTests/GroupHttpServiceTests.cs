@@ -30,10 +30,10 @@ public class GroupHttpServiceTests : IntegrationTest
 						service.ServiceType == typeof(DbContextOptions<ApplicationDbContext>));
 					services.Remove(dbContextOptions);
 					services.AddDbContext<ApplicationDbContext>(o =>
-						{
-							string uniqueCurrentClassName = GetType().Name;
-							o.UseInMemoryDatabase(uniqueCurrentClassName);
-						});
+					{
+						string uniqueCurrentClassName = GetType().Name;
+						o.UseInMemoryDatabase(uniqueCurrentClassName);
+					});
 
 					services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
 				});
