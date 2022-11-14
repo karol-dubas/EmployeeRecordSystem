@@ -1,0 +1,52 @@
+﻿@page "/development"
+@inject AuthenticationStateProvider _authenticationStateProvider
+
+<PageTitle>Development</PageTitle>
+
+<div class="mt-3">
+    <div class="pa-2 mud-palette-primary">mud-palette-primary</div>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small">Mud primary</MudButton>
+    <br />
+    <div class="pa-2 mud-palette-secondary">mud-palette-secondary</div>
+    <MudButton Variant="Variant.Filled" Color="Color.Secondary" Size="Size.Small">Mud secondary</MudButton>
+</div>
+
+<div class="mt-3">
+    <h2>Roles</h2>
+    <ul>
+        <li><b>Logged in: </b><AuthorizeView> true</AuthorizeView></li>
+        <li><b>Employee role: </b><AuthorizeView Roles="@Roles.Employee"> true</AuthorizeView></li>
+        <li><b>Supervisor role: </b><AuthorizeView Roles="@Roles.Supervisor"> true</AuthorizeView></li>
+        <li><b>Admin role: </b><AuthorizeView Roles="@Roles.Admin"> true</AuthorizeView></li>
+    </ul>
+</div>
+
+<div class="mt-3">
+    <h2>Claims</h2>
+    <AuthorizeView>
+        <ul>
+            @foreach (var claim in context.User.Claims)
+            {
+                <li><b>@claim.Type</b>: @claim.Value</li>
+            }
+        </ul>
+    </AuthorizeView>
+</div>
+
+@code {
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetClaimsPrincipalData();
+    }
+
+    private async Task GetClaimsPrincipalData()
+    {
+        var user = (await _authenticationStateProvider.GetAuthenticationStateAsync()).User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            string x = user.FindFirst(c => c.Type == "sub")?.Value;
+        }
+    }
+}

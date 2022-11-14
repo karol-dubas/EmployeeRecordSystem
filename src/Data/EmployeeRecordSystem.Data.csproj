@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EmployeeRecordSystem\Shared\EmployeeRecordSystem.Shared.csproj" />
+    <ProjectReference Include="..\Shared\EmployeeRecordSystem.Shared.csproj" />
   </ItemGroup>
 
 </Project>

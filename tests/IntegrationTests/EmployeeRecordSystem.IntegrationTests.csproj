@@ -26,10 +26,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\EmployeeRecordSystem.Data\EmployeeRecordSystem.Data.csproj" />
-    <ProjectReference Include="..\..\EmployeeRecordSystem\Client\EmployeeRecordSystem.Client.csproj" />
-    <ProjectReference Include="..\..\EmployeeRecordSystem\Server\EmployeeRecordSystem.Server.csproj" />
-    <ProjectReference Include="..\..\EmployeeRecordSystem\Shared\EmployeeRecordSystem.Shared.csproj" />
+    <ProjectReference Include="..\..\src\Client\EmployeeRecordSystem.Client.csproj" />
+    <ProjectReference Include="..\..\src\Server\EmployeeRecordSystem.Server.csproj" />
+    <ProjectReference Include="..\..\src\Shared\EmployeeRecordSystem.Shared.csproj" />
   </ItemGroup>
 
 </Project>

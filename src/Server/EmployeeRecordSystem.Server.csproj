@@ -22,8 +22,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\EmployeeRecordSystem.Data\EmployeeRecordSystem.Data.csproj" />
     <ProjectReference Include="..\Client\EmployeeRecordSystem.Client.csproj" />
+    <ProjectReference Include="..\Data\EmployeeRecordSystem.Data.csproj" />
     <ProjectReference Include="..\Shared\EmployeeRecordSystem.Shared.csproj" />
   </ItemGroup>
 
