@@ -43,28 +43,28 @@
         openDrawer = !openDrawer;
     }
 
-    MudTheme MyCustomTheme = new MudTheme
+    MudTheme MyCustomTheme = new()
+    {
+        Palette = new Palette
         {
-            Palette = new()
-            {
-                AppbarBackground = "#ffffffff",
+            AppbarBackground = "#ffffffff",
 
-                Primary = "#0a0f36",
+            Primary = "#0a0f36",
 
-                DrawerText = "#ffffffff",
-                DrawerBackground = "#0a0f36",
-                DrawerIcon = "#ffffffff",
+            DrawerText = "#ffffffff",
+            DrawerBackground = "#0a0f36",
+            DrawerIcon = "#ffffffff",
 
-                Background = Colors.Grey.Lighten3,
+            Background = Colors.Grey.Lighten3,
 
-                TextDisabled = Colors.Grey.Darken4
-            },
+            TextDisabled = Colors.Grey.Darken4
+        },
 
-            LayoutProperties = new()
-            {
-                DrawerWidthLeft = "290px"
-            }
-        };
+        LayoutProperties = new LayoutProperties
+        {
+            DrawerWidthLeft = "290px"
+        }
+    };
 
     void IDisposable.Dispose() => _breadcrumbs.OnChange -= StateHasChanged;
 }

@@ -5,11 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EmployeeRecordSystem.Data.Entities
+namespace EmployeeRecordSystem.Data.Entities;
+
+public class ApplicationRole : IdentityRole<Guid>
 {
-    public class ApplicationRole : IdentityRole<Guid>
-    {
-        public ApplicationRole() { }
-        public ApplicationRole(string roleName) : base(roleName) { }
-    }
+    public ApplicationRole() { }
+    public ApplicationRole(string roleName) : base(roleName) { }
 }

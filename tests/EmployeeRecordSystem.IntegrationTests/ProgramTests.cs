@@ -11,22 +11,22 @@ using Microsoft.EntityFrameworkCore;
 using EmployeeRecordSystem.Data;
 using Program = EmployeeRecordSystem.Server.Program;
 
-namespace EmployeeRecordSystem.IntegrationTests
-{
-    public class ProgramTests
-    {
-        private readonly List<Type> _controllerTypes;
-        private readonly WebApplicationFactory<Program> _factory;
+namespace EmployeeRecordSystem.IntegrationTests;
 
-        public ProgramTests()
-        {
-            _controllerTypes = typeof(Program)
+public class ProgramTests
+{
+    private readonly List<Type> _controllerTypes;
+    private readonly WebApplicationFactory<Program> _factory;
+
+    public ProgramTests()
+    {
+        _controllerTypes = typeof(Program)
             .Assembly
             .GetTypes()
             .Where(t => t.IsSubclassOf(typeof(ControllerBase)))
             .ToList();
 
-            _factory = new WebApplicationFactory<Program>()
+        _factory = new WebApplicationFactory<Program>()
             .WithWebHostBuilder(builder =>
             {
                 builder.ConfigureServices(services =>
@@ -44,23 +44,22 @@ namespace EmployeeRecordSystem.IntegrationTests
                         services.AddScoped(controller);
                 });
             });
-        }
+    }
 
-        [Fact]
-        public void InstallServices_ForAllControllers_RegistersAllDependencies()
+    [Fact]
+    public void InstallServices_ForAllControllers_RegistersAllDependencies()
+    {
+        // Arrange
+        var scopeFactory = _factory.Services.GetService<IServiceScopeFactory>();
+        using var scope = scopeFactory.CreateScope();
+
+        // Act
+
+        // Assert
+        _controllerTypes.ForEach(c =>
         {
-            // Arrange
-            var scopeFactory = _factory.Services.GetService<IServiceScopeFactory>();
-            using var scope = scopeFactory.CreateScope();
-
-            // Act
-
-            // Assert
-            _controllerTypes.ForEach(c =>
-            {
-                object controller = scope.ServiceProvider.GetService(c);
-                controller.Should().NotBeNull();
-            });
-        }
+            object controller = scope.ServiceProvider.GetService(c);
+            controller.Should().NotBeNull();
+        });
     }
 }

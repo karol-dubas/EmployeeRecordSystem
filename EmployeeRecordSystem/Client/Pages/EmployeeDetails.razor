@@ -79,7 +79,7 @@ else
     bool editMode = false;
     string visibleOnEdit => editMode ? "" : "d-none";
     string editIcon => editMode ? Icons.Material.Filled.ArrowDropDown : "null";
-    EmployeeDeteilsDto employee;
+    EmployeeDetailsDto employee;
     List<GroupDto> groups = new();
     List<RoleDto> roles = new();
     GroupDto selectedGroup;
@@ -100,7 +100,7 @@ else
         ChangeRolesDisplayValue();
     }
 
-    void InitSelectLists(EmployeeDeteilsDto employee)
+    void InitSelectLists(EmployeeDetailsDto employee)
     {
         selectedGroup = employee.Group;
         selectedRole = new RoleDto() { Name = employee.Role.TranslateRole() };
@@ -120,7 +120,7 @@ else
             .Build();
     }
 
-    async Task<EmployeeDeteilsDto> GetEmployee()
+    async Task<EmployeeDetailsDto> GetEmployee()
     {
         return (await _employeeHttpService.GetDetailsAsync(EmployeeId)).DeserializedContent;
     }

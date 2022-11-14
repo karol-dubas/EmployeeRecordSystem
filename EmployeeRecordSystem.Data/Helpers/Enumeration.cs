@@ -5,33 +5,32 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EmployeeRecordSystem.Data.Helpers
+namespace EmployeeRecordSystem.Data.Helpers;
+
+public class Enumeration
 {
-    public class Enumeration
-    {
-	    public string Code { get; }
-		public string Name { get; }
+	public string Code { get; }
+	public string Name { get; }
 
-		protected Enumeration() { }
+	protected Enumeration() { }
 
-		protected Enumeration(string code, string name)
+	protected Enumeration(string code, string name)
+	{
+		Code = code;
+		Name = name;
+	}
+
+	public static IEnumerable<T> GetAll<T>() where T : Enumeration
+	{
+		var type = typeof(T);
+		var fields = type.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.DeclaredOnly);
+
+		foreach (var info in fields)
 		{
-			Code = code;
-			Name = name;
-		}
+			object instance = Activator.CreateInstance(typeof(T), true);
 
-		public static IEnumerable<T> GetAll<T>() where T : Enumeration
-		{
-			var type = typeof(T);
-			var fields = type.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.DeclaredOnly);
-
-			foreach (var info in fields)
-			{
-				object instance = Activator.CreateInstance(typeof(T), true);
-
-				if (info.GetValue(instance) is T locatedValue)
-					yield return locatedValue;
-			}
+			if (info.GetValue(instance) is T locatedValue)
+				yield return locatedValue;
 		}
 	}
 }

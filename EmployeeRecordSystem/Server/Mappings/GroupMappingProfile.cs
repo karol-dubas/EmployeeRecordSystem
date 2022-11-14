@@ -8,15 +8,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EmployeeRecordSystem.Server.Mappings
+namespace EmployeeRecordSystem.Server.Mappings;
+
+public class GroupMappingProfile : Profile
 {
-    public class GroupMappingProfile : Profile
+    public GroupMappingProfile()
     {
-        public GroupMappingProfile()
-        {
-            CreateMap<CreateGroupRequest, Group>();
-            CreateMap<Group, GroupDto>()
-                .ForMember(m => m.IsEmpty, c => c.MapFrom(s => s.Employees.Count == 0));
-        }
+        CreateMap<CreateGroupRequest, Group>();
+        CreateMap<Group, GroupDto>()
+            .ForMember(m => m.IsEmpty, c => c.MapFrom(s => s.Employees.Count == 0));
     }
 }

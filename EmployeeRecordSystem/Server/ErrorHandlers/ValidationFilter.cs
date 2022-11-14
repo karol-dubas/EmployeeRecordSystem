@@ -16,22 +16,25 @@ public class ValidationFilter : IAsyncActionFilter
 			.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Errors.Select(e => e.ErrorMessage))
 			.ToArray();
 		
+		var errorResponse = ParseErrors(errorsInModelState);
+		context.Result = new BadRequestObjectResult(errorResponse);
+	}
+
+	private static List<ErrorModel> ParseErrors(IEnumerable<KeyValuePair<string, IEnumerable<string>>> errorsInModelState)
+	{
 		var errorResponse = new List<ErrorModel>();
 
 		foreach (var error in errorsInModelState)
 		{
-			foreach (string subError in error.Value)
+			var subErrors = error.Value.Select(subError => new ErrorModel() 
 			{
-				var errorModel = new ErrorModel()
-				{
-					FieldName = error.Key,
-					Message = subError
-				};
-				
-				errorResponse.Add(errorModel);
-			}
+				FieldName = error.Key,
+				Message = subError
+			});
+			
+			errorResponse.AddRange(subErrors);
 		}
-
-		context.Result = new BadRequestObjectResult(errorResponse);
+		
+		return errorResponse;
 	}
 }

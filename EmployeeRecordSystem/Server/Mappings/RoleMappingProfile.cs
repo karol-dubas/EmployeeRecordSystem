@@ -7,13 +7,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EmployeeRecordSystem.Server.Mappings
+namespace EmployeeRecordSystem.Server.Mappings;
+
+public class RoleMappingProfile : Profile
 {
-    public class RoleMappingProfile : Profile
+    public RoleMappingProfile()
     {
-        public RoleMappingProfile()
-        {
-            CreateMap<ApplicationRole, RoleDto>();
-        }
+        CreateMap<ApplicationRole, RoleDto>();
     }
 }

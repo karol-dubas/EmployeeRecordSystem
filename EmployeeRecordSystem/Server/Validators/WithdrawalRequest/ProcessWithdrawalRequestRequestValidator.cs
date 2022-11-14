@@ -17,7 +17,7 @@ public class ProcessWithdrawalRequestRequestValidator : AbstractValidator<Proces
 		RuleFor(e => e.ChangeStatusTo)
 			.Must(p => availableWithdrawalRequestStatuses.Contains(p))
 			.WithMessage($"{nameof(ProcessWithdrawalRequestRequest.ChangeStatusTo)} " +
-			             $"must be one of these values: " +
+			             "must be one of these values: " +
 			             $"{string.Join(", ", availableWithdrawalRequestStatuses)}");
 	}
 }

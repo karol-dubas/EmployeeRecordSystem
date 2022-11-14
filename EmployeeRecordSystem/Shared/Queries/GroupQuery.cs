@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EmployeeRecordSystem.Shared.Queries
+namespace EmployeeRecordSystem.Shared.Queries;
+
+public class GroupQuery
 {
-    public class GroupQuery
-    {
-        public Guid Id { get; set; }
-    }
+    public Guid Id { get; set; }
 }

@@ -8,25 +8,24 @@ using System.Linq;
 using System.Threading.Tasks;
 using EmployeeRecordSystem.Data.Entities;
 
-namespace EmployeeRecordSystem.Data.EntityConfigurations
+namespace EmployeeRecordSystem.Data.EntityConfigurations;
+
+public class WithdrawalRequestEntityConfiguration : IEntityTypeConfiguration<WithdrawalRequest>
 {
-    public class WithdrawalRequestEntityConfiguration : IEntityTypeConfiguration<WithdrawalRequest>
+    public void Configure(EntityTypeBuilder<WithdrawalRequest> builder)
     {
-        public void Configure(EntityTypeBuilder<WithdrawalRequest> builder)
-        {
-            builder.ToTable("withdrawal-requests");
+        builder.ToTable("withdrawal-requests");
 
-            builder.HasKey(t => t.Id);
-            builder.Property(t => t.Id)
-                .ValueGeneratedOnAdd()
-                .IsRequired();
+        builder.HasKey(t => t.Id);
+        builder.Property(t => t.Id)
+            .ValueGeneratedOnAdd()
+            .IsRequired();
 
-            builder.Property(p => p.ProcessedAt).IsRequired(false);
-            builder.Property(p => p.CreatedAt).IsRequired();
-            builder.Property(p => p.WithdrawalRequestStatusTypeCode).IsRequired();
+        builder.Property(p => p.ProcessedAt).IsRequired(false);
+        builder.Property(p => p.CreatedAt).IsRequired();
+        builder.Property(p => p.WithdrawalRequestStatusTypeCode).IsRequired();
 
-            builder.Property(p => p.Amount)
-                .HasPrecision(18, 2);
-        }
+        builder.Property(p => p.Amount)
+            .HasPrecision(18, 2);
     }
 }

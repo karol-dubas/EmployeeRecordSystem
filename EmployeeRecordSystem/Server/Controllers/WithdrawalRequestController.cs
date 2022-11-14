@@ -25,7 +25,7 @@ public class WithdrawalRequestController : ControllerBase
     /// <remarks>
     ///     Authorize: logged user
     /// </remarks>
-    [HttpPost("{employeeId}")]
+    [HttpPost("{employeeId:guid}")]
 	public IActionResult Create([FromRoute] Guid employeeId, [FromBody] CreateWithdrawalRequestRequest request)
 	{
 		var response = _withdrawalRequestService.Create(employeeId, request);
@@ -51,7 +51,7 @@ public class WithdrawalRequestController : ControllerBase
     /// <remarks>
     ///     Authorize: admin
     /// </remarks>
-    [HttpPatch("{withdrawalRequestId}")]
+    [HttpPatch("{withdrawalRequestId:guid}")]
 	[Authorize(Roles = Roles.Admin)]
 	public IActionResult Process(
 		[FromRoute] Guid withdrawalRequestId,

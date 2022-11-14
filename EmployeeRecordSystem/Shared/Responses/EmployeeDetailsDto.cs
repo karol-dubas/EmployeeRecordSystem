@@ -1,6 +1,6 @@
 ﻿namespace EmployeeRecordSystem.Shared.Responses;
 
-public class EmployeeDeteilsDto
+public class EmployeeDetailsDto
 {
     public string Role { get; set; }
     public string FirstName { get; set; }

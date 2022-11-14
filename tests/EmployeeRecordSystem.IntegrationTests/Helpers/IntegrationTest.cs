@@ -97,7 +97,7 @@ public class IntegrationTest
 		return withdrawalRequest;
 	}
 	
-	protected ApplicationDbContext GetDbContext(WebApplicationFactory<Program> factory)
+	protected static ApplicationDbContext GetDbContext(WebApplicationFactory<Program> factory)
 	{
 		var scopeFactory = factory.Services.GetService<IServiceScopeFactory>();
 		/* using */ var scope = scopeFactory.CreateScope();

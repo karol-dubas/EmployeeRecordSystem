@@ -25,7 +25,7 @@ public class EmployeeController : ControllerBase
 	/// <remarks>
 	///     Authorize: admin or employee's own profile
 	/// </remarks>
-	[HttpGet("{employeeId}")]
+	[HttpGet("{employeeId:guid}")]
 	public IActionResult GetDetails([FromRoute] Guid employeeId)
 	{
 		var response = _employeeService.GetDetails(employeeId);
@@ -51,7 +51,7 @@ public class EmployeeController : ControllerBase
 	/// <remarks>
 	///     Authorize: admin or employee's own balance logs
 	/// </remarks>
-	[HttpGet("{employeeId}/balance-log")]
+	[HttpGet("{employeeId:guid}/balance-log")]
 	public IActionResult GetBalanceLogs([FromRoute] Guid employeeId, [FromQuery] BalanceLogQuery query)
 	{
 		var response = _employeeService.GetBalanceLogs(employeeId, query);
@@ -64,7 +64,7 @@ public class EmployeeController : ControllerBase
 	/// <remarks>
 	///     Authorize: admin or employee's own profile
 	/// </remarks>
-	[HttpPut("{employeeId}")]
+	[HttpPut("{employeeId:guid}")]
 	public IActionResult Edit([FromRoute] Guid employeeId, [FromBody] EditEmployeeRequest request)
 	{
 		_employeeService.Edit(employeeId, request);
@@ -77,7 +77,7 @@ public class EmployeeController : ControllerBase
 	/// <remarks>
 	///     Authorize: admin
 	/// </remarks>
-	[HttpPatch("{employeeId}/hourly-pay")]
+	[HttpPatch("{employeeId:guid}/hourly-pay")]
 	[Authorize(Roles = Roles.Admin)]
 	public IActionResult ChangeHourlyPay([FromRoute] Guid employeeId, [FromBody] ChangeEmployeeHourlyPayRequest request)
 	{

@@ -16,10 +16,10 @@ public class EmployeeHttpService
 		_httpClient = httpClient;
 	}
 
-	public async Task<HttpResponse<EmployeeDeteilsDto>> GetDetailsAsync(Guid employeeId)
+	public async Task<HttpResponse<EmployeeDetailsDto>> GetDetailsAsync(Guid employeeId)
 	{
 		return (await _httpClient.GetAsync($"{_basePath}/{employeeId}"))
-			.DeserializeContent<EmployeeDeteilsDto>();
+			.DeserializeContent<EmployeeDetailsDto>();
 	}
 
 	public async Task<HttpResponse<List<EmployeeInGroupDto>>> GetAllAsync(EmployeeQuery query = null)

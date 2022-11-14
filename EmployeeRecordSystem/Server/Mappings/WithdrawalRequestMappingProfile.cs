@@ -7,14 +7,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EmployeeRecordSystem.Server.Mappings
+namespace EmployeeRecordSystem.Server.Mappings;
+
+public class WithdrawalRequestMappingProfile : Profile
 {
-    public class WithdrawalRequestMappingProfile : Profile
+    public WithdrawalRequestMappingProfile()
     {
-        public WithdrawalRequestMappingProfile()
-        {
-            CreateMap<WithdrawalRequest, WithdrawalRequestDto>()
-                .ForMember(m => m.WithdrawalRequestStatus, c => c.MapFrom(s => s.WithdrawalRequestStatusTypeCode));
-        }
+        CreateMap<WithdrawalRequest, WithdrawalRequestDto>()
+            .ForMember(m => m.WithdrawalRequestStatus, c => c.MapFrom(s => s.WithdrawalRequestStatusTypeCode));
     }
 }

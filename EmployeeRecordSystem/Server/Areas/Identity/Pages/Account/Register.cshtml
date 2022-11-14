@@ -2,6 +2,7 @@
 
 @using EmployeeRecordSystem.Server.Services
 @using EmployeeRecordSystem.Shared
+@using EmployeeRecordSystem.Shared.Queries
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 
 @attribute [Authorize(Roles = Roles.Admin)]
@@ -19,7 +20,7 @@
         .Reverse();
     var rolesSelectList = new SelectList(rolesSelectItems, nameof(SelectListItem.Value), nameof(SelectListItem.Text));
 
-    var groups = GroupService.GetAll(new());
+    var groups = GroupService.GetAll(new GroupQuery());
     var groupsSelectItems = groups.Select(g => new SelectListItem(g.Name, g.Id.ToString()));
     groupsSelectItems = groupsSelectItems.Prepend(new SelectListItem("Brak", null));
     var groupsSelectList = new SelectList(groupsSelectItems, nameof(SelectListItem.Value), nameof(SelectListItem.Text));

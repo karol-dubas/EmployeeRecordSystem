@@ -25,7 +25,7 @@ var databaseSeeder = app.Services
 	.GetRequiredService<DatabaseSeeder>();
 
 await databaseSeeder
-	.ApplyPendingMigrations()
+	.Migrate()
 	.SeedAsync();
 
 if (app.Environment.IsDevelopment())

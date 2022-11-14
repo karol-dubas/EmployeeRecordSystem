@@ -52,7 +52,7 @@ public class GroupController : ControllerBase
     /// <remarks>
     ///     Authorize: admin
     /// </remarks>
-    [HttpPatch("{groupId}")]
+    [HttpPatch("{groupId:guid}")]
 	[Authorize(Roles = Roles.Admin)]
 	public IActionResult Rename([FromRoute] Guid groupId, [FromBody] RenameGroupRequest request)
 	{
@@ -66,7 +66,7 @@ public class GroupController : ControllerBase
     /// <remarks>
     ///     Authorize: admin
     /// </remarks>
-    [HttpPatch("{groupId}/employee/{employeeId}")]
+    [HttpPatch("{groupId:guid}/employee/{employeeId:guid}")]
 	[Authorize(Roles = Roles.Admin)]
 	public IActionResult AssignEmployeeToGroup([FromRoute] Guid groupId, [FromRoute] Guid employeeId)
 	{
@@ -80,7 +80,7 @@ public class GroupController : ControllerBase
     /// <remarks>
     ///     Authorize: admin
     /// </remarks>
-    [HttpDelete("employee/{employeeId}")]
+    [HttpDelete("employee/{employeeId:guid}")]
 	[Authorize(Roles = Roles.Admin)]
 	public IActionResult RemoveEmployeeFromGroup([FromRoute] Guid employeeId)
 	{
@@ -94,7 +94,7 @@ public class GroupController : ControllerBase
     /// <remarks>
     ///     Authorize: admin
     /// </remarks>
-    [HttpDelete("{groupId}")]
+    [HttpDelete("{groupId:guid}")]
 	[Authorize(Roles = Roles.Admin)]
 	public IActionResult Delete([FromRoute] Guid groupId)
 	{

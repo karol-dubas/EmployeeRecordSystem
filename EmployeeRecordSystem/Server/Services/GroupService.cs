@@ -96,7 +96,7 @@ public class GroupService : BaseService, IGroupService
         SaveChanges();
     }
 
-    private IQueryable<Group> ApplyGetAllFilter(GroupQuery query, IQueryable<Group> queryable)
+    private static IQueryable<Group> ApplyGetAllFilter(GroupQuery query, IQueryable<Group> queryable)
     {
         if (query.Id != default)
             queryable = queryable.Where(g => g.Id == query.Id);

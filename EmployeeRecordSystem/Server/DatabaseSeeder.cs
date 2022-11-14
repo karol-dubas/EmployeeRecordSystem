@@ -30,7 +30,7 @@ public class DatabaseSeeder
 	///		Will create the database if it does not already exist.
 	/// 	Applies any pending migrations for the context to the database.
 	/// </summary>
-	public DatabaseSeeder ApplyPendingMigrations()
+	public DatabaseSeeder Migrate()
 	{
 		bool isDatabaseForTests = !_dbContext.Database.IsRelational();
 		if (isDatabaseForTests)

@@ -88,28 +88,30 @@ public class WithdrawalRequestService : BaseService, IWithdrawalRequestService
 		if (withdrawalRequest.IsAlreadyProcessed())
 			throw new BadRequestException(nameof(withdrawalRequestId), "Withdrawal request already processed");
 
-		if (WithdrawalRequestAccepted(request))
+		if (IsWithdrawalRequestAccepted(request))
+		{
 			AcceptWithdrawalRequest(withdrawalRequest);
-		else if (WithdrawalRequestDenied(request))
+		}
+		else if (IsWithdrawalRequestDenied(request))
+		{
 			DenyWithdrawalRequest(withdrawalRequest);
-		else
-			return;
+		}
 
 		withdrawalRequest.ProcessedAt = DateTimeOffset.Now;
 		SaveChanges();
 	}
 
-	private static bool WithdrawalRequestDenied(ProcessWithdrawalRequestRequest request)
+	private static bool IsWithdrawalRequestDenied(ProcessWithdrawalRequestRequest request)
 	{
 		return request.ChangeStatusTo == WithdrawalRequestStatusTypeCodes.Denied;
 	}
 
-	private static bool WithdrawalRequestAccepted(ProcessWithdrawalRequestRequest request)
+	private static bool IsWithdrawalRequestAccepted(ProcessWithdrawalRequestRequest request)
 	{
 		return request.ChangeStatusTo == WithdrawalRequestStatusTypeCodes.Accepted;
 	}
 
-	private void DenyWithdrawalRequest(WithdrawalRequest withdrawalRequest)
+	private static void DenyWithdrawalRequest(WithdrawalRequest withdrawalRequest)
 	{
 		withdrawalRequest.WithdrawalRequestStatusTypeCode = WithdrawalRequestStatusTypeCodes.Denied;
 	}
@@ -124,7 +126,7 @@ public class WithdrawalRequestService : BaseService, IWithdrawalRequestService
 		withdrawalRequest.WithdrawalRequestStatusTypeCode = WithdrawalRequestStatusTypeCodes.Accepted;
 	}
 
-	private BalanceLog CreateBalanceLog(
+	private static BalanceLog CreateBalanceLog(
 		WithdrawalRequest withdrawalRequest,
 		decimal balanceBefore,
 		decimal balanceAfter)
@@ -138,7 +140,7 @@ public class WithdrawalRequestService : BaseService, IWithdrawalRequestService
 		};
 	}
 
-	private (decimal, decimal) SubtractUsersBalance(WithdrawalRequest withdrawalRequest)
+	private static (decimal, decimal) SubtractUsersBalance(WithdrawalRequest withdrawalRequest)
 	{
 		decimal balanceBefore = withdrawalRequest.Employee.EmployeeBilling.Balance;
 		decimal balanceAfter = withdrawalRequest.Employee.EmployeeBilling.Balance -= withdrawalRequest.Amount;
@@ -168,20 +170,7 @@ public class WithdrawalRequestService : BaseService, IWithdrawalRequestService
 			                               || wr.Employee.LastName.ToLower().Contains(query.NameSearch.ToLower()));
 
 		if (!string.IsNullOrEmpty(query.SortBy))
-		{
-			var columnsSelector = new Dictionary<string, Expression<Func<WithdrawalRequest, object>>>()
-			{
-				{ nameof(WithdrawalRequest.CreatedAt), wr => wr.CreatedAt },
-				{ nameof(WithdrawalRequest.WithdrawalRequestStatusTypeCode), wr => wr.WithdrawalRequestStatusTypeCode }
-			};
-
-			var selectedColumn = columnsSelector[query.SortBy];
-
-			if (query.SortDirection == SortDirection.Ascending.ToDescriptionString())
-				queryable = queryable.OrderBy(selectedColumn);
-			else if (query.SortDirection == SortDirection.Descending.ToDescriptionString())
-				queryable = queryable.OrderByDescending(selectedColumn);
-		}
+			queryable = SortWithdrawalRequests(query, queryable);
 
 		int totalItemsCount = queryable.Count();
 		
@@ -190,5 +179,22 @@ public class WithdrawalRequestService : BaseService, IWithdrawalRequestService
 			.Take(query.PageSize);
 
 		return (queryable, totalItemsCount);
+	}
+
+	private static IQueryable<WithdrawalRequest> SortWithdrawalRequests(WithdrawalRequestQuery query, IQueryable<WithdrawalRequest> queryable)
+	{
+		var columnsSelector = new Dictionary<string, Expression<Func<WithdrawalRequest, object>>>()
+		{
+			{ nameof(WithdrawalRequest.CreatedAt), wr => wr.CreatedAt },
+			{ nameof(WithdrawalRequest.WithdrawalRequestStatusTypeCode), wr => wr.WithdrawalRequestStatusTypeCode }
+		};
+
+		var selectedColumn = columnsSelector[query.SortBy];
+
+		if (query.SortDirection == SortDirection.Ascending.ToDescriptionString())
+			queryable = queryable.OrderBy(selectedColumn);
+		else if (query.SortDirection == SortDirection.Descending.ToDescriptionString())
+			queryable = queryable.OrderByDescending(selectedColumn);
+		return queryable;
 	}
 }

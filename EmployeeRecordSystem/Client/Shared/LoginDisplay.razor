@@ -7,7 +7,7 @@
 <AuthorizeView>
     <Authorized>
         <div class="gap-4 d-flex flex-wrap">
-            <AuthorizeView Roles="@Roles.Admin" Context="test">
+            <AuthorizeView Roles="@Roles.Admin" Context="auth">
                 <MudButton Variant="Variant.Filled" Color="Color.Inherit" EndIcon="@Icons.Outlined.GroupAdd" href="authentication/register">Zarejestruj</MudButton>
             </AuthorizeView>
             <MudButton Variant="Variant.Filled" Color="Color.Inherit" EndIcon="@Icons.Filled.Settings" href="authentication/profile">Konto</MudButton>

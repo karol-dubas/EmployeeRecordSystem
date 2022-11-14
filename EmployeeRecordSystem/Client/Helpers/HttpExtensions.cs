@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using EmployeeRecordSystem.Shared.Responses;
 using Microsoft.AspNetCore.WebUtilities;
 using Newtonsoft.Json;
 
@@ -15,16 +14,10 @@ public static class HttpExtensions
 		{
 			object value = prop.GetValue(query);
 
-			// Skip if reference type default value
-			if (value is null)
+			if (IsRefTypeDefaultValue(value) || IsValueTypeDefaultValue(value))
 				continue;
 
-			// Skip if value type default value
-			bool isRefTypeDefaultValue = value.Equals(GetValueTypeDefaultValue(value));
-			if (isRefTypeDefaultValue)
-				continue;
-
-			queryParams.Add(prop.Name, value.ToString());
+			queryParams.Add(prop.Name, value!.ToString());
 		}
 
 		return QueryHelpers.AddQueryString(basePath, queryParams);
@@ -40,15 +33,22 @@ public static class HttpExtensions
 	{
 		return new HttpResponse<TContent>(message);
 	}
-	
+
 	public static HttpResponse DeserializeContent(this HttpResponseMessage message)
 	{
 		return new HttpResponse(message);
 	}
 
-	private static object GetValueTypeDefaultValue(object value)
+	private static bool IsValueTypeDefaultValue(object value)
 	{
 		var type = value.GetType();
-		return type == typeof(string) ? null : Activator.CreateInstance(type);
+		object valObj = type == typeof(string) ? null : Activator.CreateInstance(type);
+
+		return value.Equals(valObj);
+	}
+
+	private static bool IsRefTypeDefaultValue(object value)
+	{
+		return value is null;
 	}
 }

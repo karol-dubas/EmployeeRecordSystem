@@ -17,7 +17,7 @@ namespace EmployeeRecordSystem.Server.Services;
 
 public interface IEmployeeService
 {
-	EmployeeDeteilsDto GetDetails(Guid employeeId);
+	EmployeeDetailsDto GetDetails(Guid employeeId);
 	List<EmployeeInGroupDto> GetAll(EmployeeQuery query);
 	void Edit(Guid employeeId, EditEmployeeRequest request);
 	void ChangeHourlyPay(Guid employeeId, ChangeEmployeeHourlyPayRequest request);
@@ -64,7 +64,7 @@ public class EmployeeService : BaseService, IEmployeeService
 		return map;
 	}
 
-	public EmployeeDeteilsDto GetDetails(Guid employeeId)
+	public EmployeeDetailsDto GetDetails(Guid employeeId)
 	{
 		bool isAuthorized = _authorizationService.IsUserOwnResource(employeeId) ||
 		                    _authorizationService.IsAdmin();
@@ -82,7 +82,7 @@ public class EmployeeService : BaseService, IEmployeeService
 
 		employee.Role = GetEmployeeRole(employee);
 
-		return Mapper.Map<EmployeeDeteilsDto>(employee);
+		return Mapper.Map<EmployeeDetailsDto>(employee);
 	}
 
 	public void Edit(Guid employeeId, EditEmployeeRequest request)
@@ -178,25 +178,12 @@ public class EmployeeService : BaseService, IEmployeeService
 		SaveChanges();
 	}
 
-	private (IQueryable<BalanceLog>, int totalItemsCount) ApplyBalanceLogsQuery(
+	private static (IQueryable<BalanceLog>, int totalItemsCount) ApplyBalanceLogsQuery(
 		BalanceLogQuery query,
 		IQueryable<BalanceLog> queryable)
 	{
 		if (!string.IsNullOrEmpty(query.SortBy))
-		{
-			var columnsSelector = new Dictionary<string, Expression<Func<BalanceLog, object>>>
-			{
-				{ nameof(BalanceLog.CreatedAt), bl => bl.CreatedAt },
-				{ nameof(BalanceLog.BalanceAfter), bl => bl.BalanceAfter > bl.BalanceBefore }
-			};
-
-			var selectedColumn = columnsSelector[query.SortBy];
-
-			if (query.SortDirection == SortDirection.Ascending.ToDescriptionString())
-				queryable = queryable.OrderBy(selectedColumn);
-			else if (query.SortDirection == SortDirection.Descending.ToDescriptionString())
-				queryable = queryable.OrderByDescending(selectedColumn);
-		}
+			queryable = SortBalanceLogs(query, queryable);
 
 		int totalItemsCount = queryable.Count();
 
@@ -205,6 +192,24 @@ public class EmployeeService : BaseService, IEmployeeService
 			.Take(query.PageSize);
 
 		return (queryable, totalItemsCount);
+	}
+
+	private static IQueryable<BalanceLog> SortBalanceLogs(BalanceLogQuery query, IQueryable<BalanceLog> queryable)
+	{
+		var columnsSelector = new Dictionary<string, Expression<Func<BalanceLog, object>>>
+		{
+			{ nameof(BalanceLog.CreatedAt), bl => bl.CreatedAt },
+			{ nameof(BalanceLog.BalanceAfter), bl => bl.BalanceAfter > bl.BalanceBefore }
+		};
+
+		var selectedColumn = columnsSelector[query.SortBy];
+
+		if (query.SortDirection == SortDirection.Ascending.ToDescriptionString())
+			queryable = queryable.OrderBy(selectedColumn);
+		else if (query.SortDirection == SortDirection.Descending.ToDescriptionString())
+			queryable = queryable.OrderByDescending(selectedColumn);
+		
+		return queryable;
 	}
 
 	private static IQueryable<Employee> LimitData(IQueryable<Employee> queryable)
@@ -261,7 +266,7 @@ public class EmployeeService : BaseService, IEmployeeService
 		DbContext.BalanceLogs.Add(balanceLog);
 	}
 
-	private IQueryable<Employee> ApplyGetAllFilter(EmployeeQuery query, IQueryable<Employee> queryable)
+	private static IQueryable<Employee> ApplyGetAllFilter(EmployeeQuery query, IQueryable<Employee> queryable)
 	{
 		if (query.WithoutGroup)
 		{

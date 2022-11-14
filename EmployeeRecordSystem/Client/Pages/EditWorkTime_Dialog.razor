@@ -62,8 +62,8 @@
         var selectedIds = selectedEmployees.Select(se => se.Id).ToList();
         request.EmployeeIds.AddRange(selectedIds);
 
-        request.WorkTime = timeInput is null ? TimeSpan.Zero : timeInput.Value;
-        request.WorkTimeOperation = workTimeOperationChecked == true ? WorkTimeOperations.Add : WorkTimeOperations.Subtract;
+        request.WorkTime = timeInput ?? TimeSpan.Zero;
+        request.WorkTimeOperation = workTimeOperationChecked ? WorkTimeOperations.Add : WorkTimeOperations.Subtract;
 
         MudDialog.Close(request);
     }

@@ -19,7 +19,7 @@ public class ChangeEmployeesWorkTimeRequestValidator : AbstractValidator<ChangeE
 		RuleFor(e => e.EmployeeIds)
 			.Must(p => p.Count > 0)
 			.WithMessage($"{nameof(ChangeEmployeesWorkTimeRequest.EmployeeIds)}" +
-			             $" list should contain at least one element");
+			             " list should contain at least one element");
 		
 		RuleFor(e => e.EmployeeIds)
 			.Custom((value, context) =>

@@ -3,25 +3,24 @@ using EmployeeRecordSystem.Data.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace EmployeeRecordSystem.Data.EntityConfigurations
+namespace EmployeeRecordSystem.Data.EntityConfigurations;
+
+public class RequestStatusTypeEntityTypeConfiguration : IEntityTypeConfiguration<WithdrawalRequestStatusType>
 {
-    public class RequestStatusTypeEntityTypeConfiguration : IEntityTypeConfiguration<WithdrawalRequestStatusType>
+    public void Configure(EntityTypeBuilder<WithdrawalRequestStatusType> builder)
     {
-        public void Configure(EntityTypeBuilder<WithdrawalRequestStatusType> builder)
-        {
-            builder.ToTable("request-status-types");
+        builder.ToTable("request-status-types");
 
-            builder.HasKey(st => st.Code);
+        builder.HasKey(st => st.Code);
 
-            builder.Property(st => st.Code)
-                .ValueGeneratedNever()
-                .IsRequired();
+        builder.Property(st => st.Code)
+            .ValueGeneratedNever()
+            .IsRequired();
 
-            builder.Property(st => st.Name)
-                .HasMaxLength(50)
-                .IsRequired();
+        builder.Property(st => st.Name)
+            .HasMaxLength(50)
+            .IsRequired();
 
-            builder.HasData(Enumeration.GetAll<WithdrawalRequestStatusType>().ToArray());
-        }
+        builder.HasData(Enumeration.GetAll<WithdrawalRequestStatusType>().ToArray());
     }
 }

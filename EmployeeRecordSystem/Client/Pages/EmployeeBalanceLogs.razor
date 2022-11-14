@@ -38,7 +38,7 @@
 
     MudTable<BalanceLogDto> table;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         CreateBreadcrumbs();
     }
@@ -71,7 +71,7 @@
             .Build();
     }
 
-    string GetOperationType(BalanceLogDto dto) => dto switch
+    static string GetOperationType(BalanceLogDto dto) => dto switch
     {
         _ when (dto.BalanceBefore > dto.BalanceAfter) => "wypłata",
         _ when (dto.BalanceAfter > dto.BalanceBefore) => "należność",

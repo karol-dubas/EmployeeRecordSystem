@@ -6,27 +6,26 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EmployeeRecordSystem.Server.Services
+namespace EmployeeRecordSystem.Server.Services;
+
+public abstract class BaseService
 {
-    public abstract class BaseService
+    protected readonly ApplicationDbContext DbContext;
+    protected readonly IMapper Mapper;
+
+    protected BaseService(ApplicationDbContext dbContext, IMapper mapper)
     {
-        protected readonly ApplicationDbContext DbContext;
-        protected readonly IMapper Mapper;
+        DbContext = dbContext;
+        Mapper = mapper;
+    }
 
-        protected BaseService(ApplicationDbContext dbContext, IMapper mapper)
-        {
-            DbContext = dbContext;
-            Mapper = mapper;
-        }
+    protected void SaveChanges()
+    {
+        DbContext.SaveChanges();
+    }
 
-        protected void SaveChanges()
-        {
-            DbContext.SaveChanges();
-        }
-
-        protected async Task SaveChangesAsync()
-        {
-            await DbContext.SaveChangesAsync();
-        }
+    protected async Task SaveChangesAsync()
+    {
+        await DbContext.SaveChangesAsync();
     }
 }
