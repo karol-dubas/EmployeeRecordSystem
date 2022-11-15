@@ -6,6 +6,8 @@ using EmployeeRecordSystem.Server.Installers.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.WebHost.UseUrls("http://localhost:5200/");
+
 // Find and add all services to the container.
 var installers = typeof(Program)
 	.Assembly
@@ -27,6 +29,8 @@ var databaseSeeder = app.Services
 await databaseSeeder
 	.Migrate()
 	.SeedAsync();
+
+
 
 if (app.Environment.IsDevelopment())
 {
