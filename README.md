@@ -23,7 +23,7 @@ The application is available at [Azure](https://employee-record-system.azurewebs
 - MudBlazor - Material Design component framework
 
 ## Database diagram
-![db_diagram](https://user-images.githubusercontent.com/70332407/201782777-edcefc6f-da26-4f74-8764-44a85933e09d.png)
+![db_diagram](https://user-images.githubusercontent.com/70332407/202138204-ba1574d2-2924-49d3-b817-95b0a7fa26f5.png)
 
 ## Status
 Not finished yet, still in progress.
