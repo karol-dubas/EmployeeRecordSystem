@@ -1,6 +1,7 @@
 ﻿@page "/employee/balance-logs/{employeeId:guid}"
 @inject EmployeeHttpService _employeeHttpService
 @inject BreadcrumbStateContainer _breadcrumbs
+@inject BreadcrumbBuilder _breadcrumbBuilder
 
 <MudTable @ref="table"
           ServerData="@(new Func<TableState, Task<TableData<BalanceLogDto>>>(GetBalanceLogs))"
@@ -64,7 +65,7 @@
 
     void CreateBreadcrumbs()
     {
-        _breadcrumbs.Items = new BreadcrumbBuilder()
+        _breadcrumbs.Items = _breadcrumbBuilder
             .AddHome()
             .AddEmployeeDetails()
             .AddEmployeeBalanceLogs()

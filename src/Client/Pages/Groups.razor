@@ -3,6 +3,7 @@
 @inject EmployeeHttpService _employeeHttpService
 @inject GroupHttpService _groupHttpService;
 @inject BreadcrumbStateContainer _breadcrumbs
+@inject BreadcrumbBuilder _breadcrumbBuilder
 @inject NavigationManager _nav
 @inject IDialogService _dialogService
 @inject ISnackbar _snackbar
@@ -212,7 +213,7 @@
 
     private void CreateBreadcrumbs()
     {
-        _breadcrumbs.Items = new BreadcrumbBuilder()
+        _breadcrumbs.Items = _breadcrumbBuilder
             .AddHome()
             .AddGroups()
             .Build();

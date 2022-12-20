@@ -1,5 +1,6 @@
 ﻿@page "/"
 @inject BreadcrumbStateContainer _breadcrumbs
+@inject BreadcrumbBuilder _breadcrumbBuilder
 
 @code {
     protected override void OnInitialized()
@@ -9,7 +10,7 @@
 
     void CreateBreadcrumbs()
     {
-        _breadcrumbs.Items = new BreadcrumbBuilder()
+        _breadcrumbs.Items = _breadcrumbBuilder
             .AddHome()
             .Build();
     }

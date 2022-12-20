@@ -2,6 +2,7 @@
 @inject WithdrawalRequestHttpService _withdrawalRequestHttpService
 @inject NavigationManager _nav
 @inject BreadcrumbStateContainer _breadcrumbs
+@inject BreadcrumbBuilder _breadcrumbBuilder
 @inject ISnackbar _snackbar
 @attribute [Authorize(Roles = Roles.Admin)]
 
@@ -54,7 +55,7 @@
 
     private void CreateBreadcrumbs()
     {
-        _breadcrumbs.Items = new BreadcrumbBuilder()
+        _breadcrumbs.Items = _breadcrumbBuilder
             .AddHome()
             .AddPendingWithdrawalRequests()
             .Build();

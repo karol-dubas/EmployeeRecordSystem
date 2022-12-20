@@ -3,6 +3,7 @@
 @inject EmployeeHttpService _employeeHttpService
 @inject IDialogService _dialogService
 @inject BreadcrumbStateContainer _breadcrumbs
+@inject BreadcrumbBuilder _breadcrumbBuilder
 @inject ISnackbar _snackbar
 
 <div class="d-flex justify-end">
@@ -50,7 +51,7 @@
 
     void CreateBreadcrumbs()
     {
-        _breadcrumbs.Items = new BreadcrumbBuilder()
+        _breadcrumbs.Items = _breadcrumbBuilder
             .AddHome()
             .AddEmployeeDetails()
             .AddEmployeeWithdrawalRequests()

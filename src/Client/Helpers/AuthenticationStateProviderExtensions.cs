@@ -15,18 +15,18 @@ public static class AuthenticationStateProviderExtensions
     {
         var user = (await authenticationStateProvider.GetAuthenticationStateAsync()).User;
 
-        if (!user.Identity.IsAuthenticated)
+        if (user.Identity is { IsAuthenticated: false })
             return default;
             
         string userId =  user.FindFirst(c => c.Type == "sub")?.Value;
-        return Guid.Parse(userId);
+        return Guid.Parse(userId ?? throw new InvalidOperationException("userId is null"));
     }
 
     public static async Task<bool> IsUserInRole(this AuthenticationStateProvider authenticationStateProvider, string role)
     {
         var user = (await authenticationStateProvider.GetAuthenticationStateAsync()).User;
 
-        if (!user.Identity.IsAuthenticated)
+        if (user.Identity is { IsAuthenticated: false })
             return false;
             
         string claimsRole = user.FindFirst(c => c.Type == "role")?.Value;
