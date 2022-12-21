@@ -8,6 +8,7 @@
 @inject BreadcrumbBuilder _breadcrumbBuilder
 @inject IDialogService _dialogService
 @inject ISnackbar _snackbar
+@using Severity = MudBlazor.Severity
 
 @if (employee is null)
 {
@@ -19,22 +20,24 @@ else
 {
     <div class="pa-4">
         <MudStack Spacing="3">
-            <MudTextField @bind-Value="employee.FirstName" Label="Imię" Disabled="!editMode" Variant="Variant.Text"></MudTextField>
-            <MudTextField @bind-Value="employee.LastName" Label="Nazwisko" Disabled="!editMode" Variant="Variant.Text"></MudTextField>
-            <MudTextField @bind-Value="employee.BankAccountNumber" Label="Numer konta bankowego" Disabled="!editMode" Variant="Variant.Text"></MudTextField>
-            <MudTextField @bind-Value="employee.Note" Label="Notatka" Disabled="!editMode" Variant="Variant.Text" Lines="2"></MudTextField>
-
+            <MudForm Model="employee" @ref="form" Validation="employeeValidator.ValidateValue">
+                <MudTextField @bind-Value="employee.FirstName" For="() => employee.FirstName" Label="Imię" Disabled="!editMode" Variant="Variant.Text"></MudTextField>
+                <MudTextField @bind-Value="employee.LastName" For="() => employee.LastName" Label="Nazwisko" Disabled="!editMode" Variant="Variant.Text"></MudTextField>
+                <MudTextField @bind-Value="employee.BankAccountNumber" For="() => employee.BankAccountNumber" Label="Numer konta bankowego" Disabled="!editMode" Variant="Variant.Text"></MudTextField>
+                <MudTextField @bind-Value="employee.Note" For="() => employee.Note" Label="Notatka" Disabled="!editMode" Variant="Variant.Text" Lines="2"></MudTextField>
+            </MudForm>
+            
             <MudSelect ToStringFunc="roleToString" T="RoleDto" @bind-Value="selectedRole" Label="Rola" Disabled="!editMode" AdornmentIcon="@editIcon">
                 @foreach (var role in roles)
                 {
-                    <MudSelectItem Value="@role" />
+                    <MudSelectItem Value="@role"/>
                 }
             </MudSelect>
             <MudStack Row="true" AlignItems="AlignItems.End">
                 <MudSelect ToStringFunc="groupToString" T="GroupDto" @bind-Value="selectedGroup" Label="Grupa" Disabled="!editMode" AdornmentIcon="@editIcon">
                     @foreach (var group in groups)
                     {
-                        <MudSelectItem Value="@group" />
+                        <MudSelectItem Value="@group"/>
                     }
                 </MudSelect>
                 <MudButton Variant="Variant.Filled" Size="Size.Small" @onclick="RemoveFromGroup" Class="@visibleOnEdit">Usuń z grupy</MudButton>
@@ -65,7 +68,7 @@ else
                     <MudStack Row="true">
                         <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Success" @onclick="Save">Zapisz</MudButton>
                         <MudButton Variant="Variant.Filled" Size="Size.Small" @onclick="() => editMode = false">Anuluj</MudButton>
-                        <MudSpacer />
+                        <MudSpacer/>
                         <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Error" @onclick="DeleteAccount">Usuń konto</MudButton>
                     </MudStack>
                 }
@@ -87,7 +90,9 @@ else
     RoleDto selectedRole;
     Func<GroupDto, string> groupToString = g => g == null ? "Brak grupy" : g.Name;
     Func<RoleDto, string> roleToString = g => g.Name;
-
+    MudForm form;
+    EmployeeDetailsDtoValidator employeeValidator = new();
+    
     protected override async Task OnInitializedAsync()
     {
         CreateBreadcrumbs();
@@ -149,6 +154,10 @@ else
 
         await ChangeHourlyPay();
 
+        await form.Validate();
+        if (!form.IsValid)
+            return;
+        
         var request = new EditEmployeeRequest()
         {
             BankAccountNumber = employee.BankAccountNumber,

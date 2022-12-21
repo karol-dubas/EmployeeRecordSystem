@@ -1,6 +1,7 @@
-﻿<MudDialog>
+﻿@using EmployeeRecordSystem.Client.Validators
+<MudDialog>
     <DialogContent>
-        <MudTextField T="string" Label="Nazwa" @bind-Value="name"></MudTextField>
+        <MudTextField T="string" Label="Nazwa" Validation="@nameValidator.Validation" @bind-Value="name"></MudTextField>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Anuluj</MudButton>
@@ -15,4 +16,8 @@
 
     void Cancel() => MudDialog.Cancel();
     void Submit() => MudDialog.Close(name);
+    
+    FluentValueValidator<string> nameValidator = new(x => x
+        .NotEmpty()
+        .MaximumLength(50));
 }

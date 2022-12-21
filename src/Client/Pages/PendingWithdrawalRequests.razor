@@ -5,6 +5,7 @@
 @inject BreadcrumbBuilder _breadcrumbBuilder
 @inject ISnackbar _snackbar
 @attribute [Authorize(Roles = Roles.Admin)]
+@using Severity = MudBlazor.Severity
 
 <MudTable @ref="table"
           ServerData="@(new Func<TableState, Task<TableData<WithdrawalRequestDto>>>(GetPendingWithdrawalRequestsAsync))"

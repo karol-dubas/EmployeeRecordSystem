@@ -26,8 +26,8 @@
                 <MudStack Row="true" Spacing="3" Class="align-center">
                     <span>Odejmij</span>
                     <MudSwitch @bind-Checked="workTimeOperationChecked"
-                               ThumbIcon="@(workTimeOperationChecked == true ? Icons.Material.Filled.Add : Icons.Material.Filled.Remove)"
-                               ThumbIconColor="@(workTimeOperationChecked == true ? Color.Success : Color.Error)">
+                               ThumbIcon="@(workTimeOperationChecked ? Icons.Material.Filled.Add : Icons.Material.Filled.Remove)"
+                               ThumbIconColor="@(workTimeOperationChecked ? Color.Success : Color.Error)">
                     </MudSwitch>
                     <span style="margin: -20px;">Dodaj</span>
                 </MudStack>
