@@ -1,6 +1,30 @@
 ﻿@page "/authentication/{action}"
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-<RemoteAuthenticatorView Action="@Action" />
+<RemoteAuthenticatorView Action="@Action">
+    <LoggingIn>
+        <MudPaper Class="d-flex justify-center" Elevation="0">
+            <MudProgressCircular Indeterminate="true" />
+        </MudPaper>
+    </LoggingIn>
+    <Registering>
+        <MudPaper Class="d-flex justify-center" Elevation="0">
+            <MudProgressCircular Indeterminate="true" />
+        </MudPaper>
+    </Registering>
+    <UserProfile>
+        <MudPaper Class="d-flex justify-center" Elevation="0">
+            <MudProgressCircular Indeterminate="true" />
+        </MudPaper> 
+    </UserProfile>
+    <CompletingLoggingIn>
+        <MudPaper Class="d-flex justify-center" Elevation="0">
+            <MudProgressCircular Indeterminate="true" />
+        </MudPaper>
+    </CompletingLoggingIn>
+    <LogOut>
+        <span>Wylogowano</span>
+    </LogOut>
+</RemoteAuthenticatorView>
 
 @* _Imports.razor has '@attribute [Authorize]', so this page must have this attribute for proper redirection *@
 @attribute [AllowAnonymous]

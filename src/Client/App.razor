@@ -2,6 +2,11 @@
     <Router AppAssembly="@typeof(App).Assembly">
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+                <Authorizing>
+                    <MudPaper Class="d-flex justify-center" Elevation="0">
+                        <MudProgressCircular Indeterminate="true"/>
+                    </MudPaper>
+                </Authorizing>
                 <NotAuthorized>
                     @*Check route authorization ex. razor component with @attribute [Authorize(Roles="Administrator")]*@
                     @if (context.User.Identity?.IsAuthenticated != true)
