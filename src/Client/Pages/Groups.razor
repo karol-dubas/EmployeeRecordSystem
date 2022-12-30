@@ -23,9 +23,6 @@
         <MudTooltip Text="Zwiń/rozwiń">
             <MudIconButton Icon="@Icons.Filled.ExpandMore" Color="Color.Primary" @onclick="ToggleExpand" />
         </MudTooltip>
-        <MudTooltip Text="@PageNames.MyGroup">
-            <MudIconButton Icon="@MyIcons.MyGroup" Color="Color.Primary" @onclick="NavigateToEmployeeGroup" />
-        </MudTooltip>
         <MudSpacer />
         <AuthorizeView Roles="@Roles.Admin">
             <MudTooltip Text="Dodaj nową grupę">
@@ -187,7 +184,8 @@
 
 @code {
     [Parameter] public Guid GroupId { get; set; }
-
+    bool isMyGroupView => GroupId != Guid.Empty;
+    
     List<EmployeeInGroupDto> employeesInGroup = new();
     List<EmployeeInGroupDto> emptyGroups = new();
     List<GroupDto> allGroups = new();
@@ -206,10 +204,20 @@
         Selector = s => s.Group.Id
     };
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         CreateBreadcrumbs();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
         await GetItems();
+    }
+
+    async Task GetItems()
+    {
+        await GetGroups();
+        await GetEmployeesInGroups();
     }
 
     private void CreateBreadcrumbs()
@@ -221,29 +229,44 @@
     }
 
     bool IsContainerForEmployeesWithNoGroup(Guid groupId) => groupId == Guid.Empty;
-
-    /// <summary>
-    ///     Get all groups & employees
-    /// </summary>
-    async Task GetItems()
+    
+    async Task GetGroups()
     {
-        this.allGroups = (await _groupHttpService.GetAllAsync()).DeserializedContent;
-        var employees = (await _employeeHttpService.GetAllAsync()).DeserializedContent;
+        allGroups = (await _groupHttpService.GetAllAsync()).DeserializedContent;
+
+        if (isMyGroupView)
+        {
+            emptyGroups.Clear();
+            return;
+        }
+
+        emptyGroups = allGroups
+            .Where(g => g.IsEmpty)
+            .Select(g => new EmployeeInGroupDto
+            {
+                Group = g
+            })
+            .ToList();
+    }
+
+    async Task GetEmployeesInGroups()
+    {
+        var query = new EmployeeQuery();
+
+        if (isMyGroupView)
+            query.GroupId = GroupId;
+
+        var employees = (await _employeeHttpService.GetAllAsync(query)).DeserializedContent;
 
         // Add employees without group to a special container
         foreach (var employee in employees.Where(e => e.Group is null))
-            employee.Group = new GroupDto { Id = Guid.Empty };
-
-        // Add empty groups
-        var emptyGroups = allGroups.Where(g => g.IsEmpty)
-            .ToList()
-            .Select(g => new EmployeeInGroupDto { Group = g })
-            .ToList();
+            employee.Group = new GroupDto
+            {
+                Id = Guid.Empty
+            };
 
         ChangeRoleDisplayValue(employees);
-
         this.employeesInGroup = employees;
-        this.emptyGroups = emptyGroups;
     }
 
     void ChangeRoleDisplayValue(List<EmployeeInGroupDto> employees)
@@ -390,11 +413,6 @@
     }
 
     void ToggleExpand()
-    {
-        // TODO: add implementation
-    }
-
-    void NavigateToEmployeeGroup()
     {
         // TODO: add implementation
     }
