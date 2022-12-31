@@ -36,11 +36,19 @@ public class WithdrawalRequestService : BaseService, IWithdrawalRequestService
 
 	public WithdrawalRequestDto Create(Guid employeeId, CreateWithdrawalRequestRequest request)
 	{
-		var employee = DbContext.Users.Find(employeeId);
+		var employee = DbContext.Users
+			.Include(e => e.EmployeeBilling)
+			.SingleOrDefault(e => e.Id == employeeId);
 
 		if (employee is null)
 			throw new NotFoundException(nameof(employeeId), "Employee");
 
+		decimal balanceAfter = employee.EmployeeBilling.Balance -= request.Amount;
+
+		if (balanceAfter < 0)
+			throw new BadRequestException("User balance",
+				"The withdrawal amount must be equal to or greater than the balance");
+		
 		var withdrawalRequest = new WithdrawalRequest
 		{
 			Employee = employee,
@@ -113,13 +121,15 @@ public class WithdrawalRequestService : BaseService, IWithdrawalRequestService
 
 	private static void DenyWithdrawalRequest(WithdrawalRequest withdrawalRequest)
 	{
+		withdrawalRequest.Employee.EmployeeBilling.Balance += withdrawalRequest.Amount;
 		withdrawalRequest.WithdrawalRequestStatusTypeCode = WithdrawalRequestStatusTypeCodes.Denied;
 	}
 
 	private void AcceptWithdrawalRequest(WithdrawalRequest withdrawalRequest)
 	{
-		(decimal balanceBefore, decimal balanceAfter) = SubtractUsersBalance(withdrawalRequest);
-
+		decimal balanceAfter = withdrawalRequest.Employee.EmployeeBilling.Balance;
+		decimal balanceBefore = balanceAfter + withdrawalRequest.Amount;
+			
 		var balanceLog = CreateBalanceLog(withdrawalRequest, balanceBefore, balanceAfter);
 		DbContext.BalanceLogs.Add(balanceLog);
 
@@ -138,18 +148,6 @@ public class WithdrawalRequestService : BaseService, IWithdrawalRequestService
 			CreatedAt = DateTimeOffset.Now,
 			Employee = withdrawalRequest.Employee
 		};
-	}
-
-	private static (decimal, decimal) SubtractUsersBalance(WithdrawalRequest withdrawalRequest)
-	{
-		decimal balanceBefore = withdrawalRequest.Employee.EmployeeBilling.Balance;
-		decimal balanceAfter = withdrawalRequest.Employee.EmployeeBilling.Balance -= withdrawalRequest.Amount;
-
-		if (balanceAfter < 0)
-			throw new BadRequestException("User balance",
-				"The withdrawal amount must be equal to or greater than the balance");
-
-		return (balanceBefore, balanceAfter);
 	}
 
 	private static (IQueryable<WithdrawalRequest> queryable, int totalItemsCount) ApplyGetAllQuery(

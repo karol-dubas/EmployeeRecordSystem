@@ -40,8 +40,10 @@ public class IntegrationTest
 			LastName = "test",
 			UserName = "test@test.com",
 			PasswordHash = "1",
-			SecurityStamp = "1"
+			SecurityStamp = "1",
 		};
+
+		newEmployee.EmployeeBilling.Balance = 10;
 			
 		DbContext.Users.Add(newEmployee);
 		DbContext.SaveChanges();

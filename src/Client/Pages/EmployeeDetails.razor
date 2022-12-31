@@ -53,6 +53,8 @@ else
                 <MudButton Variant="Variant.Filled" Size="Size.Small" @onclick="() => _nav.NavigateToEmployeeBalanceLogs(EmployeeId)">Historia salda</MudButton>
                 <MudButton Variant="Variant.Filled" Size="Size.Small" @onclick="() => _nav.NavigateToEmployeeWithdrawalRequests(EmployeeId)">Wypłaty</MudButton>
             </MudStack>
+            
+            <MudTextField @bind-Value="employee.EmployeeBilling.LockedBalance" Label="Saldo zablokowane" Disabled="true" Variant="Variant.Text"></MudTextField>
 
             <div class="mt-5">
                 @if (!editMode)

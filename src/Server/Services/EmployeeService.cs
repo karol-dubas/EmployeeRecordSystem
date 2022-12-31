@@ -73,16 +73,22 @@ public class EmployeeService : BaseService, IEmployeeService
 
 		var employee = DbContext.Users
 			.AsNoTracking()
-			.Include(u => u.Group)
-			.Include(u => u.EmployeeBilling)
+			.Include(e => e.Group)
+			.Include(e => e.EmployeeBilling)
+			.Include(e => e.WithdrawalRequests)
 			.SingleOrDefault(u => u.Id == employeeId);
 
 		if (employee is null)
 			throw new NotFoundException(nameof(employeeId), "Employee");
 
 		employee.Role = GetEmployeeRole(employee);
-
-		return Mapper.Map<EmployeeDetailsDto>(employee);
+		var dto = Mapper.Map<EmployeeDetailsDto>(employee);
+		dto.EmployeeBilling.LockedBalance =
+			employee.WithdrawalRequests
+				.Where(wr => wr.WithdrawalRequestStatusTypeCode == WithdrawalRequestStatusTypeCodes.Pending)
+				.Sum(wr => wr.Amount);
+		
+		return dto;
 	}
 
 	public void Edit(Guid employeeId, EditEmployeeRequest request)
