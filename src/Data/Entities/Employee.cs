@@ -30,4 +30,6 @@ public class Employee : IdentityUser<Guid>
     public virtual List<WithdrawalRequest> WithdrawalRequests { get; set; } = new();
 
     public virtual List<BalanceLog> BalanceLogs { get; set; } = new();
+    
+    public virtual List<Announcement> Announcements { get; set; } = new();
 }

@@ -60,7 +60,7 @@ public class GroupHttpServiceTests : IntegrationTest
 	}
 
 	[Fact]
-	public async Task CreateAsync_ForValidInvalidRequest_ReturnsBadRequest()
+	public async Task CreateAsync_ForInvalidRequest_ReturnsBadRequest()
 	{
 		// Arrange
 		var request = new CreateGroupRequest { Name = "" };

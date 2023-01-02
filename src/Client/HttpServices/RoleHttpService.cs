@@ -22,12 +22,12 @@ public class RoleHttpService
     public async Task<HttpResponse<List<RoleDto>>> GetAllAsync()
     {
         return (await _httpClient.GetAsync(_basePath))
-            .DeserializeContent<List<RoleDto>>();
+            .ToHttpResponseWithContent<List<RoleDto>>();
     }
 
     public async Task<HttpResponse> ChangeEmployeeRoleAsync(Guid employeeId, Guid newRoleId)
     {
         return (await _httpClient.PatchAsync($"{_basePath}/{newRoleId}/employee/{employeeId}", null))
-            .DeserializeContent();
+            .ToHttpResponse();
     }
 }

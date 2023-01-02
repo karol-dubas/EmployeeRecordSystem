@@ -17,7 +17,9 @@ public class ApplicationDbContext : ApiAuthorizationDbContext<Employee, Applicat
 	public virtual DbSet<BalanceLog> BalanceLogs { get; set; }
 	public virtual DbSet<WithdrawalRequest> WithdrawalRequests { get; set; }
 	public virtual DbSet<WithdrawalRequestStatusType> WithdrawalRequestStatuses { get; set; }
-
+	
+	public virtual DbSet<Announcement> Announcements { get; set; }
+	
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
 		modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);

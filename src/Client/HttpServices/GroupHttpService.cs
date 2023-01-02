@@ -19,7 +19,7 @@ public class GroupHttpService
 	public async Task<HttpResponse<GroupDto>> CreateAsync(CreateGroupRequest request)
 	{
 		return (await _httpClient.PostAsJsonAsync(_basePath, request))
-			.DeserializeContent<GroupDto>();
+			.ToHttpResponseWithContent<GroupDto>();
 	}
 
 	public async Task<HttpResponse<List<GroupDto>>> GetAllAsync(GroupQuery query = null)
@@ -30,30 +30,30 @@ public class GroupHttpService
 			path = path.AddHttpQuery(query);
 
 		return (await _httpClient.GetAsync(path))
-			.DeserializeContent<List<GroupDto>>();
+			.ToHttpResponseWithContent<List<GroupDto>>();
 	}
 
 	public async Task<HttpResponse<GroupDto>> RenameAsync(Guid groupId, RenameGroupRequest request)
 	{
 		return (await _httpClient.PatchAsync($"{_basePath}/{groupId}", request.ToHttpContent()))
-			.DeserializeContent<GroupDto>();
+			.ToHttpResponseWithContent<GroupDto>();
 	}
 
 	public async Task<HttpResponse> AssignEmployeeToGroupAsync(Guid groupId, Guid employeeId)
 	{
 		return (await _httpClient.PatchAsync($"{_basePath}/{groupId}/employee/{employeeId}", null))
-			.DeserializeContent();
+			.ToHttpResponse();
 	}
 
 	public async Task<HttpResponse> RemoveEmployeeFromGroupAsync(Guid employeeId)
 	{
 		return (await _httpClient.DeleteAsync($"{_basePath}/employee/{employeeId}"))
-			.DeserializeContent();
+			.ToHttpResponse();
 	}
 
 	public async Task<HttpResponse> DeleteAsync(Guid groupId)
 	{
 		return (await _httpClient.DeleteAsync($"{_basePath}/{groupId}"))
-			.DeserializeContent();
+			.ToHttpResponse();
 	}
 }

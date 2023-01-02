@@ -35,6 +35,7 @@ public class EmployeeEntityConfiguration : IEntityTypeConfiguration<Employee>
         builder.Ignore(c => c.FullName);
 
         builder.Property(c => c.UserName).IsRequired();
+        
         builder.Property(c => c.PasswordHash).IsRequired();
 
         builder.HasOne(c => c.Group)
@@ -56,5 +57,10 @@ public class EmployeeEntityConfiguration : IEntityTypeConfiguration<Employee>
             .WithOne(c => c.Employee)
             .HasForeignKey(c => c.EmployeeId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(c => c.Announcements)
+            .WithOne(c => c.CreatedBy)
+            .HasForeignKey(c => c.CreatedById)
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }

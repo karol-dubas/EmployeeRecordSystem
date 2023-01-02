@@ -29,12 +29,12 @@ public static class HttpExtensions
 		return new StringContent(serializedRequest, Encoding.UTF8, "application/json-patch+json");
 	}
 
-	public static HttpResponse<TContent> DeserializeContent<TContent>(this HttpResponseMessage message)
+	public static HttpResponse<TContent> ToHttpResponseWithContent<TContent>(this HttpResponseMessage message)
 	{
 		return new HttpResponse<TContent>(message);
 	}
 
-	public static HttpResponse DeserializeContent(this HttpResponseMessage message)
+	public static HttpResponse ToHttpResponse(this HttpResponseMessage message)
 	{
 		return new HttpResponse(message);
 	}

@@ -19,7 +19,7 @@ public class EmployeeHttpService
 	public async Task<HttpResponse<EmployeeDetailsDto>> GetDetailsAsync(Guid employeeId)
 	{
 		return (await _httpClient.GetAsync($"{_basePath}/{employeeId}"))
-			.DeserializeContent<EmployeeDetailsDto>();
+			.ToHttpResponseWithContent<EmployeeDetailsDto>();
 	}
 
 	public async Task<HttpResponse<List<EmployeeInGroupDto>>> GetAllAsync(EmployeeQuery query = null)
@@ -30,7 +30,7 @@ public class EmployeeHttpService
 			path = path.AddHttpQuery(query);
 
 		return (await _httpClient.GetAsync(path))
-			.DeserializeContent<List<EmployeeInGroupDto>>();
+			.ToHttpResponseWithContent<List<EmployeeInGroupDto>>();
 	}
 
 	public async Task<HttpResponse<PagedContent<BalanceLogDto>>> GetBalanceLogsAsync(Guid employeeId, BalanceLogQuery query = null)
@@ -41,30 +41,30 @@ public class EmployeeHttpService
 			path = path.AddHttpQuery(query);
 		
 		return (await _httpClient.GetAsync(path))
-			.DeserializeContent<PagedContent<BalanceLogDto>>();
+			.ToHttpResponseWithContent<PagedContent<BalanceLogDto>>();
 	}
 
 	public async Task<HttpResponse> EditAsync(Guid employeeId, EditEmployeeRequest request)
 	{
 		return (await _httpClient.PutAsJsonAsync($"{_basePath}/{employeeId}", request))
-			.DeserializeContent();
+			.ToHttpResponse();
 	}
 
 	public async Task<HttpResponse> ChangeHourlyPayAsync(Guid employeeId, ChangeEmployeeHourlyPayRequest request)
 	{
 		return (await _httpClient.PatchAsync($"{_basePath}/{employeeId}/hourly-pay", request.ToHttpContent()))
-			.DeserializeContent();
+			.ToHttpResponse();
 	}
 
 	public async Task<HttpResponse> ChangeWorkTimeAsync(ChangeEmployeesWorkTimeRequest request)
 	{
 		return (await _httpClient.PatchAsync($"{_basePath}/work-time", request.ToHttpContent()))
-			.DeserializeContent();
+			.ToHttpResponse();
 	}
 
 	public async Task<HttpResponse> ConvertWorkTimeToBalanceAsync(ConvertTimeRequest request)
 	{
 		return (await _httpClient.PatchAsync($"{_basePath}/work-time/convert", request.ToHttpContent()))
-			.DeserializeContent();
+			.ToHttpResponse();
 	}
 }

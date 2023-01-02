@@ -21,7 +21,7 @@ public class WithdrawalRequestHttpService
 		CreateWithdrawalRequestRequest request)
 	{
 		return (await _httpClient.PostAsJsonAsync($"{_basePath}/{employeeId}", request))
-			.DeserializeContent<WithdrawalRequestDto>();
+			.ToHttpResponseWithContent<WithdrawalRequestDto>();
 	}
 
 	public async Task<HttpResponse<PagedContent<WithdrawalRequestDto>>> GetAllAsync(WithdrawalRequestQuery query = null)
@@ -32,12 +32,12 @@ public class WithdrawalRequestHttpService
 			path = path.AddHttpQuery(query);
 
 		return (await _httpClient.GetAsync(path))
-			.DeserializeContent<PagedContent<WithdrawalRequestDto>>();
+			.ToHttpResponseWithContent<PagedContent<WithdrawalRequestDto>>();
 	}
 
 	public async Task<HttpResponse> ProcessAsync(Guid withdrawalRequestId, ProcessWithdrawalRequestRequest request)
 	{
 		return (await _httpClient.PatchAsync($"{_basePath}/{withdrawalRequestId}", request.ToHttpContent()))
-			.DeserializeContent();
+			.ToHttpResponse();
 	}
 }
