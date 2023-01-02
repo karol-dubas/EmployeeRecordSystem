@@ -98,6 +98,20 @@ public class IntegrationTest
 		
 		return withdrawalRequest;
 	}
+
+	protected Announcement SeedAnnouncement(Guid ownerId)
+	{
+		var announcement = new Announcement()
+		{
+			Title = "test",
+			CreatedById = ownerId
+		};
+
+		DbContext.Announcements.Add(announcement);
+		DbContext.SaveChanges();
+
+		return announcement;
+	}
 	
 	protected static ApplicationDbContext GetDbContext(WebApplicationFactory<Program> factory)
 	{

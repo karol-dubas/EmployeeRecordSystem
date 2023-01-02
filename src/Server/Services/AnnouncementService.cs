@@ -21,12 +21,12 @@ public interface IAnnouncementService
 [ScopedRegistration]
 public class AnnouncementService : BaseService, IAnnouncementService
 {
-	private readonly AuthorizationService _authorizationService;
+	private readonly IAuthorizationService _authorizationService;
 
 	public AnnouncementService(
 		ApplicationDbContext dbContext,
 		IMapper mapper,
-		AuthorizationService authorizationService) : base(dbContext, mapper)
+		IAuthorizationService authorizationService) : base(dbContext, mapper)
 	{
 		_authorizationService = authorizationService;
 	}
