@@ -48,7 +48,10 @@ public class AnnouncementService : BaseService, IAnnouncementService
 
 		queryable = ApplyGetAllFilter(query, queryable);
 
-		var announcements = queryable.ToList();
+		var announcements = queryable
+			.ToList()
+			.OrderByDescending(a => a.CreatedAt);
+		
 		return Mapper.Map<List<AnnouncementDto>>(announcements);
 	}
 

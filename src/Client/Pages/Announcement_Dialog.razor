@@ -1,0 +1,26 @@
+﻿<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Add" Class="mr-3 mb-n1"/>
+            Dodaj ogłoszenie
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudTextField @bind-Value="request.Title" Label="Tytuł" Variant="Variant.Text" Required="true" Counter="25"></MudTextField>
+        <MudTextField @bind-Value="request.Text" Label="Treść" Variant="Variant.Text" Counter="1000" Lines="5"></MudTextField>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Anuluj</MudButton>
+        <MudButton OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public CreateAnnouncementRequest request { get; set; }
+
+    void Cancel() => MudDialog.Cancel();
+    void Submit() => MudDialog.Close(request);
+}

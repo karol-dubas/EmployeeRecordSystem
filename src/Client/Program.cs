@@ -35,6 +35,7 @@ builder.Services.AddScoped<EmployeeHttpService>();
 builder.Services.AddScoped<WithdrawalRequestHttpService>();
 builder.Services.AddScoped<GroupHttpService>();
 builder.Services.AddScoped<RoleHttpService>();
+builder.Services.AddScoped<AnnouncementHttpService>();
 builder.Services.AddSingleton<BreadcrumbStateContainer>();
 builder.Services.AddTransient<BreadcrumbBuilder>();
 

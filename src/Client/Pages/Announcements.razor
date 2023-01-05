@@ -1,0 +1,148 @@
+﻿@page "/"
+@using Severity = MudBlazor.Severity
+@inject BreadcrumbStateContainer _breadcrumbs
+@inject BreadcrumbBuilder _breadcrumbBuilder
+@inject AnnouncementHttpService _announcementHttpService
+@inject IDialogService _dialogService
+@inject ISnackbar _snackbar
+
+<AuthorizeView Roles='@($"{Roles.Admin},{Roles.Supervisor}")'>
+    <MudPaper Elevation="25" Class="mb-8">
+        <MudToolBar>
+            <MudSpacer />
+            <MudTooltip Text="Dodaj nowe ogłoszenie">
+                <MudIconButton Icon="@Icons.Filled.Add" Color="Color.Primary" @onclick="Create" />
+            </MudTooltip>
+        </MudToolBar>
+    </MudPaper>
+</AuthorizeView>
+
+@if (announcements is null)
+{
+    <LoadingCircle/>
+}
+else
+{
+    @foreach (var announcement in announcements)
+    {
+        <MudCard Class="my-3">
+            <MudCardHeader Style="background-color:var(--mud-palette-background)" Class="py-1">
+                <MudText Typo="Typo.h6">@announcement.Title</MudText>
+                <MudSpacer/>
+                <AuthorizeView Roles='@($"{Roles.Admin},{Roles.Supervisor}")'>
+                    <MudTooltip Text="Edytuj ogłoszenie">
+                        <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="() => Edit(announcement)" Color="Color.Primary" Size="Size.Small"/>
+                    </MudTooltip>
+                    <MudTooltip Text="Usuń ogłoszenie">
+                        <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="() => Delete(announcement.Id)" Color="Color.Error" Size="Size.Small"/>
+                    </MudTooltip>
+                </AuthorizeView>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudText>@announcement.Text</MudText>
+            </MudCardContent>
+            <MudCardActions>
+                <div>
+                    <p Typo="Typo.caption">Autor: @announcement.CreatedBy</p>
+                    <p Typo="Typo.caption">Stworzono: @announcement.CreatedAt</p>
+                </div>
+            </MudCardActions>
+        </MudCard>
+    } 
+}
+
+@code {
+    List<AnnouncementDto> announcements;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        CreateBreadcrumbs();
+        await GetAnnouncements();
+    }
+
+    void CreateBreadcrumbs()
+    {
+        _breadcrumbs.Items = _breadcrumbBuilder
+            .AddHome()
+            .Build();
+    }
+
+    async Task GetAnnouncements()
+    {
+        announcements = (await _announcementHttpService.GetAllAsync()).DeserializedContent;
+    }
+
+    async Task Create()
+    {
+        var parameters = new DialogParameters{ ["request"] = new CreateAnnouncementRequest() };
+        var options = new DialogOptions
+        {
+            MaxWidth = MaxWidth.Medium,
+            FullWidth = true
+        };
+        var dialog = _dialogService.Show<Announcement_Dialog>("", parameters, options);
+        var result = await dialog.Result;
+
+        if (result.Cancelled)
+            return;
+
+        var request = result.Data as CreateAnnouncementRequest;
+        var response = await _announcementHttpService.CreateAsync(request);
+
+        if (!response.IsSuccessStatusCode)
+            return;
+
+        await GetAnnouncements();
+        _snackbar.Add("Dodano ogłoszenie", Severity.Success);
+    }
+
+    async Task Edit(AnnouncementDto announcement)
+    {
+        var parameters = new DialogParameters
+        {
+            ["request"] = new CreateAnnouncementRequest()
+            {
+                Text = announcement.Text,
+                Title = announcement.Title
+            }
+        };
+        var options = new DialogOptions
+        {
+            MaxWidth = MaxWidth.Medium,
+            FullWidth = true
+        };
+        var dialog = _dialogService.Show<Announcement_Dialog>("", parameters, options);
+        var result = await dialog.Result;
+
+        if (result.Cancelled)
+            return;
+
+        var request = result.Data as CreateAnnouncementRequest;
+        var response = await _announcementHttpService.UpdateAsync(announcement.Id, request);
+
+        if (!response.IsSuccessStatusCode)
+            return;
+
+        await GetAnnouncements();
+        _snackbar.Add("Edytowano ogłoszenie", Severity.Success);
+    }
+
+    async Task Delete(Guid announcementId)
+    {
+        bool? result = await _dialogService.ShowMessageBox(
+            "Uwaga",
+            "Czy na pewno chcesz usunąć?",
+            "Usuń",
+            cancelText: "Anuluj");
+
+        if (result != true)
+            return;
+        
+        var response = await _announcementHttpService.DeleteAsync(announcementId);
+        if (!response.IsSuccessStatusCode)
+            return;
+        
+        _snackbar.Add("Grupa została usunięta", Severity.Success);
+        await GetAnnouncements();
+    }
+}
