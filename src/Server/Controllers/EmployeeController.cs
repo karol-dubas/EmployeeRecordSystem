@@ -112,4 +112,18 @@ public class EmployeeController : ControllerBase
 		_employeeService.ConvertWorkTimeToBalance(request);
 		return NoContent();
 	}
+
+	/// <summary>
+	///     Delete
+	/// </summary>
+	/// <remarks>
+	///     Authorize: admin
+	/// </remarks>
+	[HttpDelete("{employeeId:guid}")]
+	[Authorize(Roles = Roles.Admin)]
+	public IActionResult Delete([FromRoute] Guid employeeId)
+	{
+		_employeeService.Delete(employeeId);
+		return NoContent();
+	}
 }

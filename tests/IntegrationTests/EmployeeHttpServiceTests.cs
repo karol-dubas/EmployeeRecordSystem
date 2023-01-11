@@ -321,4 +321,32 @@ public class EmployeeHttpServiceTests : IntegrationTest
 		response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 		response.Errors.Should().HaveCount(1);
 	}
+	
+	
+	[Fact]
+	public async Task DeleteAsync_ForValidId_ReturnsNoContent()
+	{
+	    // Arrange
+	    var employee = SeedEmployee();
+	    
+	    // Act
+	    var response = await _sut.DeleteAsync(employee.Id);
+	    
+	    // Assert
+	    response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+	}
+
+	[Fact]
+	public async Task DeleteAsync_ForInvalidId_ReturnsNotFound()
+	{
+		// Arrange
+		var invalidEmployeeId = Guid.NewGuid();
+
+		// Act
+		var response = await _sut.DeleteAsync(invalidEmployeeId);
+
+		// Assert
+		response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+		response.Errors.Should().HaveCount(1);
+	}
 }

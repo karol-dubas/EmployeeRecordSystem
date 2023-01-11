@@ -33,6 +33,7 @@
     {
         userId = await _auth.GetUserIdAsync();
         await Task.Delay(200);
-        groupId = (await _employeeHttpService.GetDetailsAsync(userId)).DeserializedContent.Group.Id;
+        if (userId != default)
+            groupId = (await _employeeHttpService.GetDetailsAsync(userId)).DeserializedContent.Group.Id;
     }
 }

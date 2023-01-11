@@ -248,7 +248,12 @@ else
         if (result == false)
             return;
 
-        // TODO: delete account (Identity redirect?)
+        var response = (await _employeeHttpService.DeleteAsync(EmployeeId));
+
+        if (!response.IsSuccessStatusCode)
+            return;
+
+        _snackbar.Add("Usunięto pracownika", Severity.Success);
     }
 
     async Task RemoveFromGroup()

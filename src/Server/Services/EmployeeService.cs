@@ -2,6 +2,7 @@
 using AutoMapper;
 using EmployeeRecordSystem.Data;
 using EmployeeRecordSystem.Data.Entities;
+using EmployeeRecordSystem.Data.EntityConfigurations;
 using EmployeeRecordSystem.Server.Exceptions;
 using EmployeeRecordSystem.Shared.Constants;
 using EmployeeRecordSystem.Shared.Queries;
@@ -24,6 +25,7 @@ public interface IEmployeeService
 	void ChangeWorkTimes(ChangeEmployeesWorkTimeRequest request);
 	PagedContent<BalanceLogDto> GetBalanceLogs(Guid employeeId, BalanceLogQuery query);
 	void ConvertWorkTimeToBalance(ConvertTimeRequest request);
+	void Delete(Guid employeeId);
 }
 
 [ScopedRegistration]
@@ -182,6 +184,18 @@ public class EmployeeService : BaseService, IEmployeeService
 
 		ConvertBillingsToBalance(billings.ToList());
 		SaveChanges();
+	}
+
+	public void Delete(Guid employeeId)
+	{
+		var user = DbContext.Users.Find(employeeId);
+		if (user == null)
+			throw new NotFoundException(nameof(employeeId), nameof(Employee));
+
+		var result = _userManager.DeleteAsync(user).Result;
+
+		if (!result.Succeeded)
+			throw new Exception();
 	}
 
 	private static (IQueryable<BalanceLog>, int totalItemsCount) ApplyBalanceLogsQuery(

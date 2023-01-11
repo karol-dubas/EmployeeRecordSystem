@@ -67,4 +67,10 @@ public class EmployeeHttpService
 		return (await _httpClient.PatchAsync($"{_basePath}/work-time/convert", request.ToHttpContent()))
 			.ToHttpResponse();
 	}
+
+	public async Task<HttpResponse> DeleteAsync(Guid employeeId)
+	{
+		return (await _httpClient.DeleteAsync($"{_basePath}/{employeeId}"))
+			.ToHttpResponse();
+	}
 }
