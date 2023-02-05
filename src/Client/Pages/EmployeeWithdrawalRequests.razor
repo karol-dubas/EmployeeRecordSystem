@@ -20,12 +20,12 @@
         <MudText Typo="Typo.h6">Żądania wypłaty</MudText>
     </ToolBarContent>
     <HeaderContent>
-        <MudTh><MudTableSortLabel SortLabel="CreatedAt" T="WithdrawalRequestDto">Stworzono</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="CreatedAt" T="WithdrawalRequestDto" InitialDirection="SortDirection.Descending">Stworzono</MudTableSortLabel></MudTh>
         <MudTh>Kwota</MudTh>
         <MudTh><MudTableSortLabel SortLabel="WithdrawalRequestStatusTypeCode" T="WithdrawalRequestDto">Status</MudTableSortLabel></MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="Stworzono">@context.CreatedAt</MudTd>
+        <MudTd DataLabel="Stworzono">@context.CreatedAt.Humanize()</MudTd>
         <MudTd DataLabel="Kwota">@context.Amount</MudTd>
         <MudTd DataLabel="Status">@context.WithdrawalRequestStatus</MudTd>
     </RowTemplate>

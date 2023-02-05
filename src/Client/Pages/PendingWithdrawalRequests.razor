@@ -16,14 +16,14 @@
         <MudTextField T="string" ValueChanged="@(OnSearch)" Placeholder="Wyszukaj pracownika" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
     </ToolBarContent>
     <HeaderContent>
-        <MudTh><MudTableSortLabel SortLabel="CreatedAt" T="WithdrawalRequestDto">Stworzono</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="CreatedAt" T="WithdrawalRequestDto" InitialDirection="SortDirection.Descending">Stworzono</MudTableSortLabel></MudTh>
         <MudTh>Kwota</MudTh>
         <MudTh>Pracownik</MudTh>
         <MudTh>Nr konta bankowego</MudTh>
         <MudTh></MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="Stworzono">@context.CreatedAt</MudTd>
+        <MudTd DataLabel="Stworzono">@context.CreatedAt.Humanize()</MudTd>
         <MudTd DataLabel="Kwota">@context.Amount</MudTd>
         <MudTd DataLabel="Pracownik" @onclick="() => NavigateToEmployee(context.EmployeeId)" class="cursor-pointer">@context.EmployeeFullName</MudTd>
         <MudTd DataLabel="Nr konta bankowego">@context.EmployeeBankAccountNumber</MudTd>

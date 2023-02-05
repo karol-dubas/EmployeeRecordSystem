@@ -14,14 +14,14 @@
         <MudTh>Kwota</MudTh>
         <MudTh>Saldo przed</MudTh>
         <MudTh>Saldo po</MudTh>
-        <MudTh><MudTableSortLabel SortLabel="CreatedAt" T="BalanceLogDto">Utworzono</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="CreatedAt" T="BalanceLogDto" InitialDirection="SortDirection.Descending">Utworzono</MudTableSortLabel></MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Typ operacji">@GetOperationType(context)</MudTd>
         <MudTd DataLabel="Kwota">@context.Amount</MudTd>
         <MudTd DataLabel="Saldo przed">@context.BalanceBefore</MudTd>
         <MudTd DataLabel="Saldo po">@context.BalanceAfter</MudTd>
-        <MudTd DataLabel="Utworzono">@context.CreatedAt</MudTd>
+        <MudTd DataLabel="Utworzono">@context.CreatedAt.Humanize()</MudTd>
     </RowTemplate>
    <NoRecordsContent>
         <MudText>Brak wyników</MudText>
