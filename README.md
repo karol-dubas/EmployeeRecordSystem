@@ -24,6 +24,3 @@ The application is available at [Azure](https://employee-record-system.azurewebs
 
 ## Database diagram
 ![db_diagram](https://user-images.githubusercontent.com/70332407/202138204-ba1574d2-2924-49d3-b817-95b0a7fa26f5.png)
-
-## Status
-Not finished yet, still in progress.
